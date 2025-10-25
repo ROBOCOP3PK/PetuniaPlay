@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Services\ProductService;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductResource;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $perPage = $request->get('per_page', 15);
+        $products = $this->productService->getAllProducts($perPage);
+
+        return ProductResource::collection($products);
+    }
+
+    /**
+     * Display featured products.
+     */
+    public function featured(Request $request)
+    {
+        $limit = $request->get('limit', 8);
+        $products = $this->productService->getFeaturedProducts($limit);
+
+        return ProductResource::collection($products);
+    }
+
+    /**
+     * Search products.
+     */
+    public function search(Request $request)
+    {
+        $term = $request->get('q');
+        $perPage = $request->get('per_page', 15);
+
+        if (!$term) {
+            return response()->json(['message' => 'Se requiere un término de búsqueda'], 400);
+        }
+
+        $products = $this->productService->searchProducts($term, $perPage);
+
+        return ProductResource::collection($products);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreProductRequest $request)
+    {
+        try {
+            $product = $this->productService->createProduct($request->validated());
+
+            return new ProductResource($product);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al crear producto: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Display the specified resource by slug.
+     */
+    public function show(string $slug)
+    {
+        try {
+            $product = $this->productService->getProductBySlug($slug);
+
+            return new ProductResource($product);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Producto no encontrado'], 404);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateProductRequest $request, string $id)
+    {
+        try {
+            $product = $this->productService->updateProduct($id, $request->validated());
+
+            return new ProductResource($product);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al actualizar producto: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        try {
+            $this->productService->deleteProduct($id);
+
+            return response()->json(['message' => 'Producto eliminado exitosamente']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al eliminar producto: ' . $e->getMessage()], 500);
+        }
+    }
+}
