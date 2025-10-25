@@ -1,1 +1,1 @@
-"# PetuniaPlay" 
+"# Petunia Play - E-commerce para Mascotas" 
