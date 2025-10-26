@@ -14,6 +14,7 @@ class CategoryRepository extends BaseRepository
     public function getAllActive()
     {
         return $this->model->active()
+            ->with('parent')
             ->orderBy('order')
             ->get();
     }

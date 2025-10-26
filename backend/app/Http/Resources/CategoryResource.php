@@ -14,6 +14,37 @@ class CategoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'description' => $this->description,
+            'image' => $this->image,
+            'parent_id' => $this->parent_id,
+            'order' => $this->order,
+            'is_active' => $this->is_active,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+
+            // Relaciones
+            'parent' => $this->whenLoaded('parent', function () {
+                return [
+                    'id' => $this->parent->id,
+                    'name' => $this->parent->name,
+                    'slug' => $this->parent->slug,
+                ];
+            }),
+
+            'children' => CategoryResource::collection($this->whenLoaded('children')),
+
+            // Conteo de hijos
+            'children_count' => $this->children()->count(),
+
+            // Conteo de productos
+            'products_count' => $this->when(
+                $this->relationLoaded('products'),
+                $this->products->count()
+            ),
+        ];
     }
 }
