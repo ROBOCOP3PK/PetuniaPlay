@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\WishlistController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\FileUploadController;
+use App\Http\Controllers\Api\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,10 @@ Route::prefix('v1')->group(function () {
     // Categories
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/{slug}', [CategoryController::class, 'show']);
+
+    // Reviews (public)
+    Route::get('/products/{productId}/reviews', [ReviewController::class, 'index']);
+    Route::get('/products/{productId}/reviews/stats', [ReviewController::class, 'stats']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);
@@ -75,6 +80,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::delete('/wishlist/clear', [WishlistController::class, 'clear']);
     Route::delete('/wishlist/{productId}', [WishlistController::class, 'destroy']);
 
+    // Reviews (authenticated)
+    Route::post('/reviews', [ReviewController::class, 'store']);
+    Route::put('/reviews/{id}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+
     // Manager routes (accessible by manager and admin)
     Route::middleware('manager')->group(function () {
 
@@ -101,6 +111,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Orders Management
         Route::get('/admin/orders', [OrderController::class, 'adminIndex']);
         Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+
+        // Reviews Management
+        Route::get('/admin/reviews', [ReviewController::class, 'adminIndex']);
+        Route::put('/admin/reviews/{id}/toggle-approval', [ReviewController::class, 'toggleApproval']);
     });
 
     // Admin only routes (only accessible by admin)

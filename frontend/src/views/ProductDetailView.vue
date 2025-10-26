@@ -70,15 +70,13 @@
           <h1 class="text-4xl font-bold mb-4">{{ product.name }}</h1>
 
           <!-- Rating -->
-          <div class="flex items-center mb-6">
-            <div class="flex text-yellow-500 text-lg">
-              <span v-for="star in 5" :key="star">
-                {{ star <= Math.round(product.average_rating) ? '★' : '☆' }}
-              </span>
-            </div>
-            <span class="text-gray-600 ml-2">
-              ({{ product.average_rating || 0 }} / 5)
-            </span>
+          <div class="mb-6">
+            <StarRating
+              :model-value="product.average_rating || 0"
+              :show-rating="true"
+              :total-reviews="reviewStats?.total_reviews || 0"
+              size="lg"
+            />
           </div>
 
           <!-- Price -->
@@ -214,6 +212,67 @@
         </div>
       </div>
 
+      <!-- Reviews Section -->
+      <section v-if="product" class="mt-16">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+          <!-- Review Stats -->
+          <div v-if="reviewStats" class="mb-8 pb-8 border-b">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- Average Rating -->
+              <div class="text-center">
+                <div class="text-5xl font-bold text-gray-900 mb-2">
+                  {{ reviewStats.average_rating || 0 }}
+                </div>
+                <StarRating
+                  :model-value="reviewStats.average_rating || 0"
+                  size="lg"
+                  class="justify-center mb-2"
+                />
+                <p class="text-gray-600">
+                  Basado en {{ reviewStats.total_reviews }} reseñas
+                </p>
+              </div>
+
+              <!-- Rating Distribution -->
+              <div class="space-y-2">
+                <div
+                  v-for="rating in [5, 4, 3, 2, 1]"
+                  :key="rating"
+                  class="flex items-center gap-3"
+                >
+                  <span class="text-sm font-medium w-8">{{ rating }} ★</span>
+                  <div class="flex-1 bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <div
+                      class="bg-yellow-400 h-full rounded-full transition-all"
+                      :style="{
+                        width: reviewStats.total_reviews > 0
+                          ? `${(reviewStats.rating_distribution[rating] / reviewStats.total_reviews) * 100}%`
+                          : '0%'
+                      }"
+                    ></div>
+                  </div>
+                  <span class="text-sm text-gray-600 w-12 text-right">
+                    {{ reviewStats.rating_distribution[rating] }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reviews List -->
+          <ReviewsList
+            :reviews="reviews"
+            :pagination="reviewsPagination"
+            :loading="loadingReviews"
+            :can-write-review="canWriteReview"
+            @write-review="openReviewForm()"
+            @edit-review="openReviewForm"
+            @delete-review="confirmDeleteReview"
+            @page-change="loadReviews"
+          />
+        </div>
+      </section>
+
       <!-- Related Products -->
       <section v-if="product" class="mt-16">
         <h2 class="text-3xl font-bold mb-8">Productos Relacionados</h2>
@@ -224,6 +283,14 @@
           </p>
         </div>
       </section>
+
+      <!-- Review Form Modal -->
+      <ReviewForm
+        v-model="showReviewForm"
+        :review="editingReview"
+        :product="product"
+        @submit="handleReviewSubmit"
+      />
     </div>
   </div>
 </template>
@@ -236,6 +303,10 @@ import { useCartStore } from '../stores/cartStore'
 import { useWishlistStore } from '../stores/wishlistStore'
 import { useAuthStore } from '../stores/authStore'
 import { useToast } from 'vue-toastification'
+import StarRating from '../components/StarRating.vue'
+import ReviewsList from '../components/ReviewsList.vue'
+import ReviewForm from '../components/ReviewForm.vue'
+import reviewService from '../services/reviewService'
 
 const route = useRoute()
 const router = useRouter()
@@ -248,9 +319,24 @@ const toast = useToast()
 const quantity = ref(1)
 const selectedImage = ref(null)
 
+// Reviews state
+const reviews = ref([])
+const reviewStats = ref(null)
+const reviewsPagination = ref(null)
+const loadingReviews = ref(false)
+const showReviewForm = ref(false)
+const editingReview = ref(null)
+
 const product = computed(() => productStore.currentProduct)
 const isInWishlist = computed(() => {
   return product.value ? wishlistStore.isInWishlist(product.value.id) : false
+})
+
+const canWriteReview = computed(() => {
+  if (!authStore.isAuthenticated || !reviews.value) return false
+  // Check if user has already reviewed this product
+  const userReview = reviews.value.find(r => r.user_id === authStore.user?.id)
+  return !userReview
 })
 
 const formatPrice = (price) => {
@@ -294,6 +380,105 @@ const loadProduct = async () => {
   // Set default image
   if (product.value?.primary_image) {
     selectedImage.value = product.value.primary_image.image_url
+  }
+
+  // Load reviews when product is loaded
+  if (product.value) {
+    loadReviews()
+    loadReviewStats()
+  }
+}
+
+// Reviews methods
+const loadReviews = async (page = 1) => {
+  if (!product.value) return
+
+  loadingReviews.value = true
+  try {
+    const response = await reviewService.getProductReviews(product.value.id, {
+      page,
+      per_page: 10
+    })
+
+    reviews.value = response.data.data
+    reviewsPagination.value = {
+      current_page: response.data.current_page,
+      last_page: response.data.last_page,
+      total: response.data.total
+    }
+  } catch (error) {
+    console.error('Error loading reviews:', error)
+    toast.error('Error al cargar las reseñas')
+  } finally {
+    loadingReviews.value = false
+  }
+}
+
+const loadReviewStats = async () => {
+  if (!product.value) return
+
+  try {
+    const response = await reviewService.getReviewStats(product.value.id)
+    reviewStats.value = response.data
+  } catch (error) {
+    console.error('Error loading review stats:', error)
+  }
+}
+
+const openReviewForm = (review = null) => {
+  if (!authStore.isAuthenticated) {
+    toast.warning('Debes iniciar sesión para escribir una reseña')
+    router.push({ name: 'login', query: { redirect: route.fullPath } })
+    return
+  }
+
+  editingReview.value = review
+  showReviewForm.value = true
+}
+
+const handleReviewSubmit = async (reviewData) => {
+  try {
+    if (editingReview.value) {
+      // Update existing review
+      await reviewService.update(editingReview.value.id, reviewData)
+      toast.success('Reseña actualizada exitosamente')
+    } else {
+      // Create new review
+      await reviewService.create({
+        product_id: product.value.id,
+        ...reviewData
+      })
+      toast.success('Reseña publicada exitosamente')
+    }
+
+    // Reload reviews and stats
+    await loadReviews()
+    await loadReviewStats()
+
+    // Close form
+    showReviewForm.value = false
+    editingReview.value = null
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || 'Error al enviar la reseña'
+    toast.error(errorMessage)
+    throw new Error(errorMessage)
+  }
+}
+
+const confirmDeleteReview = async (review) => {
+  if (!confirm('¿Estás seguro de que deseas eliminar esta reseña?')) {
+    return
+  }
+
+  try {
+    await reviewService.delete(review.id)
+    toast.success('Reseña eliminada exitosamente')
+
+    // Reload reviews and stats
+    await loadReviews()
+    await loadReviewStats()
+  } catch (error) {
+    toast.error('Error al eliminar la reseña')
   }
 }
 
