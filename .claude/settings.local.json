@@ -2,7 +2,21 @@
   "permissions": {
     "allow": [
       "Bash(php artisan:*)",
-      "Bash(php artisan make:model:*)"
+      "Bash(php artisan make:model:*)",
+      "Bash(composer install:*)",
+      "Bash(cp:*)",
+      "Bash(touch:*)",
+      "Bash(php:*)",
+      "Bash(mysql:*)",
+      "Bash(mariadb:*)",
+      "Bash(sudo mysql:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

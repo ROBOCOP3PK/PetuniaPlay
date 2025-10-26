@@ -3,16 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\CategoryService;
+use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $categories = $this->categoryService->getAllCategories();
+        return CategoryResource::collection($categories);
     }
 
     /**
@@ -20,15 +30,35 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|unique:categories',
+            'description' => 'nullable|string',
+            'image' => 'nullable|string',
+            'parent_id' => 'nullable|exists:categories,id',
+            'order' => 'nullable|integer',
+            'is_active' => 'boolean',
+        ]);
+
+        try {
+            $category = $this->categoryService->createCategory($validated);
+            return new CategoryResource($category);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al crear categoría: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
-        //
+        try {
+            $category = $this->categoryService->getCategoryBySlug($slug);
+            return new CategoryResource($category);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Categoría no encontrada'], 404);
+        }
     }
 
     /**
@@ -36,7 +66,22 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'slug' => 'nullable|string|unique:categories,slug,' . $id,
+            'description' => 'nullable|string',
+            'image' => 'nullable|string',
+            'parent_id' => 'nullable|exists:categories,id',
+            'order' => 'nullable|integer',
+            'is_active' => 'boolean',
+        ]);
+
+        try {
+            $category = $this->categoryService->updateCategory($id, $validated);
+            return new CategoryResource($category);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al actualizar categoría: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -44,6 +89,11 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $this->categoryService->deleteCategory($id);
+            return response()->json(['message' => 'Categoría eliminada exitosamente']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al eliminar categoría: ' . $e->getMessage()], 500);
+        }
     }
 }
