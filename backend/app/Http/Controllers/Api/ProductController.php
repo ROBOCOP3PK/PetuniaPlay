@@ -24,7 +24,22 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 15);
-        $products = $this->productService->getAllProducts($perPage);
+
+        // Si hay filtros, usar el método de filtrado avanzado
+        if ($request->hasAny(['min_price', 'max_price', 'brand', 'in_stock', 'min_rating', 'sort_by'])) {
+            $filters = [
+                'min_price' => $request->get('min_price'),
+                'max_price' => $request->get('max_price'),
+                'brand' => $request->get('brand'),
+                'in_stock' => $request->boolean('in_stock'),
+                'min_rating' => $request->get('min_rating'),
+                'sort_by' => $request->get('sort_by'),
+            ];
+
+            $products = $this->productService->filterProducts($filters, $perPage);
+        } else {
+            $products = $this->productService->getAllProducts($perPage);
+        }
 
         return ProductResource::collection($products);
     }
@@ -110,6 +125,19 @@ class ProductController extends Controller
             return response()->json(['message' => 'Producto eliminado exitosamente']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al eliminar producto: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get all unique brands.
+     */
+    public function brands()
+    {
+        try {
+            $brands = $this->productService->getAllBrands();
+            return response()->json(['brands' => $brands]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener marcas: ' . $e->getMessage()], 500);
         }
     }
 }

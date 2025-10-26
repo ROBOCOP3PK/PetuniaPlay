@@ -7,6 +7,7 @@ export const useProductStore = defineStore('product', () => {
   const products = ref([])
   const featuredProducts = ref([])
   const currentProduct = ref(null)
+  const brands = ref([])
   const loading = ref(false)
   const error = ref(null)
   const pagination = ref({
@@ -87,6 +88,15 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
+  async function fetchBrands() {
+    try {
+      const response = await productService.getBrands()
+      brands.value = response.data.brands || []
+    } catch (err) {
+      console.error('Error fetching brands:', err)
+    }
+  }
+
   function clearProducts() {
     products.value = []
     currentProduct.value = null
@@ -97,6 +107,7 @@ export const useProductStore = defineStore('product', () => {
     products,
     featuredProducts,
     currentProduct,
+    brands,
     loading,
     error,
     pagination,
@@ -108,6 +119,7 @@ export const useProductStore = defineStore('product', () => {
     fetchFeaturedProducts,
     fetchProductBySlug,
     searchProducts,
+    fetchBrands,
     clearProducts
   }
 })

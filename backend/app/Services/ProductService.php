@@ -141,4 +141,14 @@ class ProductService
             $limit
         );
     }
+
+    public function filterProducts(array $filters = [], $perPage = 15)
+    {
+        return $this->productRepository->filterProducts($filters, $perPage);
+    }
+
+    public function getAllBrands()
+    {
+        return $this->productRepository->getAllBrands();
+    }
 }

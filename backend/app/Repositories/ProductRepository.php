@@ -105,4 +105,95 @@ class ProductRepository extends BaseRepository
             ->limit($limit)
             ->get();
     }
+
+    /**
+     * Filtrar productos con filtros avanzados
+     */
+    public function filterProducts(array $filters = [], $perPage = 15)
+    {
+        $query = $this->model->active()
+            ->with(['category', 'primaryImage', 'reviews']);
+
+        // Filtro por rango de precio
+        if (isset($filters['min_price']) && $filters['min_price'] !== null && $filters['min_price'] !== '') {
+            $query->where(function($q) use ($filters) {
+                $q->where('sale_price', '>=', $filters['min_price'])
+                  ->orWhere(function($sq) use ($filters) {
+                      $sq->whereNull('sale_price')
+                         ->where('price', '>=', $filters['min_price']);
+                  });
+            });
+        }
+
+        if (isset($filters['max_price']) && $filters['max_price'] !== null && $filters['max_price'] !== '') {
+            $query->where(function($q) use ($filters) {
+                $q->where(function($sq) use ($filters) {
+                    $sq->whereNotNull('sale_price')
+                       ->where('sale_price', '<=', $filters['max_price']);
+                })
+                ->orWhere(function($sq) use ($filters) {
+                    $sq->whereNull('sale_price')
+                       ->where('price', '<=', $filters['max_price']);
+                });
+            });
+        }
+
+        // Filtro por marca
+        if (isset($filters['brand']) && $filters['brand'] !== null && $filters['brand'] !== '') {
+            $query->where('brand', $filters['brand']);
+        }
+
+        // Filtro por disponibilidad de stock
+        if (isset($filters['in_stock']) && $filters['in_stock'] === true) {
+            $query->inStock();
+        }
+
+        // Filtro por calificación mínima
+        if (isset($filters['min_rating']) && $filters['min_rating'] !== null && $filters['min_rating'] !== '') {
+            $query->whereHas('reviews', function($q) {
+                // Agrupa por producto y verifica que el promedio sea >= min_rating
+            })->withAvg('reviews', 'rating')
+              ->havingRaw('COALESCE(reviews_avg_rating, 0) >= ?', [$filters['min_rating']]);
+        }
+
+        // Ordenamiento
+        if (isset($filters['sort_by'])) {
+            switch ($filters['sort_by']) {
+                case 'price_asc':
+                    $query->orderByRaw('COALESCE(sale_price, price) ASC');
+                    break;
+                case 'price_desc':
+                    $query->orderByRaw('COALESCE(sale_price, price) DESC');
+                    break;
+                case 'name':
+                    $query->orderBy('name', 'ASC');
+                    break;
+                case 'rating':
+                    $query->withAvg('reviews', 'rating')
+                          ->orderByDesc('reviews_avg_rating');
+                    break;
+                case 'newest':
+                    $query->orderBy('created_at', 'DESC');
+                    break;
+                default:
+                    $query->orderBy('created_at', 'DESC');
+            }
+        } else {
+            $query->orderBy('created_at', 'DESC');
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Obtener todas las marcas únicas
+     */
+    public function getAllBrands()
+    {
+        return $this->model
+            ->whereNotNull('brand')
+            ->distinct()
+            ->orderBy('brand')
+            ->pluck('brand');
+    }
 }

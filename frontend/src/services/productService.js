@@ -23,6 +23,11 @@ export const productService = {
     })
   },
 
+  // Obtener todas las marcas
+  getBrands() {
+    return api.get('/products/brands')
+  },
+
   // Crear producto (solo admin)
   create(data) {
     return api.post('/products', data)

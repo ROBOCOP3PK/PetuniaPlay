@@ -250,6 +250,27 @@
                   />
                 </div>
 
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Marca</label>
+                  <input
+                    v-model="productForm.brand"
+                    type="text"
+                    placeholder="Ej: Purina, Royal Canin, etc."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Peso (kg)</label>
+                  <input
+                    v-model.number="productForm.weight"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
                 <div class="md:col-span-2">
                   <label class="block text-sm font-semibold text-gray-700 mb-2">Descripción Corta *</label>
                   <textarea
@@ -319,17 +340,6 @@
                     type="number"
                     min="1"
                     required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Peso (kg)</label>
-                  <input
-                    v-model.number="productForm.weight"
-                    type="number"
-                    step="0.01"
-                    min="0"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
@@ -424,6 +434,7 @@ const savingProduct = ref(false)
 // Product form
 const emptyForm = {
   name: '',
+  brand: '',
   category_id: '',
   sku: '',
   description: '',
