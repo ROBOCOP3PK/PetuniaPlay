@@ -28,10 +28,10 @@
       <button
         v-if="authStore.isAuthenticated"
         @click.stop="toggleWishlist"
-        class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:scale-110 transition-transform"
+        class="absolute top-2 right-2 bg-white dark:bg-gray-800 p-2 rounded-full shadow-md hover:scale-110 transition-transform"
         :title="isInWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos'"
       >
-        <svg class="w-5 h-5" :class="isInWishlist ? 'text-red-500' : 'text-gray-400'" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5" :class="isInWishlist ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
       </button>
@@ -41,7 +41,7 @@
         v-if="!product.in_stock"
         class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center"
       >
-        <span class="bg-white text-dark px-4 py-2 rounded-lg font-bold">
+        <span class="bg-white dark:bg-gray-800 text-dark dark:text-white px-4 py-2 rounded-lg font-bold">
           Agotado
         </span>
       </div>
@@ -50,28 +50,28 @@
     <!-- Content -->
     <div class="p-4">
       <!-- Category -->
-      <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">
+      <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
         {{ product.category?.name }}
       </p>
 
       <!-- Title -->
-      <h3 class="font-bold text-lg mb-2 line-clamp-2 group-hover:text-primary transition">
+      <h3 class="font-bold text-lg mb-2 line-clamp-2 text-gray-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary-light transition">
         {{ product.name }}
       </h3>
 
       <!-- Description -->
-      <p class="text-sm text-gray-600 mb-3 line-clamp-2">
+      <p class="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
         {{ product.description }}
       </p>
 
       <!-- Rating -->
       <div class="flex items-center mb-3">
-        <div class="flex text-yellow-500">
+        <div class="flex text-yellow-500 dark:text-yellow-400">
           <span v-for="star in 5" :key="star">
             {{ star <= Math.round(product.average_rating) ? '★' : '☆' }}
           </span>
         </div>
-        <span class="text-xs text-gray-500 ml-2">
+        <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">
           ({{ product.average_rating || 0 }})
         </span>
       </div>
@@ -80,15 +80,15 @@
       <div class="flex items-center justify-between">
         <div>
           <div v-if="product.has_discount" class="flex items-center gap-2">
-            <span class="text-gray-400 line-through text-sm">
+            <span class="text-gray-400 dark:text-gray-500 line-through text-sm">
               ${{ formatPrice(product.price) }}
             </span>
-            <span class="text-primary font-bold text-xl">
+            <span class="text-primary dark:text-primary-light font-bold text-xl">
               ${{ formatPrice(product.sale_price) }}
             </span>
           </div>
           <div v-else>
-            <span class="text-primary font-bold text-xl">
+            <span class="text-primary dark:text-primary-light font-bold text-xl">
               ${{ formatPrice(product.price) }}
             </span>
           </div>

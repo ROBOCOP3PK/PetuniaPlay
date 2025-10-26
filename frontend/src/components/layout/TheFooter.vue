@@ -39,26 +39,31 @@
                 Contacto
               </router-link>
             </li>
+            <li>
+              <router-link to="/tracking" class="text-gray-300 hover:text-primary transition">
+                Rastrear Pedido
+              </router-link>
+            </li>
           </ul>
         </div>
 
-        <!-- Categories -->
+        <!-- Legal -->
         <div>
-          <h3 class="font-bold text-lg mb-4">Categorías</h3>
+          <h3 class="font-bold text-lg mb-4">Legal</h3>
           <ul class="space-y-2 text-sm">
             <li>
-              <router-link to="/category/perros" class="text-gray-300 hover:text-primary transition">
-                Perros
+              <router-link to="/terms" class="text-gray-300 hover:text-primary transition">
+                Términos y Condiciones
               </router-link>
             </li>
             <li>
-              <router-link to="/category/gatos" class="text-gray-300 hover:text-primary transition">
-                Gatos
+              <router-link to="/privacy" class="text-gray-300 hover:text-primary transition">
+                Política de Privacidad
               </router-link>
             </li>
             <li>
-              <router-link to="/category/accesorios" class="text-gray-300 hover:text-primary transition">
-                Accesorios
+              <router-link to="/returns" class="text-gray-300 hover:text-primary transition">
+                Devoluciones y Reembolsos
               </router-link>
             </li>
           </ul>
