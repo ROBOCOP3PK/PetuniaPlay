@@ -331,10 +331,12 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cartStore'
+import { useToast } from 'vue-toastification'
 import orderService from '../services/orderService'
 
 const router = useRouter()
 const cartStore = useCartStore()
+const toast = useToast()
 
 const processing = ref(false)
 
@@ -383,24 +385,24 @@ const formatExpiry = (event) => {
 
 const validateForm = () => {
   if (!form.name || !form.email || !form.phone || !form.document) {
-    alert('Por favor completa todos los campos personales')
+    toast.warning('Por favor completa todos los campos personales')
     return false
   }
 
   if (!form.address || !form.city || !form.state) {
-    alert('Por favor completa la dirección de envío')
+    toast.warning('Por favor completa la dirección de envío')
     return false
   }
 
   if (form.paymentMethod === 'card') {
     if (!form.cardNumber || !form.cardExpiry || !form.cardCvv || !form.cardName) {
-      alert('Por favor completa todos los datos de la tarjeta')
+      toast.warning('Por favor completa todos los datos de la tarjeta')
       return false
     }
   }
 
   if (!form.acceptTerms) {
-    alert('Debes aceptar los términos y condiciones')
+    toast.warning('Debes aceptar los términos y condiciones')
     return false
   }
 
@@ -452,9 +454,12 @@ const placeOrder = async () => {
     // Limpiar carrito
     cartStore.clearCart()
 
-    // Redirigir a página de confirmación
-    alert(`✅ ¡Pedido realizado exitosamente!\n\nNúmero de orden: ${order.order_number}\n\nRecibirás un email de confirmación pronto.`)
+    // Mostrar mensaje de éxito
+    toast.success(`¡Pedido realizado exitosamente! Número de orden: ${order.order_number}. Recibirás un email de confirmación pronto.`, {
+      timeout: 6000
+    })
 
+    // Redirigir a página principal
     router.push('/')
 
   } catch (error) {
@@ -462,7 +467,7 @@ const placeOrder = async () => {
 
     // Mostrar mensaje de error más específico
     const errorMessage = error.response?.data?.message || 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.'
-    alert(`❌ ${errorMessage}`)
+    toast.error(errorMessage)
   } finally {
     processing.value = false
   }

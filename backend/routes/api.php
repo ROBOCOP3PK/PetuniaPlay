@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,10 @@ use App\Http\Controllers\Api\CartController;
 
 // Public routes
 Route::prefix('v1')->group(function () {
+
+    // Auth routes (public)
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 
     // Products
     Route::get('/products', [ProductController::class, 'index']);
@@ -38,6 +44,20 @@ Route::prefix('v1')->group(function () {
 
 // Protected routes (require authentication)
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+
+    // Auth routes (protected)
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/user/profile', [AuthController::class, 'updateProfile']);
+    Route::put('/user/password', [AuthController::class, 'changePassword']);
+
+    // Addresses
+    Route::get('/user/addresses', [AddressController::class, 'index']);
+    Route::post('/user/addresses', [AddressController::class, 'store']);
+    Route::get('/user/addresses/{id}', [AddressController::class, 'show']);
+    Route::put('/user/addresses/{id}', [AddressController::class, 'update']);
+    Route::delete('/user/addresses/{id}', [AddressController::class, 'destroy']);
+    Route::put('/user/addresses/{id}/set-default', [AddressController::class, 'setDefault']);
 
     // Orders
     Route::get('/orders', [OrderController::class, 'index']);

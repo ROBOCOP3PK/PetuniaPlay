@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useAuthStore } from '../stores/authStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,26 @@ const router = createRouter({
       name: 'about',
       component: () => import('../views/AboutView.vue'),
     },
+    // Auth routes
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+      meta: { guest: true }
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue'),
+      meta: { guest: true }
+    },
+    // Protected routes
+    {
+      path: '/account',
+      name: 'account',
+      component: () => import('../views/AccountView.vue'),
+      meta: { requiresAuth: true }
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -51,6 +72,37 @@ const router = createRouter({
     } else {
       return { top: 0 }
     }
+  }
+})
+
+// Navigation guard para rutas protegidas
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  // Si la ruta requiere autenticación
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!authStore.isAuthenticated) {
+      // Redirigir a login con redirect query
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  }
+  // Si la ruta es solo para invitados (login/register)
+  else if (to.matched.some(record => record.meta.guest)) {
+    if (authStore.isAuthenticated) {
+      // Si ya está autenticado, redirigir a account
+      next('/account')
+    } else {
+      next()
+    }
+  }
+  // Otras rutas
+  else {
+    next()
   }
 })
 

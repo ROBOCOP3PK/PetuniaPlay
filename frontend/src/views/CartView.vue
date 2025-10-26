@@ -190,9 +190,11 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cartStore'
+import { useToast } from 'vue-toastification'
 
 const router = useRouter()
 const cartStore = useCartStore()
+const toast = useToast()
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO').format(price)
@@ -204,7 +206,7 @@ const increaseQuantity = (productId) => {
     try {
       cartStore.updateQuantity(productId, item.quantity + 1)
     } catch (error) {
-      alert(`❌ ${error.message}`)
+      toast.error(error.message)
     }
   }
 }
@@ -225,7 +227,7 @@ const updateQuantity = (productId, value) => {
   try {
     cartStore.updateQuantity(productId, quantity)
   } catch (error) {
-    alert(`❌ ${error.message}`)
+    toast.error(error.message)
   }
 }
 

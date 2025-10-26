@@ -7,7 +7,8 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
-  }
+  },
+  withCredentials: true // Importante para CORS con Sanctum
 })
 
 // Interceptor para requests - agregar token si existe

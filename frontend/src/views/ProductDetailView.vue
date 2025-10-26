@@ -204,11 +204,13 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '../stores/productStore'
 import { useCartStore } from '../stores/cartStore'
+import { useToast } from 'vue-toastification'
 
 const route = useRoute()
 const router = useRouter()
 const productStore = useProductStore()
 const cartStore = useCartStore()
+const toast = useToast()
 
 const quantity = ref(1)
 const selectedImage = ref(null)
@@ -223,17 +225,16 @@ const addToCart = () => {
   try {
     cartStore.addItem(product.value, quantity.value)
 
-    // Preguntar si quiere ir al carrito o seguir comprando
-    const goToCart = confirm(`✅ ${quantity.value} x ${product.value.name} agregado al carrito.\n\n¿Deseas ir al carrito?`)
+    // Mostrar toast de éxito con opción de ir al carrito
+    toast.success(`${quantity.value} x ${product.value.name} agregado al carrito`, {
+      timeout: 3000,
+      onClick: () => router.push('/cart')
+    })
 
-    if (goToCart) {
-      router.push('/cart')
-    } else {
-      // Reset quantity
-      quantity.value = 1
-    }
+    // Reset quantity
+    quantity.value = 1
   } catch (error) {
-    alert(`❌ ${error.message}`)
+    toast.error(error.message)
   }
 }
 

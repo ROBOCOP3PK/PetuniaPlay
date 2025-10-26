@@ -7,9 +7,52 @@
           <span>petuniaplay@gmail.com</span>
           <span>+57 305 759 40 88</span>
         </div>
+        <!-- Auth Menu -->
         <div class="flex items-center space-x-4">
-          <router-link to="/login" class="hover:text-beige transition">Iniciar Sesión</router-link>
-          <router-link to="/register" class="hover:text-beige transition">Registrarse</router-link>
+          <!-- If NOT authenticated -->
+          <template v-if="!authStore.isAuthenticated">
+            <router-link to="/login" class="hover:text-beige transition">Iniciar Sesión</router-link>
+            <router-link to="/register" class="hover:text-beige transition">Registrarse</router-link>
+          </template>
+          <!-- If authenticated -->
+          <template v-else>
+            <div class="relative">
+              <button
+                @click="showUserMenu = !showUserMenu"
+                class="hover:text-beige transition flex items-center gap-2"
+              >
+                <span>👤 {{ authStore.userName }}</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <!-- Dropdown Menu -->
+              <div
+                v-if="showUserMenu"
+                @click="showUserMenu = false"
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
+              >
+                <router-link
+                  to="/account"
+                  class="block px-4 py-2 text-dark hover:bg-gray-100 transition"
+                >
+                  Mi Cuenta
+                </router-link>
+                <router-link
+                  to="/account"
+                  class="block px-4 py-2 text-dark hover:bg-gray-100 transition"
+                >
+                  Mis Pedidos
+                </router-link>
+                <button
+                  @click="handleLogout"
+                  class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition"
+                >
+                  Cerrar Sesión
+                </button>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -101,12 +144,17 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useCartStore } from '../../stores/cartStore'
+import { useAuthStore } from '../../stores/authStore'
+import { useToast } from 'vue-toastification'
 
 const router = useRouter()
 const categoryStore = useCategoryStore()
 const cartStore = useCartStore()
+const authStore = useAuthStore()
+const toast = useToast()
 
 const searchQuery = ref('')
+const showUserMenu = ref(false)
 
 const parentCategories = computed(() => categoryStore.parentCategories)
 
@@ -114,6 +162,13 @@ const handleSearch = () => {
   if (searchQuery.value.trim()) {
     router.push({ path: '/products', query: { search: searchQuery.value } })
   }
+}
+
+const handleLogout = async () => {
+  await authStore.logout()
+  showUserMenu.value = false
+  toast.info('Sesión cerrada exitosamente')
+  router.push('/')
 }
 
 onMounted(() => {
