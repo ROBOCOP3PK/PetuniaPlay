@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
     <!-- Sidebar -->
     <aside
-      class="fixed inset-y-0 left-0 w-64 bg-dark text-white transform transition-transform duration-300 ease-in-out z-30"
+      class="fixed inset-y-0 left-0 w-64 bg-dark dark:bg-gray-950 text-white transform transition-transform duration-300 ease-in-out z-30"
       :class="{ '-translate-x-full': !sidebarOpen }"
     >
       <div class="flex flex-col h-full">
@@ -109,11 +109,11 @@
     <!-- Main Content -->
     <div class="lg:ml-64">
       <!-- Top Bar -->
-      <header class="bg-white shadow-sm sticky top-0 z-20">
+      <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 transition-colors duration-200">
         <div class="flex items-center justify-between px-6 py-4">
           <button
             @click="sidebarOpen = !sidebarOpen"
-            class="lg:hidden text-gray-600 hover:text-gray-900"
+            class="lg:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -121,6 +121,7 @@
           </button>
 
           <div class="flex items-center space-x-4">
+            <ThemeToggle />
             <router-link
               to="/"
               class="text-gray-600 hover:text-primary transition"
@@ -163,6 +164,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import { useToast } from 'vue-toastification'
+import ThemeToggle from '../components/ThemeToggle.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

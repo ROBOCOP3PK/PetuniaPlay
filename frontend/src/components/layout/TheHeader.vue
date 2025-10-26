@@ -1,7 +1,7 @@
 <template>
-  <header class="bg-white shadow-md sticky top-0 z-50">
+  <header class="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50 transition-colors duration-200">
     <!-- Top bar -->
-    <div class="bg-primary text-white py-2">
+    <div class="bg-primary dark:bg-primary-dark text-white py-2">
       <div class="container mx-auto px-4 flex justify-between items-center text-sm">
         <div class="flex items-center space-x-4">
           <span>petuniaplay@gmail.com</span>
@@ -30,17 +30,17 @@
               <div
                 v-if="showUserMenu"
                 @click="showUserMenu = false"
-                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
+                class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-50"
               >
                 <router-link
                   to="/account"
-                  class="block px-4 py-2 text-dark hover:bg-gray-100 transition"
+                  class="block px-4 py-2 text-dark dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                 >
                   Mi Cuenta
                 </router-link>
                 <router-link
                   to="/account"
-                  class="block px-4 py-2 text-dark hover:bg-gray-100 transition"
+                  class="block px-4 py-2 text-dark dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                 >
                   Mis Pedidos
                 </router-link>
@@ -48,13 +48,13 @@
                 <router-link
                   v-if="authStore.hasManagerAccess"
                   to="/admin"
-                  class="block px-4 py-2 text-primary font-semibold hover:bg-primary hover:bg-opacity-10 transition border-t"
+                  class="block px-4 py-2 text-primary dark:text-primary-light font-semibold hover:bg-primary hover:bg-opacity-10 dark:hover:bg-opacity-20 transition border-t dark:border-gray-700"
                 >
                   📊 Panel Admin
                 </router-link>
                 <button
                   @click="handleLogout"
-                  class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition border-t"
+                  class="w-full text-left px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 dark:hover:bg-opacity-20 transition border-t dark:border-gray-700"
                 >
                   Cerrar Sesión
                 </button>
@@ -70,10 +70,10 @@
       <div class="flex items-center justify-between">
         <!-- Logo -->
         <router-link to="/" class="flex items-center space-x-2">
-          <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl">
+          <div class="w-12 h-12 bg-primary dark:bg-primary-light rounded-full flex items-center justify-center text-white font-bold text-xl">
             PP
           </div>
-          <span class="text-2xl font-bold text-primary">Petunia Play</span>
+          <span class="text-2xl font-bold text-primary dark:text-primary-light">Petunia Play</span>
         </router-link>
 
         <!-- Search bar -->
@@ -84,7 +84,7 @@
               @keyup.enter="handleSearch"
               type="text"
               placeholder="Buscar productos..."
-              class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              class="w-full px-4 py-2 pr-10 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
             />
             <button
               @click="handleSearch"
@@ -99,6 +99,9 @@
 
         <!-- Cart, Wishlist & User -->
         <div class="flex items-center space-x-6">
+          <!-- Theme Toggle -->
+          <ThemeToggle />
+
           <!-- Wishlist Icon (only for authenticated users) -->
           <router-link
             v-if="authStore.isAuthenticated"
@@ -134,29 +137,29 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="bg-beige">
+    <nav class="bg-beige dark:bg-gray-800">
       <div class="container mx-auto px-4">
         <ul class="flex items-center space-x-8 py-3">
           <li>
-            <router-link to="/" class="text-dark hover:text-primary font-semibold transition">
+            <router-link to="/" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition">
               Inicio
             </router-link>
           </li>
           <li>
-            <router-link to="/products" class="text-dark hover:text-primary font-semibold transition">
+            <router-link to="/products" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition">
               Productos
             </router-link>
           </li>
           <li v-for="category in parentCategories" :key="category.id">
             <router-link
               :to="`/category/${category.slug}`"
-              class="text-dark hover:text-primary font-semibold transition"
+              class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition"
             >
               {{ category.name }}
             </router-link>
           </li>
           <li>
-            <router-link to="/contact" class="text-dark hover:text-primary font-semibold transition">
+            <router-link to="/contact" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition">
               Contacto
             </router-link>
           </li>
@@ -174,6 +177,7 @@ import { useCartStore } from '../../stores/cartStore'
 import { useWishlistStore } from '../../stores/wishlistStore'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from 'vue-toastification'
+import ThemeToggle from '../ThemeToggle.vue'
 
 const router = useRouter()
 const categoryStore = useCategoryStore()
