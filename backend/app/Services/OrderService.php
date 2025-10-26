@@ -61,12 +61,15 @@ class OrderService
             // Crear dirección de envío
             $shippingAddress = Address::create([
                 'user_id' => $userId,
-                'type' => 'shipping',
-                'address' => $orderData['shipping']['address'],
+                'full_name' => $orderData['customer']['name'],
+                'phone' => $orderData['customer']['phone'],
+                'address_line_1' => $orderData['shipping']['address'],
+                'address_line_2' => null,
                 'city' => $orderData['shipping']['city'],
                 'state' => $orderData['shipping']['state'],
-                'zip_code' => $orderData['shipping']['zipCode'] ?? null,
+                'postal_code' => $orderData['shipping']['zipCode'] ?? '000000',
                 'country' => 'Colombia',
+                'type' => 'shipping',
                 'is_default' => false,
             ]);
 
