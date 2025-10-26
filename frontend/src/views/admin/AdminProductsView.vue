@@ -308,31 +308,14 @@
 
             <!-- Images -->
             <div>
-              <h3 class="font-bold text-lg mb-3">Imágenes</h3>
-              <div class="space-y-3">
-                <div v-for="(image, index) in productForm.images" :key="index" class="flex gap-2">
-                  <input
-                    v-model="productForm.images[index].url"
-                    type="url"
-                    placeholder="URL de la imagen"
-                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <button
-                    type="button"
-                    @click="removeImage(index)"
-                    class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                  >
-                    Eliminar
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  @click="addImageField"
-                  class="text-primary font-semibold hover:underline"
-                >
-                  + Agregar imagen
-                </button>
-              </div>
+              <h3 class="font-bold text-lg mb-3">Imágenes del Producto</h3>
+              <p class="text-sm text-gray-600 mb-3">La primera imagen será la imagen principal</p>
+              <ImageUpload
+                v-model="productForm.images"
+                :multiple="true"
+                :max-files="10"
+                type="product"
+              />
             </div>
 
             <!-- Status -->
@@ -386,6 +369,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
+import ImageUpload from '../../components/admin/ImageUpload.vue'
 import { useProductStore } from '../../stores/productStore'
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useToast } from 'vue-toastification'
@@ -420,7 +404,7 @@ const emptyForm = {
   weight: null,
   is_active: true,
   is_featured: false,
-  images: [{ url: '' }]
+  images: []
 }
 
 const productForm = ref({ ...emptyForm })
@@ -499,7 +483,7 @@ const saveStock = async (product) => {
 // Modal functions
 const openCreateModal = () => {
   editingProductData.value = null
-  productForm.value = { ...emptyForm, images: [{ url: '' }] }
+  productForm.value = { ...emptyForm, images: [] }
   showModal.value = true
 }
 
@@ -518,8 +502,8 @@ const editProduct = (product) => {
     is_active: product.is_active,
     is_featured: product.is_featured || false,
     images: product.images?.length > 0
-      ? product.images.map(img => ({ url: img.image_url }))
-      : [{ url: '' }]
+      ? product.images.map(img => img.image_url)
+      : []
   }
   showModal.value = true
 }
@@ -528,16 +512,6 @@ const closeModal = () => {
   showModal.value = false
   editingProductData.value = null
   productForm.value = { ...emptyForm }
-}
-
-const addImageField = () => {
-  productForm.value.images.push({ url: '' })
-}
-
-const removeImage = (index) => {
-  if (productForm.value.images.length > 1) {
-    productForm.value.images.splice(index, 1)
-  }
 }
 
 const saveProductForm = async () => {
@@ -555,7 +529,7 @@ const saveProductForm = async () => {
       weight: productForm.value.weight || null,
       is_active: productForm.value.is_active,
       is_featured: productForm.value.is_featured,
-      images: productForm.value.images.filter(img => img.url.trim() !== '').map(img => img.url)
+      images: productForm.value.images.filter(url => url && url.trim() !== '')
     }
 
     if (editingProductData.value) {

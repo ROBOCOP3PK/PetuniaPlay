@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\WishlistController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\FileUploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Dashboard & Statistics
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
         Route::get('/admin/sales-stats', [AdminController::class, 'salesStats']);
+
+        // File Upload
+        Route::post('/upload/image', [FileUploadController::class, 'uploadImage']);
+        Route::post('/upload/images', [FileUploadController::class, 'uploadMultiple']);
+        Route::delete('/upload/image', [FileUploadController::class, 'deleteImage']);
+        Route::delete('/upload/image-by-url', [FileUploadController::class, 'deleteImageByUrl']);
 
         // Products Management
         Route::post('/products', [ProductController::class, 'store']);

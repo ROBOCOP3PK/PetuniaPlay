@@ -192,12 +192,11 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Imagen (URL)</label>
-                  <input
-                    v-model="categoryForm.image"
-                    type="url"
-                    placeholder="https://ejemplo.com/imagen.jpg"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Imagen de la Categoría</label>
+                  <ImageUpload
+                    v-model="categoryForm.imageArray"
+                    :multiple="false"
+                    type="category"
                   />
                 </div>
               </div>
@@ -278,6 +277,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
+import ImageUpload from '../../components/admin/ImageUpload.vue'
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useToast } from 'vue-toastification'
 import { adminService } from '../../services/adminService'
@@ -300,6 +300,7 @@ const emptyForm = {
   slug: '',
   description: '',
   image: '',
+  imageArray: [],
   parent_id: null,
   order: 0,
   is_active: true
@@ -358,6 +359,7 @@ const editCategory = (category) => {
     slug: category.slug || '',
     description: category.description || '',
     image: category.image || '',
+    imageArray: category.image ? [category.image] : [],
     parent_id: category.parent_id || null,
     order: category.order || 0,
     is_active: category.is_active
@@ -374,11 +376,16 @@ const closeModal = () => {
 const saveCategoryForm = async () => {
   savingCategory.value = true
   try {
+    // Convertir imageArray a image (tomar la primera URL del array)
+    const imageUrl = categoryForm.value.imageArray && categoryForm.value.imageArray.length > 0
+      ? categoryForm.value.imageArray[0]
+      : null
+
     const categoryData = {
       name: categoryForm.value.name,
       slug: categoryForm.value.slug || null,
       description: categoryForm.value.description || null,
-      image: categoryForm.value.image || null,
+      image: imageUrl,
       parent_id: categoryForm.value.parent_id || null,
       order: categoryForm.value.order,
       is_active: categoryForm.value.is_active
