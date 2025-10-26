@@ -1,10 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import couponService from '../services/couponService'
 
 export const useCartStore = defineStore('cart', () => {
   // State
   const items = ref([])
   const loading = ref(false)
+  const appliedCoupon = ref(null)
+  const couponDiscount = ref(0)
 
   // Load cart from localStorage on initialization
   const loadCart = () => {
@@ -50,11 +53,17 @@ export const useCartStore = defineStore('cart', () => {
     return 10000
   })
 
+  const discount = computed(() => {
+    return couponDiscount.value
+  })
+
   const total = computed(() => {
-    return subtotal.value + tax.value + shipping.value
+    return subtotal.value + tax.value + shipping.value - discount.value
   })
 
   const hasItems = computed(() => items.value.length > 0)
+
+  const hasCoupon = computed(() => appliedCoupon.value !== null)
 
   // Actions
   function addItem(product, quantity = 1) {
@@ -135,6 +144,48 @@ export const useCartStore = defineStore('cart', () => {
     return item ? item.quantity : 0
   }
 
+  // Coupon functions
+  async function applyCoupon(code) {
+    if (!code || code.trim() === '') {
+      throw new Error('Por favor ingresa un código de cupón')
+    }
+
+    try {
+      const response = await couponService.validate(code.toUpperCase(), subtotal.value)
+
+      if (response.data.valid) {
+        appliedCoupon.value = response.data.data.coupon
+        couponDiscount.value = response.data.data.discount
+
+        return {
+          success: true,
+          message: response.data.message,
+          discount: response.data.data.discount
+        }
+      } else {
+        return {
+          success: false,
+          message: response.data.message
+        }
+      }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Error al validar el cupón'
+      return {
+        success: false,
+        message
+      }
+    }
+  }
+
+  function removeCoupon() {
+    appliedCoupon.value = null
+    couponDiscount.value = 0
+  }
+
+  function clearCoupon() {
+    removeCoupon()
+  }
+
   // Initialize cart from localStorage
   loadCart()
 
@@ -142,13 +193,17 @@ export const useCartStore = defineStore('cart', () => {
     // State
     items,
     loading,
+    appliedCoupon,
+    couponDiscount,
     // Getters
     itemCount,
     subtotal,
     tax,
     shipping,
+    discount,
     total,
     hasItems,
+    hasCoupon,
     // Actions
     addItem,
     removeItem,
@@ -156,5 +211,8 @@ export const useCartStore = defineStore('cart', () => {
     clearCart,
     getItemQuantity,
     loadCart,
+    applyCoupon,
+    removeCoupon,
+    clearCoupon,
   }
 })

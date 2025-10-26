@@ -269,6 +269,58 @@
                 </div>
               </div>
 
+              <!-- Coupon Section -->
+              <div class="mb-6 pb-6 border-b">
+                <h3 class="font-bold mb-3 text-sm">¿Tienes un cupón?</h3>
+
+                <!-- Applied Coupon -->
+                <div v-if="cartStore.hasCoupon" class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                      </svg>
+                      <div>
+                        <p class="font-bold text-green-800 text-sm">{{ cartStore.appliedCoupon.code }}</p>
+                        <p class="text-xs text-green-700">
+                          Descuento: ${{ formatPrice(cartStore.discount) }}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      @click="removeCoupon"
+                      class="text-red-600 hover:text-red-700 text-sm font-semibold"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Coupon Input -->
+                <div v-else class="flex gap-2">
+                  <input
+                    v-model="couponCode"
+                    type="text"
+                    placeholder="Código de cupón"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                    @keyup.enter="applyCoupon"
+                    :disabled="applyingCoupon"
+                  />
+                  <button
+                    @click="applyCoupon"
+                    :disabled="applyingCoupon || !couponCode"
+                    class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-semibold"
+                  >
+                    {{ applyingCoupon ? 'Verificando...' : 'Aplicar' }}
+                  </button>
+                </div>
+
+                <!-- Coupon Error -->
+                <p v-if="couponError" class="text-red-600 text-xs mt-2">
+                  {{ couponError }}
+                </p>
+              </div>
+
               <!-- Totals -->
               <div class="space-y-3 mb-6">
                 <div class="flex justify-between text-sm">
@@ -287,6 +339,10 @@
                   <span v-else class="font-semibold">
                     ${{ formatPrice(cartStore.shipping) }}
                   </span>
+                </div>
+                <div v-if="cartStore.hasCoupon" class="flex justify-between text-sm text-green-600">
+                  <span class="font-semibold">Descuento</span>
+                  <span class="font-bold">-${{ formatPrice(cartStore.discount) }}</span>
                 </div>
               </div>
 
@@ -339,6 +395,9 @@ const cartStore = useCartStore()
 const toast = useToast()
 
 const processing = ref(false)
+const couponCode = ref('')
+const applyingCoupon = ref(false)
+const couponError = ref('')
 
 const form = reactive({
   // Personal Info
@@ -381,6 +440,39 @@ const formatExpiry = (event) => {
     value = value.slice(0, 2) + '/' + value.slice(2, 4)
   }
   form.cardExpiry = value
+}
+
+// Coupon functions
+const applyCoupon = async () => {
+  if (!couponCode.value || couponCode.value.trim() === '') {
+    couponError.value = 'Por favor ingresa un código de cupón'
+    return
+  }
+
+  applyingCoupon.value = true
+  couponError.value = ''
+
+  try {
+    const result = await cartStore.applyCoupon(couponCode.value)
+
+    if (result.success) {
+      toast.success(result.message || 'Cupón aplicado correctamente')
+      couponCode.value = ''
+    } else {
+      couponError.value = result.message || 'Cupón inválido'
+    }
+  } catch (error) {
+    couponError.value = 'Error al aplicar el cupón'
+  } finally {
+    applyingCoupon.value = false
+  }
+}
+
+const removeCoupon = () => {
+  cartStore.removeCoupon()
+  couponCode.value = ''
+  couponError.value = ''
+  toast.info('Cupón removido')
 }
 
 const validateForm = () => {
@@ -443,8 +535,10 @@ const placeOrder = async () => {
         subtotal: cartStore.subtotal,
         tax: cartStore.tax,
         shipping: cartStore.shipping,
+        discount: cartStore.discount,
         total: cartStore.total
-      }
+      },
+      coupon_code: cartStore.appliedCoupon?.code || null
     }
 
     // Enviar pedido a la API

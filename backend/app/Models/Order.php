@@ -14,6 +14,8 @@ class Order extends Model
         'user_id',
         'shipping_address_id',
         'billing_address_id',
+        'coupon_id',
+        'coupon_code',
         'subtotal',
         'tax',
         'shipping_cost',
@@ -65,6 +67,11 @@ class Order extends Model
     public function shipment()
     {
         return $this->hasOne(Shipment::class);
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     // Scopes

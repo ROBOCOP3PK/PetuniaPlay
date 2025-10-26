@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Models\User;
 use App\Models\Address;
 use App\Models\Payment;
+use App\Models\Coupon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -89,7 +90,26 @@ class OrderService
             $subtotal = $orderData['totals']['subtotal'];
             $tax = $orderData['totals']['tax'];
             $shippingCost = $orderData['totals']['shipping'];
+            $discount = $orderData['totals']['discount'] ?? 0;
             $total = $orderData['totals']['total'];
+
+            // Procesar cupón si existe
+            $couponId = null;
+            $couponCode = null;
+            if (isset($orderData['coupon_code']) && !empty($orderData['coupon_code'])) {
+                $coupon = Coupon::where('code', strtoupper($orderData['coupon_code']))->first();
+
+                if ($coupon && $coupon->isValid()) {
+                    // Verificar monto mínimo
+                    if (!$coupon->min_purchase_amount || $subtotal >= $coupon->min_purchase_amount) {
+                        $couponId = $coupon->id;
+                        $couponCode = $coupon->code;
+
+                        // Incrementar contador de uso
+                        $coupon->increment('usage_count');
+                    }
+                }
+            }
 
             // Mapear método de pago del frontend al backend
             $paymentMethodMap = [
@@ -104,10 +124,12 @@ class OrderService
                 'user_id' => $userId,
                 'shipping_address_id' => $shippingAddress->id,
                 'billing_address_id' => $shippingAddress->id,
+                'coupon_id' => $couponId,
+                'coupon_code' => $couponCode,
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'shipping_cost' => $shippingCost,
-                'discount' => 0,
+                'discount' => $discount,
                 'total' => $total,
                 'status' => 'pending',
                 'payment_status' => 'pending',

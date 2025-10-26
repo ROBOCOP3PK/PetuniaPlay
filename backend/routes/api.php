@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\WishlistController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\FileUploadController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\CouponController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,9 @@ Route::prefix('v1')->group(function () {
     // Reviews (public)
     Route::get('/products/{productId}/reviews', [ReviewController::class, 'index']);
     Route::get('/products/{productId}/reviews/stats', [ReviewController::class, 'stats']);
+
+    // Coupons (public - validation)
+    Route::post('/coupons/validate', [CouponController::class, 'validate']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);
@@ -115,6 +119,15 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Reviews Management
         Route::get('/admin/reviews', [ReviewController::class, 'adminIndex']);
         Route::put('/admin/reviews/{id}/toggle-approval', [ReviewController::class, 'toggleApproval']);
+
+        // Coupons Management
+        Route::get('/coupons', [CouponController::class, 'index']);
+        Route::post('/coupons', [CouponController::class, 'store']);
+        Route::get('/coupons/{id}', [CouponController::class, 'show']);
+        Route::put('/coupons/{id}', [CouponController::class, 'update']);
+        Route::delete('/coupons/{id}', [CouponController::class, 'destroy']);
+        Route::put('/coupons/{id}/toggle-status', [CouponController::class, 'toggleStatus']);
+        Route::get('/admin/coupons/stats', [CouponController::class, 'stats']);
     });
 
     // Admin only routes (only accessible by admin)
