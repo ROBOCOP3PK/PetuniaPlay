@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
@@ -30,8 +31,8 @@ class AdminController extends Controller
             'processing_orders' => Order::where('status', 'processing')->count(),
 
             // Productos
-            'products_low_stock' => Product::where('stock', '<=', 10)->where('stock', '>', 0)->count(),
-            'products_out_of_stock' => Product::where('stock', 0)->count(),
+            'products_low_stock' => Product::lowStock()->count(),
+            'products_out_of_stock' => Product::outOfStock()->count(),
             'featured_products' => Product::where('is_featured', true)->count(),
 
             // Ventas recientes (último mes)
@@ -48,8 +49,8 @@ class AdminController extends Controller
             ->get();
 
         // Productos con bajo stock
-        $low_stock_products = Product::where('stock', '<=', 10)
-            ->where('stock', '>', 0)
+        $low_stock_products = Product::lowStock()
+            ->with(['category', 'primaryImage'])
             ->orderBy('stock', 'asc')
             ->limit(10)
             ->get();
@@ -163,5 +164,31 @@ class AdminController extends Controller
             'data' => $sales,
             'period' => $period
         ]);
+    }
+
+    /**
+     * Get all products with low stock
+     */
+    public function lowStockProducts(Request $request)
+    {
+        $products = Product::lowStock()
+            ->with(['category', 'primaryImage'])
+            ->orderBy('stock', 'asc')
+            ->get();
+
+        return ProductResource::collection($products);
+    }
+
+    /**
+     * Get all products out of stock
+     */
+    public function outOfStockProducts(Request $request)
+    {
+        $products = Product::outOfStock()
+            ->with(['category', 'primaryImage'])
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return ProductResource::collection($products);
     }
 }

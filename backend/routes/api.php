@@ -114,6 +114,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Dashboard & Statistics
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
         Route::get('/admin/sales-stats', [AdminController::class, 'salesStats']);
+        Route::get('/admin/products/low-stock', [AdminController::class, 'lowStockProducts']);
+        Route::get('/admin/products/out-of-stock', [AdminController::class, 'outOfStockProducts']);
 
         // File Upload
         Route::post('/upload/image', [FileUploadController::class, 'uploadImage']);

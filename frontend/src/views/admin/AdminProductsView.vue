@@ -35,8 +35,8 @@
           >
             <option value="">Todos los productos</option>
             <option value="in_stock">En stock</option>
-            <option value="low_stock">Bajo stock (≤10)</option>
-            <option value="out_of_stock">Sin stock</option>
+            <option value="low_stock">⚠️ Bajo stock</option>
+            <option value="out_of_stock">❌ Sin stock</option>
           </select>
         </div>
       </div>
@@ -116,18 +116,34 @@
                       @blur="saveStock(product)"
                     />
                   </div>
-                  <span
-                    v-else
-                    class="font-bold cursor-pointer"
-                    :class="{
-                      'text-red-600': product.stock === 0,
-                      'text-yellow-600': product.stock > 0 && product.stock <= 10,
-                      'text-green-600': product.stock > 10
-                    }"
-                    @click="editingStock = product.id"
-                  >
-                    {{ product.stock }}
-                  </span>
+                  <div v-else class="flex items-center justify-end space-x-2">
+                    <span
+                      class="font-bold cursor-pointer"
+                      :class="{
+                        'text-red-600': product.is_out_of_stock,
+                        'text-yellow-600': product.is_low_stock,
+                        'text-green-600': product.in_stock && !product.is_low_stock
+                      }"
+                      @click="editingStock = product.id"
+                    >
+                      {{ product.stock }}
+                    </span>
+                    <!-- Badge de Stock Bajo -->
+                    <span
+                      v-if="product.is_low_stock"
+                      class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 font-semibold"
+                      :title="`Stock por debajo del umbral (${product.low_stock_threshold})`"
+                    >
+                      ⚠️ Bajo
+                    </span>
+                    <!-- Badge de Sin Stock -->
+                    <span
+                      v-if="product.is_out_of_stock"
+                      class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800 font-semibold"
+                    >
+                      ❌ Agotado
+                    </span>
+                  </div>
                 </td>
                 <td class="px-6 py-4 text-center">
                   <span
@@ -294,6 +310,20 @@
                 </div>
 
                 <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Umbral de Stock Bajo *
+                    <span class="text-xs text-gray-500 font-normal">(alerta cuando stock ≤ este valor)</span>
+                  </label>
+                  <input
+                    v-model.number="productForm.low_stock_threshold"
+                    type="number"
+                    min="1"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                <div>
                   <label class="block text-sm font-semibold text-gray-700 mb-2">Peso (kg)</label>
                   <input
                     v-model.number="productForm.weight"
@@ -401,6 +431,7 @@ const emptyForm = {
   price: 0,
   sale_price: null,
   stock: 0,
+  low_stock_threshold: 10,
   weight: null,
   is_active: true,
   is_featured: false,
@@ -430,11 +461,11 @@ const filteredProducts = computed(() => {
 
   // Stock filter
   if (filterStock.value === 'in_stock') {
-    filtered = filtered.filter(p => p.stock > 10)
+    filtered = filtered.filter(p => p.in_stock && !p.is_low_stock)
   } else if (filterStock.value === 'low_stock') {
-    filtered = filtered.filter(p => p.stock > 0 && p.stock <= 10)
+    filtered = filtered.filter(p => p.is_low_stock)
   } else if (filterStock.value === 'out_of_stock') {
-    filtered = filtered.filter(p => p.stock === 0)
+    filtered = filtered.filter(p => p.is_out_of_stock)
   }
 
   return filtered

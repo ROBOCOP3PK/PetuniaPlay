@@ -19,6 +19,7 @@ class Product extends Model
         'sale_price',
         'sku',
         'stock',
+        'low_stock_threshold',
         'weight',
         'is_featured',
         'is_active',
@@ -34,6 +35,7 @@ class Product extends Model
             'sale_price' => 'decimal:2',
             'weight' => 'decimal:2',
             'stock' => 'integer',
+            'low_stock_threshold' => 'integer',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
         ];
@@ -88,6 +90,17 @@ class Product extends Model
         return $query->where('stock', '>', 0);
     }
 
+    public function scopeLowStock($query)
+    {
+        return $query->whereColumn('stock', '<=', 'low_stock_threshold')
+                     ->where('stock', '>', 0);
+    }
+
+    public function scopeOutOfStock($query)
+    {
+        return $query->where('stock', '=', 0);
+    }
+
     // Accessors
 
     public function getFinalPriceAttribute()
@@ -117,5 +130,15 @@ class Product extends Model
     public function getInStockAttribute()
     {
         return $this->stock > 0;
+    }
+
+    public function getIsLowStockAttribute()
+    {
+        return $this->stock > 0 && $this->stock <= $this->low_stock_threshold;
+    }
+
+    public function getIsOutOfStockAttribute()
+    {
+        return $this->stock === 0;
     }
 }
