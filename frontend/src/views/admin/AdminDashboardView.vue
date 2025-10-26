@@ -87,6 +87,37 @@
           </div>
         </div>
 
+        <!-- Alert Card for Low Stock -->
+        <div
+          v-if="stats.products_low_stock > 0"
+          class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg mb-6"
+        >
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-8 w-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div class="ml-3 flex-1">
+              <h3 class="text-lg font-semibold text-yellow-800">
+                ⚠️ Alerta de Inventario
+              </h3>
+              <p class="text-sm text-yellow-700 mt-1">
+                Tienes <strong>{{ stats.products_low_stock }}</strong> producto(s) con stock bajo
+                <span v-if="stats.products_out_of_stock > 0">
+                  y <strong>{{ stats.products_out_of_stock }}</strong> producto(s) agotado(s)
+                </span>
+              </p>
+            </div>
+            <router-link
+              to="/admin/products?filter=low_stock"
+              class="ml-3 bg-yellow-400 text-yellow-900 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition"
+            >
+              Revisar Inventario
+            </router-link>
+          </div>
+        </div>
+
         <!-- Two Column Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <!-- Recent Orders -->
@@ -123,31 +154,62 @@
 
           <!-- Low Stock Products -->
           <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold mb-4">Productos con Bajo Stock</h2>
-            <div class="space-y-3">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold">Productos con Bajo Stock</h2>
+              <span
+                v-if="stats.products_low_stock > 0"
+                class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 font-semibold"
+              >
+                {{ stats.products_low_stock }} alertas
+              </span>
+            </div>
+            <div v-if="lowStockProducts.length === 0" class="text-center py-8 text-gray-500">
+              ✅ Todos los productos tienen stock adecuado
+            </div>
+            <div v-else class="space-y-3">
               <div
                 v-for="product in lowStockProducts"
                 :key="product.id"
-                class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                class="flex items-center justify-between p-3 rounded-lg"
+                :class="product.is_out_of_stock ? 'bg-red-50' : 'bg-yellow-50'"
               >
                 <div class="flex-1">
-                  <p class="font-semibold text-dark">{{ product.name }}</p>
-                  <p class="text-sm text-gray-600">SKU: {{ product.sku }}</p>
+                  <div class="flex items-center space-x-2">
+                    <p class="font-semibold text-dark">{{ product.name }}</p>
+                    <span
+                      v-if="product.is_out_of_stock"
+                      class="px-2 py-1 text-xs rounded-full bg-red-200 text-red-800 font-semibold"
+                    >
+                      ❌ Agotado
+                    </span>
+                    <span
+                      v-else-if="product.is_low_stock"
+                      class="px-2 py-1 text-xs rounded-full bg-yellow-200 text-yellow-800 font-semibold"
+                    >
+                      ⚠️ Bajo
+                    </span>
+                  </div>
+                  <p class="text-sm text-gray-600">
+                    SKU: {{ product.sku }} | Umbral: {{ product.low_stock_threshold }}
+                  </p>
                 </div>
                 <div class="text-right">
                   <span
                     class="text-lg font-bold"
-                    :class="product.stock <= 5 ? 'text-red-600' : 'text-yellow-600'"
+                    :class="{
+                      'text-red-600': product.is_out_of_stock,
+                      'text-yellow-600': product.is_low_stock && !product.is_out_of_stock
+                    }"
                   >
                     {{ product.stock }} unidades
                   </span>
                 </div>
               </div>
               <router-link
-                to="/admin/products"
+                to="/admin/products?filter=low_stock"
                 class="block text-center text-primary font-semibold hover:underline mt-4"
               >
-                Ver todos los productos →
+                Ver todos los productos con stock bajo →
               </router-link>
             </div>
           </div>

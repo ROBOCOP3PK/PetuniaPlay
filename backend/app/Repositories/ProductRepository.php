@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Product;
+use App\Events\ProductStockUpdated;
 
 class ProductRepository extends BaseRepository
 {
@@ -63,10 +64,35 @@ class ProductRepository extends BaseRepository
             ->paginate($perPage);
     }
 
+    public function update($id, array $data)
+    {
+        $product = $this->findOrFail($id);
+
+        // Capturar stock anterior si está cambiando
+        $previousStock = $product->stock;
+        $stockChanged = isset($data['stock']) && $data['stock'] != $previousStock;
+
+        // Actualizar el producto
+        $product->update($data);
+
+        // Disparar evento si el stock cambió
+        if ($stockChanged) {
+            event(new ProductStockUpdated($product->fresh(), $previousStock));
+        }
+
+        return $product;
+    }
+
     public function updateStock($productId, $quantity)
     {
         $product = $this->findOrFail($productId);
+        $previousStock = $product->stock;
+
         $product->decrement('stock', $quantity);
+
+        // Disparar evento de actualización de stock
+        event(new ProductStockUpdated($product->fresh(), $previousStock));
+
         return $product;
     }
 
