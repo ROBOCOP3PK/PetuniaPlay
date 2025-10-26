@@ -4,7 +4,7 @@
     <form @submit.prevent="updateProfile" class="space-y-6 mb-8">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-semibold mb-2">Nombre Completo</label>
+          <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Nombre Completo</label>
           <input
             v-model="profileForm.name"
             type="text"
@@ -15,7 +15,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-2">Email</label>
+          <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Email</label>
           <input
             v-model="profileForm.email"
             type="email"
@@ -26,7 +26,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-2">Teléfono</label>
+          <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Teléfono</label>
           <input
             v-model="profileForm.phone"
             type="tel"
@@ -36,7 +36,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-2">Documento</label>
+          <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Documento</label>
           <input
             v-model="profileForm.document"
             type="text"
@@ -46,7 +46,28 @@
         </div>
       </div>
 
-      <div class="flex justify-end">
+      <!-- Email Notifications Preference -->
+      <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Preferencias de Notificaciones</h3>
+        <div class="flex items-start space-x-3">
+          <input
+            id="email_notifications"
+            v-model="profileForm.email_notifications"
+            type="checkbox"
+            class="mt-1 w-4 h-4 text-primary bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-primary focus:ring-2"
+            :disabled="loading"
+          />
+          <label for="email_notifications" class="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+            <span class="font-medium text-gray-900 dark:text-white">Recibir notificaciones por email</span>
+            <p class="text-gray-500 dark:text-gray-400 mt-1">
+              Recibe actualizaciones sobre tus pedidos, ofertas especiales y novedades en tu correo electrónico.
+              Las notificaciones del sistema siempre estarán disponibles en la aplicación.
+            </p>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-6">
         <button
           type="submit"
           :disabled="loading"
@@ -59,12 +80,12 @@
     </form>
 
     <!-- Divider -->
-    <div class="border-t pt-8">
-      <h3 class="text-xl font-bold mb-6">Cambiar Contraseña</h3>
+    <div class="border-t border-gray-200 dark:border-gray-700 pt-8">
+      <h3 class="text-xl font-bold mb-6 text-gray-900 dark:text-white">Cambiar Contraseña</h3>
 
       <form @submit.prevent="changePassword" class="space-y-4 max-w-md">
         <div>
-          <label class="block text-sm font-semibold mb-2">Contraseña Actual</label>
+          <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Contraseña Actual</label>
           <input
             v-model="passwordForm.current_password"
             type="password"
@@ -75,7 +96,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-2">Nueva Contraseña</label>
+          <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Nueva Contraseña</label>
           <input
             v-model="passwordForm.password"
             type="password"
@@ -87,7 +108,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold mb-2">Confirmar Nueva Contraseña</label>
+          <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Confirmar Nueva Contraseña</label>
           <input
             v-model="passwordForm.password_confirmation"
             type="password"
@@ -127,7 +148,8 @@ const profileForm = reactive({
   name: '',
   email: '',
   phone: '',
-  document: ''
+  document: '',
+  email_notifications: true
 })
 
 const passwordForm = reactive({
@@ -142,6 +164,7 @@ const loadUserData = () => {
     profileForm.email = authStore.user.email || ''
     profileForm.phone = authStore.user.phone || ''
     profileForm.document = authStore.user.document || ''
+    profileForm.email_notifications = authStore.user.email_notifications ?? true
   }
 }
 
@@ -152,7 +175,8 @@ const updateProfile = async () => {
     name: profileForm.name,
     email: profileForm.email,
     phone: profileForm.phone,
-    document: profileForm.document
+    document: profileForm.document,
+    email_notifications: profileForm.email_notifications
   })
 
   loading.value = false

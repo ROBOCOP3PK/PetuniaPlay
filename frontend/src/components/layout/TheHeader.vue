@@ -102,6 +102,9 @@
           <!-- Theme Toggle -->
           <ThemeToggle />
 
+          <!-- Notifications Bell (only for authenticated users) -->
+          <NotificationBell v-if="authStore.isAuthenticated" />
+
           <!-- Wishlist Icon (only for authenticated users) -->
           <router-link
             v-if="authStore.isAuthenticated"
@@ -178,6 +181,7 @@ import { useWishlistStore } from '../../stores/wishlistStore'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from 'vue-toastification'
 import ThemeToggle from '../ThemeToggle.vue'
+import NotificationBell from '../notifications/NotificationBell.vue'
 
 const router = useRouter()
 const categoryStore = useCategoryStore()

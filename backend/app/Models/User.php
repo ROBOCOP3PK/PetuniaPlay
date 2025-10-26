@@ -28,6 +28,7 @@ class User extends Authenticatable
         'birth_date',
         'avatar',
         'is_active',
+        'email_notifications',
     ];
 
     /**
@@ -52,6 +53,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'birth_date' => 'date',
             'is_active' => 'boolean',
+            'email_notifications' => 'boolean',
         ];
     }
 
@@ -85,6 +87,11 @@ class User extends Authenticatable
     public function blogPosts()
     {
         return $this->hasMany(BlogPost::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 
     // Helpers
