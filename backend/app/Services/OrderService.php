@@ -9,7 +9,9 @@ use App\Models\User;
 use App\Models\Address;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use App\Mail\OrderConfirmation;
 
 class OrderService
 {
@@ -143,7 +145,19 @@ class OrderService
                 ])
             ]);
 
-            return $order->load(['items', 'shippingAddress', 'billingAddress', 'user']);
+            // Cargar relaciones necesarias para el email
+            $order->load(['items', 'shippingAddress', 'billingAddress', 'user']);
+
+            // Enviar email de confirmación
+            try {
+                Mail::to($orderData['customer']['email'])
+                    ->send(new OrderConfirmation($order));
+            } catch (\Exception $e) {
+                // Log el error pero no falla la orden
+                \Log::error('Error enviando email de confirmación: ' . $e->getMessage());
+            }
+
+            return $order;
         });
     }
 
