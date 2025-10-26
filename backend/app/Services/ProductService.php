@@ -39,6 +39,11 @@ class ProductService
         return $this->productRepository->search($term, $perPage);
     }
 
+    public function autocompleteProducts($term, $limit = 10)
+    {
+        return $this->productRepository->autocomplete($term, $limit);
+    }
+
     public function getProduct($id)
     {
         return $this->productRepository->findOrFail($id);

@@ -78,23 +78,7 @@
 
         <!-- Search bar -->
         <div class="flex-1 max-w-2xl mx-8">
-          <div class="relative">
-            <input
-              v-model="searchQuery"
-              @keyup.enter="handleSearch"
-              type="text"
-              placeholder="Buscar productos..."
-              class="w-full px-4 py-2 pr-10 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-            />
-            <button
-              @click="handleSearch"
-              class="absolute right-2 top-1/2 transform -translate-y-1/2 text-primary hover:text-primary-dark"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
-          </div>
+          <SearchAutocomplete placeholder="Buscar productos por nombre, marca o SKU..." />
         </div>
 
         <!-- Cart, Wishlist & User -->
@@ -182,6 +166,7 @@ import { useAuthStore } from '../../stores/authStore'
 import { useToast } from 'vue-toastification'
 import ThemeToggle from '../ThemeToggle.vue'
 import NotificationBell from '../notifications/NotificationBell.vue'
+import SearchAutocomplete from '../search/SearchAutocomplete.vue'
 
 const router = useRouter()
 const categoryStore = useCategoryStore()
@@ -190,16 +175,9 @@ const wishlistStore = useWishlistStore()
 const authStore = useAuthStore()
 const toast = useToast()
 
-const searchQuery = ref('')
 const showUserMenu = ref(false)
 
 const parentCategories = computed(() => categoryStore.parentCategories)
-
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    router.push({ path: '/products', query: { search: searchQuery.value } })
-  }
-}
 
 const handleLogout = async () => {
   await authStore.logout()

@@ -73,6 +73,23 @@ class ProductController extends Controller
     }
 
     /**
+     * Autocomplete search for products.
+     */
+    public function autocomplete(Request $request)
+    {
+        $term = $request->get('q');
+        $limit = $request->get('limit', 10);
+
+        if (!$term || strlen($term) < 2) {
+            return response()->json(['data' => []]);
+        }
+
+        $products = $this->productService->autocompleteProducts($term, $limit);
+
+        return ProductResource::collection($products);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreProductRequest $request)

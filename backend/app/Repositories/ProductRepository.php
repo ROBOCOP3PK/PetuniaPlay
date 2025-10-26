@@ -50,10 +50,29 @@ class ProductRepository extends BaseRepository
             ->where(function($query) use ($term) {
                 $query->where('name', 'like', "%{$term}%")
                     ->orWhere('description', 'like', "%{$term}%")
-                    ->orWhere('sku', 'like', "%{$term}%");
+                    ->orWhere('long_description', 'like', "%{$term}%")
+                    ->orWhere('sku', 'like', "%{$term}%")
+                    ->orWhere('brand', 'like', "%{$term}%");
             })
             ->with(['category', 'primaryImage'])
             ->paginate($perPage);
+    }
+
+    /**
+     * Autocompletado rápido para búsqueda
+     */
+    public function autocomplete($term, $limit = 10)
+    {
+        return $this->model->active()
+            ->where(function($query) use ($term) {
+                $query->where('name', 'like', "%{$term}%")
+                    ->orWhere('sku', 'like', "%{$term}%")
+                    ->orWhere('brand', 'like', "%{$term}%");
+            })
+            ->select('id', 'name', 'slug', 'sku', 'brand', 'price', 'sale_price')
+            ->with(['primaryImage:id,product_id,image_url'])
+            ->limit($limit)
+            ->get();
     }
 
     public function getInStock($perPage = 15)

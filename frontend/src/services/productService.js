@@ -23,6 +23,13 @@ export const productService = {
     })
   },
 
+  // Autocompletado de búsqueda
+  autocomplete(query, limit = 10) {
+    return api.get('/products/autocomplete', {
+      params: { q: query, limit }
+    })
+  },
+
   // Obtener todas las marcas
   getBrands() {
     return api.get('/products/brands')

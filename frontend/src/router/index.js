@@ -70,6 +70,11 @@ const router = createRouter({
       name: 'returns',
       component: () => import('../views/ReturnsView.vue'),
     },
+    {
+      path: '/shipping',
+      name: 'shipping',
+      component: () => import('../views/ShippingView.vue'),
+    },
     // Auth routes
     {
       path: '/login',

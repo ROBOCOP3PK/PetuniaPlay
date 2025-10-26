@@ -71,6 +71,11 @@
                 Devoluciones y Reembolsos
               </router-link>
             </li>
+            <li>
+              <router-link to="/shipping" class="text-gray-300 hover:text-primary transition">
+                Política de Envíos
+              </router-link>
+            </li>
           </ul>
         </div>
 
