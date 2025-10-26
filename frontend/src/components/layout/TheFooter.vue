@@ -35,6 +35,11 @@
               </router-link>
             </li>
             <li>
+              <router-link to="/faq" class="text-gray-300 hover:text-primary transition">
+                Preguntas Frecuentes
+              </router-link>
+            </li>
+            <li>
               <router-link to="/contact" class="text-gray-300 hover:text-primary transition">
                 Contacto
               </router-link>
