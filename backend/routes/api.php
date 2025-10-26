@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\ShipmentController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -159,6 +160,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::put('/shipments/{id}', [ShipmentController::class, 'update']);
         Route::delete('/shipments/{id}', [ShipmentController::class, 'destroy']);
         Route::get('/admin/shipments/stats', [ShipmentController::class, 'stats']);
+
+        // Export/Reports
+        Route::get('/admin/export/orders/excel', [OrderController::class, 'exportExcel']);
+        Route::get('/admin/export/orders/pdf', [OrderController::class, 'exportPdf']);
+        Route::get('/admin/export/products/excel', [ProductController::class, 'exportExcel']);
+        Route::get('/admin/export/sales-report', [ExportController::class, 'salesReport']);
     });
 
     // Admin only routes (only accessible by admin)

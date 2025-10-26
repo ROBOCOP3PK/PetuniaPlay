@@ -3,12 +3,22 @@
     <div>
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-dark">Gestión de Productos</h1>
-        <button
-          @click="openCreateModal"
-          class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition"
-        >
-          + Nuevo Producto
-        </button>
+        <div class="flex space-x-3">
+          <button
+            @click="exportProducts"
+            :disabled="exportingProducts"
+            class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50 flex items-center space-x-2"
+          >
+            <span>📊</span>
+            <span>{{ exportingProducts ? 'Exportando...' : 'Exportar Excel' }}</span>
+          </button>
+          <button
+            @click="openCreateModal"
+            class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition"
+          >
+            + Nuevo Producto
+          </button>
+        </div>
       </div>
 
       <!-- Search and Filters -->
@@ -425,6 +435,7 @@ const filterCategory = ref('')
 const filterStock = ref('')
 const editingProduct = ref(null)
 const editingStock = ref(null)
+const exportingProducts = ref(false)
 
 // Modal state
 const showModal = ref(false)
@@ -609,6 +620,45 @@ const deleteProduct = async (product) => {
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error al eliminar producto')
     }
+  }
+}
+
+const exportProducts = async () => {
+  exportingProducts.value = true
+  try {
+    const params = new URLSearchParams()
+    if (filterCategory.value) params.append('category', filterCategory.value)
+    if (filterStock.value === 'low_stock') params.append('low_stock', 'true')
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    const token = localStorage.getItem('auth_token')
+
+    const url = `${API_URL}/api/v1/admin/export/products/excel?${params.toString()}`
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    if (!response.ok) throw new Error('Error al exportar')
+
+    const blob = await response.blob()
+    const downloadUrl = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = `productos_${new Date().toISOString().split('T')[0]}.xlsx`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(downloadUrl)
+
+    toast.success('Productos exportados exitosamente')
+  } catch (error) {
+    console.error('Error exporting:', error)
+    toast.error('Error al exportar productos')
+  } finally {
+    exportingProducts.value = false
   }
 }
 

@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Services\OrderService;
 use App\Http\Requests\CreateOrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Exports\OrdersExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -115,5 +118,46 @@ class OrderController extends Controller
         $orders = $this->orderService->getAllOrders($filters);
 
         return OrderResource::collection($orders);
+    }
+
+    /**
+     * Export orders to Excel (admin only)
+     */
+    public function exportExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $status = $request->input('status');
+
+        $filename = 'ordenes_' . now()->format('Y-m-d_His') . '.xlsx';
+
+        return Excel::download(
+            new OrdersExport($startDate, $endDate, $status),
+            $filename
+        );
+    }
+
+    /**
+     * Export orders to PDF (admin only)
+     */
+    public function exportPdf(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $status = $request->input('status');
+
+        $export = new OrdersExport($startDate, $endDate, $status);
+        $orders = $export->collection();
+
+        $pdf = Pdf::loadView('exports.orders', [
+            'orders' => $orders,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'status' => $status
+        ]);
+
+        $filename = 'ordenes_' . now()->format('Y-m-d_His') . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

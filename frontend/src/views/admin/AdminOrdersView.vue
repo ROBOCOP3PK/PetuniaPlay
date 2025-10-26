@@ -5,7 +5,7 @@
 
       <!-- Filters -->
       <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <input
             v-model="search"
             type="text"
@@ -28,6 +28,27 @@
             type="date"
             class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           />
+        </div>
+
+        <!-- Export Buttons -->
+        <div class="flex flex-wrap gap-2 pt-4 border-t">
+          <label class="text-sm font-semibold text-gray-700 mr-2 flex items-center">Exportar:</label>
+          <button
+            @click="exportToExcel"
+            :disabled="exportingExcel"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 text-sm font-semibold flex items-center space-x-2"
+          >
+            <span>📊</span>
+            <span>{{ exportingExcel ? 'Exportando...' : 'Excel' }}</span>
+          </button>
+          <button
+            @click="exportToPdf"
+            :disabled="exportingPdf"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 text-sm font-semibold flex items-center space-x-2"
+          >
+            <span>📄</span>
+            <span>{{ exportingPdf ? 'Exportando...' : 'PDF' }}</span>
+          </button>
         </div>
       </div>
 
@@ -306,6 +327,8 @@ const search = ref('')
 const filterStatus = ref('')
 const filterDate = ref('')
 const selectedOrder = ref(null)
+const exportingExcel = ref(false)
+const exportingPdf = ref(false)
 
 // Shipment state
 const orderShipment = ref(null)
@@ -465,6 +488,90 @@ const loadOrders = async () => {
     console.error(error)
   } finally {
     loading.value = false
+  }
+}
+
+const exportToExcel = async () => {
+  exportingExcel.value = true
+  try {
+    const params = new URLSearchParams()
+    if (filterStatus.value) params.append('status', filterStatus.value)
+    if (filterDate.value) {
+      params.append('start_date', filterDate.value)
+      params.append('end_date', filterDate.value)
+    }
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    const token = localStorage.getItem('auth_token')
+
+    const url = `${API_URL}/api/v1/admin/export/orders/excel?${params.toString()}`
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    if (!response.ok) throw new Error('Error al exportar')
+
+    const blob = await response.blob()
+    const downloadUrl = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = `ordenes_${new Date().toISOString().split('T')[0]}.xlsx`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(downloadUrl)
+
+    toast.success('Órdenes exportadas exitosamente')
+  } catch (error) {
+    console.error('Error exporting:', error)
+    toast.error('Error al exportar órdenes')
+  } finally {
+    exportingExcel.value = false
+  }
+}
+
+const exportToPdf = async () => {
+  exportingPdf.value = true
+  try {
+    const params = new URLSearchParams()
+    if (filterStatus.value) params.append('status', filterStatus.value)
+    if (filterDate.value) {
+      params.append('start_date', filterDate.value)
+      params.append('end_date', filterDate.value)
+    }
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    const token = localStorage.getItem('auth_token')
+
+    const url = `${API_URL}/api/v1/admin/export/orders/pdf?${params.toString()}`
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    if (!response.ok) throw new Error('Error al exportar')
+
+    const blob = await response.blob()
+    const downloadUrl = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = `ordenes_${new Date().toISOString().split('T')[0]}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(downloadUrl)
+
+    toast.success('Órdenes exportadas exitosamente')
+  } catch (error) {
+    console.error('Error exporting:', error)
+    toast.error('Error al exportar órdenes')
+  } finally {
+    exportingPdf.value = false
   }
 }
 

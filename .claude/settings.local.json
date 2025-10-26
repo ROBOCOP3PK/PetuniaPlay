@@ -16,7 +16,8 @@
       "Bash(npm install)",
       "Bash(npm install:*)",
       "Bash(npx tailwindcss:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(composer require:*)"
     ],
     "deny": [],
     "ask": []

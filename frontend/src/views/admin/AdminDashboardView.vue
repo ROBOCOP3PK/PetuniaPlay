@@ -1,7 +1,51 @@
 <template>
   <AdminLayout>
     <div>
-      <h1 class="text-3xl font-bold text-dark mb-8">Dashboard</h1>
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-dark">Dashboard</h1>
+      </div>
+
+      <!-- Sales Report Export Section -->
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-lg font-bold text-dark mb-4">📊 Exportar Reporte de Ventas</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Inicio</label>
+            <input
+              v-model="reportStartDate"
+              type="date"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Fin</label>
+            <input
+              v-model="reportEndDate"
+              type="date"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Agrupar Por</label>
+            <select
+              v-model="reportGroupBy"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="day">Día</option>
+              <option value="week">Semana</option>
+              <option value="month">Mes</option>
+            </select>
+          </div>
+          <button
+            @click="exportSalesReport"
+            :disabled="exportingReport"
+            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 font-semibold flex items-center justify-center space-x-2"
+          >
+            <span>📊</span>
+            <span>{{ exportingReport ? 'Exportando...' : 'Exportar Excel' }}</span>
+          </button>
+        </div>
+      </div>
 
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-12">
@@ -258,6 +302,12 @@ const recentOrders = ref([])
 const lowStockProducts = ref([])
 const topProducts = ref([])
 
+// Sales report export state
+const reportStartDate = ref('')
+const reportEndDate = ref('')
+const reportGroupBy = ref('day')
+const exportingReport = ref(false)
+
 const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO').format(price)
 }
@@ -297,6 +347,46 @@ const loadDashboard = async () => {
     console.error(error)
   } finally {
     loading.value = false
+  }
+}
+
+const exportSalesReport = async () => {
+  exportingReport.value = true
+  try {
+    const params = new URLSearchParams()
+    if (reportStartDate.value) params.append('start_date', reportStartDate.value)
+    if (reportEndDate.value) params.append('end_date', reportEndDate.value)
+    params.append('group_by', reportGroupBy.value)
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    const token = localStorage.getItem('auth_token')
+
+    const url = `${API_URL}/api/v1/admin/export/sales-report?${params.toString()}`
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    if (!response.ok) throw new Error('Error al exportar')
+
+    const blob = await response.blob()
+    const downloadUrl = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = `reporte_ventas_${new Date().toISOString().split('T')[0]}.xlsx`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(downloadUrl)
+
+    toast.success('Reporte exportado exitosamente')
+  } catch (error) {
+    console.error('Error exporting:', error)
+    toast.error('Error al exportar reporte')
+  } finally {
+    exportingReport.value = false
   }
 }
 

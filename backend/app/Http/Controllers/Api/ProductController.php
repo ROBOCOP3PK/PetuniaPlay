@@ -7,7 +7,9 @@ use App\Services\ProductService;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Exports\ProductsExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -156,5 +158,22 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al obtener marcas: ' . $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Export products to Excel (admin only)
+     */
+    public function exportExcel(Request $request)
+    {
+        $category = $request->input('category');
+        $brand = $request->input('brand');
+        $lowStock = $request->boolean('low_stock');
+
+        $filename = 'productos_' . now()->format('Y-m-d_His') . '.xlsx';
+
+        return Excel::download(
+            new ProductsExport($category, $brand, $lowStock),
+            $filename
+        );
     }
 }
