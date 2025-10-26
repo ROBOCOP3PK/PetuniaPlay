@@ -94,8 +94,18 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    public function isManager()
+    {
+        return $this->role === 'manager';
+    }
+
     public function isCustomer()
     {
         return $this->role === 'customer';
+    }
+
+    public function hasManagerAccess()
+    {
+        return in_array($this->role, ['manager', 'admin']);
     }
 }

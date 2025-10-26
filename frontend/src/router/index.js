@@ -71,6 +71,31 @@ const router = createRouter({
       component: () => import('../views/WishlistView.vue'),
       meta: { requiresAuth: true }
     },
+    // Admin routes
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../views/admin/AdminDashboardView.vue'),
+      meta: { requiresAuth: true, requiresManager: true }
+    },
+    {
+      path: '/admin/products',
+      name: 'admin-products',
+      component: () => import('../views/admin/AdminProductsView.vue'),
+      meta: { requiresAuth: true, requiresManager: true }
+    },
+    {
+      path: '/admin/orders',
+      name: 'admin-orders',
+      component: () => import('../views/admin/AdminOrdersView.vue'),
+      meta: { requiresAuth: true, requiresManager: true }
+    },
+    {
+      path: '/admin/users',
+      name: 'admin-users',
+      component: () => import('../views/admin/AdminUsersView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -93,9 +118,26 @@ router.beforeEach((to, from, next) => {
         path: '/login',
         query: { redirect: to.fullPath }
       })
-    } else {
-      next()
+      return
     }
+
+    // Verificar si requiere permisos de admin
+    if (to.matched.some(record => record.meta.requiresAdmin)) {
+      if (!authStore.isAdmin) {
+        next('/') // Redirigir a home si no es admin
+        return
+      }
+    }
+
+    // Verificar si requiere permisos de manager (manager o admin)
+    if (to.matched.some(record => record.meta.requiresManager)) {
+      if (!authStore.hasManagerAccess) {
+        next('/') // Redirigir a home si no tiene acceso de manager
+        return
+      }
+    }
+
+    next()
   }
   // Si la ruta es solo para invitados (login/register)
   else if (to.matched.some(record => record.meta.guest)) {

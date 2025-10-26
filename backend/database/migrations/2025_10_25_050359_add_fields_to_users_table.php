@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('phone')->nullable()->after('email');
             $table->string('document', 50)->nullable()->after('phone');
-            $table->enum('role', ['customer', 'admin'])->default('customer')->after('password');
+            $table->enum('role', ['customer', 'manager', 'admin'])->default('customer')->after('password');
             $table->date('birth_date')->nullable()->after('role');
             $table->string('avatar')->nullable()->after('birth_date');
             $table->boolean('is_active')->default(true)->after('avatar');

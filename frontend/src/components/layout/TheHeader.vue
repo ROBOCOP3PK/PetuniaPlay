@@ -44,9 +44,17 @@
                 >
                   Mis Pedidos
                 </router-link>
+                <!-- Admin Panel Link (only for manager and admin) -->
+                <router-link
+                  v-if="authStore.hasManagerAccess"
+                  to="/admin"
+                  class="block px-4 py-2 text-primary font-semibold hover:bg-primary hover:bg-opacity-10 transition border-t"
+                >
+                  📊 Panel Admin
+                </router-link>
                 <button
                   @click="handleLogout"
-                  class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition"
+                  class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition border-t"
                 >
                   Cerrar Sesión
                 </button>

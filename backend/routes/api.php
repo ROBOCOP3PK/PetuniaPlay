@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\WishlistController;
+use App\Http\Controllers\Api\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,8 +74,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::delete('/wishlist/clear', [WishlistController::class, 'clear']);
     Route::delete('/wishlist/{productId}', [WishlistController::class, 'destroy']);
 
-    // Admin routes
-    Route::middleware('admin')->group(function () {
+    // Manager routes (accessible by manager and admin)
+    Route::middleware('manager')->group(function () {
+
+        // Dashboard & Statistics
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+        Route::get('/admin/sales-stats', [AdminController::class, 'salesStats']);
 
         // Products Management
         Route::post('/products', [ProductController::class, 'store']);
@@ -89,5 +94,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Orders Management
         Route::get('/admin/orders', [OrderController::class, 'adminIndex']);
         Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+    });
+
+    // Admin only routes (only accessible by admin)
+    Route::middleware('admin')->group(function () {
+        // User Management (admin only)
+        Route::get('/admin/users', [AdminController::class, 'users']);
+        Route::put('/admin/users/{id}/role', [AdminController::class, 'updateUserRole']);
+        Route::put('/admin/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus']);
     });
 });
