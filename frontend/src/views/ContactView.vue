@@ -56,7 +56,7 @@
                 type="tel"
                 id="phone"
                 class="input-field"
-                placeholder="+57 300 123 4567"
+                placeholder="+57 305 759 4088"
               />
             </div>
 
@@ -147,7 +147,7 @@
                 </div>
                 <div>
                   <h3 class="font-bold text-lg mb-1">Teléfono</h3>
-                  <p class="text-gray-600">+57 300 123 4567</p>
+                  <p class="text-gray-600">+57 305 759 4088</p>
                   <p class="text-gray-600 text-sm mt-1">Lun - Vie: 9:00 AM - 6:00 PM</p>
                 </div>
               </div>

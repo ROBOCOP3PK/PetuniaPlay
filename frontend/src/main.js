@@ -8,6 +8,7 @@ import 'vue-toastification/dist/index.css'
 import App from './App.vue'
 import router from './router'
 import { useAuthStore } from './stores/authStore'
+import { useWishlistStore } from './stores/wishlistStore'
 
 const app = createApp(App)
 
@@ -38,6 +39,9 @@ app.use(Toast, toastOptions)
 
 app.mount('#app')
 
-// Inicializar auth store después de montar
+// Inicializar stores después de montar
 const authStore = useAuthStore()
 authStore.init()
+
+const wishlistStore = useWishlistStore()
+wishlistStore.init()

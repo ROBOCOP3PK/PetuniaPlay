@@ -65,6 +65,12 @@ const router = createRouter({
       component: () => import('../views/AccountView.vue'),
       meta: { requiresAuth: true }
     },
+    {
+      path: '/wishlist',
+      name: 'wishlist',
+      component: () => import('../views/WishlistView.vue'),
+      meta: { requiresAuth: true }
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

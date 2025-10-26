@@ -155,6 +155,35 @@
             >
               🛒 Agregar al Carrito
             </button>
+
+            <!-- Wishlist Button -->
+            <button
+              v-if="authStore.isAuthenticated"
+              @click="toggleWishlist"
+              class="border-2 px-6 py-3 rounded-lg transition-all hover:scale-105"
+              :class="isInWishlist ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-red-500'"
+              :title="isInWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+            >
+              <svg class="w-6 h-6" :class="isInWishlist ? 'text-red-500' : 'text-gray-600'" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Wishlist Button (when out of stock) -->
+          <div v-else-if="authStore.isAuthenticated" class="mb-8">
+            <button
+              @click="toggleWishlist"
+              class="w-full border-2 px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2"
+              :class="isInWishlist ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-300 hover:border-red-500 text-gray-700'"
+            >
+              <svg class="w-6 h-6" :fill="isInWishlist ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span class="font-semibold">
+                {{ isInWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos' }}
+              </span>
+            </button>
           </div>
 
           <!-- Product Details -->
@@ -204,18 +233,25 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '../stores/productStore'
 import { useCartStore } from '../stores/cartStore'
+import { useWishlistStore } from '../stores/wishlistStore'
+import { useAuthStore } from '../stores/authStore'
 import { useToast } from 'vue-toastification'
 
 const route = useRoute()
 const router = useRouter()
 const productStore = useProductStore()
 const cartStore = useCartStore()
+const wishlistStore = useWishlistStore()
+const authStore = useAuthStore()
 const toast = useToast()
 
 const quantity = ref(1)
 const selectedImage = ref(null)
 
 const product = computed(() => productStore.currentProduct)
+const isInWishlist = computed(() => {
+  return product.value ? wishlistStore.isInWishlist(product.value.id) : false
+})
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO').format(price)
@@ -235,6 +271,19 @@ const addToCart = () => {
     quantity.value = 1
   } catch (error) {
     toast.error(error.message)
+  }
+}
+
+const toggleWishlist = async () => {
+  const result = await wishlistStore.toggleWishlist(product.value)
+  if (result.success) {
+    if (isInWishlist.value) {
+      toast.success('Agregado a favoritos')
+    } else {
+      toast.info('Eliminado de favoritos')
+    }
+  } else {
+    toast.error(result.message)
   }
 }
 

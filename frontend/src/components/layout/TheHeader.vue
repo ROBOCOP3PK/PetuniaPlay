@@ -5,7 +5,7 @@
       <div class="container mx-auto px-4 flex justify-between items-center text-sm">
         <div class="flex items-center space-x-4">
           <span>petuniaplay@gmail.com</span>
-          <span>+57 305 759 40 88</span>
+          <span>+57 305 759 4088</span>
         </div>
         <!-- Auth Menu -->
         <div class="flex items-center space-x-4">
@@ -89,9 +89,28 @@
           </div>
         </div>
 
-        <!-- Cart & User -->
+        <!-- Cart, Wishlist & User -->
         <div class="flex items-center space-x-6">
-          <router-link to="/cart" class="relative hover:text-primary transition">
+          <!-- Wishlist Icon (only for authenticated users) -->
+          <router-link
+            v-if="authStore.isAuthenticated"
+            to="/wishlist"
+            class="relative hover:text-primary transition"
+            title="Lista de deseos"
+          >
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            <span
+              v-if="wishlistStore.itemCount > 0"
+              class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+            >
+              {{ wishlistStore.itemCount }}
+            </span>
+          </router-link>
+
+          <!-- Cart Icon -->
+          <router-link to="/cart" class="relative hover:text-primary transition" title="Carrito">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
@@ -144,12 +163,14 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useCartStore } from '../../stores/cartStore'
+import { useWishlistStore } from '../../stores/wishlistStore'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from 'vue-toastification'
 
 const router = useRouter()
 const categoryStore = useCategoryStore()
 const cartStore = useCartStore()
+const wishlistStore = useWishlistStore()
 const authStore = useAuthStore()
 const toast = useToast()
 

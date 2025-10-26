@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin Petunia',
             'email' => 'admin@petuniaplay.com',
             'password' => Hash::make('password'),
-            'phone' => '+57 300 123 4567',
+            'phone' => '+57 305 759 4088',
             'role' => 'admin',
             'birth_date' => '1990-05-15',
             'is_active' => true,

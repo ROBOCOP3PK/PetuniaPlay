@@ -74,7 +74,7 @@
             </li>
             <li class="flex items-center space-x-2">
               <span>📞</span>
-              <span>+57 300 123 4567</span>
+              <span>+57 305 759 4088</span>
             </li>
             <li class="flex items-center space-x-2">
               <span>📍</span>

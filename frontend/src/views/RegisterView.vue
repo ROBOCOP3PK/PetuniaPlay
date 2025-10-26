@@ -44,7 +44,7 @@
               type="tel"
               required
               class="input-field"
-              placeholder="+57 300 123 4567"
+              placeholder="+57 305 759 4088"
               :disabled="loading"
             />
           </div>
