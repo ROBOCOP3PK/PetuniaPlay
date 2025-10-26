@@ -31,6 +31,9 @@ Route::prefix('v1')->group(function () {
     Route::put('/cart/update/{productId}', [CartController::class, 'update']);
     Route::delete('/cart/remove/{productId}', [CartController::class, 'remove']);
     Route::delete('/cart/clear', [CartController::class, 'clear']);
+
+    // Orders - Guest checkout
+    Route::post('/orders', [OrderController::class, 'store']);
 });
 
 // Protected routes (require authentication)
@@ -38,7 +41,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Orders
     Route::get('/orders', [OrderController::class, 'index']);
-    Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{orderNumber}', [OrderController::class, 'show']);
     Route::put('/orders/{id}/cancel', [OrderController::class, 'cancel']);
 

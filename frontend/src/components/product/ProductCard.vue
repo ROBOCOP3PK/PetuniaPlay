@@ -100,6 +100,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { useCartStore } from '../../stores/cartStore'
 
 const props = defineProps({
   product: {
@@ -109,6 +110,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const cartStore = useCartStore()
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO').format(price)
@@ -119,8 +121,13 @@ const goToProduct = () => {
 }
 
 const addToCart = () => {
-  // TODO: Implementar funcionalidad de carrito
-  console.log('Agregar al carrito:', props.product.name)
-  alert(`${props.product.name} agregado al carrito`)
+  try {
+    cartStore.addItem(props.product, 1)
+    // Mostrar notificación de éxito
+    alert(`✅ ${props.product.name} agregado al carrito`)
+  } catch (error) {
+    // Mostrar error (ej. sin stock)
+    alert(`❌ ${error.message}`)
+  }
 }
 </script>

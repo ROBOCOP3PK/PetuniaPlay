@@ -1,0 +1,470 @@
+<template>
+  <div class="min-h-screen py-8 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <!-- Redirect if cart is empty -->
+      <div v-if="!cartStore.hasItems" class="bg-white rounded-lg shadow-md p-12 text-center">
+        <div class="text-6xl mb-4">🛒</div>
+        <h2 class="text-2xl font-bold mb-2">Tu carrito está vacío</h2>
+        <p class="text-gray-600 mb-6">
+          Debes agregar productos antes de proceder al pago
+        </p>
+        <router-link to="/products" class="btn-primary inline-block">
+          Explorar Productos
+        </router-link>
+      </div>
+
+      <!-- Checkout Form -->
+      <div v-else>
+        <h1 class="text-4xl font-bold mb-8">Finalizar Compra</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Forms -->
+          <div class="lg:col-span-2 space-y-6">
+            <!-- Customer Information -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+              <h2 class="text-2xl font-bold mb-6">1. Información Personal</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-semibold mb-2">Nombre Completo *</label>
+                  <input
+                    v-model="form.name"
+                    type="text"
+                    required
+                    class="input-field"
+                    placeholder="Juan Pérez"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold mb-2">Email *</label>
+                  <input
+                    v-model="form.email"
+                    type="email"
+                    required
+                    class="input-field"
+                    placeholder="juan@ejemplo.com"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold mb-2">Teléfono *</label>
+                  <input
+                    v-model="form.phone"
+                    type="tel"
+                    required
+                    class="input-field"
+                    placeholder="+57 300 123 4567"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold mb-2">Documento de Identidad *</label>
+                  <input
+                    v-model="form.document"
+                    type="text"
+                    required
+                    class="input-field"
+                    placeholder="1234567890"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+              <h2 class="text-2xl font-bold mb-6">2. Dirección de Envío</h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-semibold mb-2">Dirección Completa *</label>
+                  <input
+                    v-model="form.address"
+                    type="text"
+                    required
+                    class="input-field"
+                    placeholder="Calle 123 #45-67"
+                  />
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-sm font-semibold mb-2">Ciudad *</label>
+                    <input
+                      v-model="form.city"
+                      type="text"
+                      required
+                      class="input-field"
+                      placeholder="Bogotá"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold mb-2">Departamento *</label>
+                    <input
+                      v-model="form.state"
+                      type="text"
+                      required
+                      class="input-field"
+                      placeholder="Cundinamarca"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold mb-2">Código Postal</label>
+                    <input
+                      v-model="form.zipCode"
+                      type="text"
+                      class="input-field"
+                      placeholder="110111"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold mb-2">Notas de Entrega (Opcional)</label>
+                  <textarea
+                    v-model="form.notes"
+                    rows="3"
+                    class="input-field resize-none"
+                    placeholder="Apartamento 301, tocar timbre..."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+              <h2 class="text-2xl font-bold mb-6">3. Método de Pago</h2>
+
+              <div class="space-y-4">
+                <!-- Payment Options -->
+                <div class="space-y-3">
+                  <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
+                    :class="form.paymentMethod === 'card' ? 'border-primary bg-primary bg-opacity-5' : 'border-gray-300 hover:border-primary'">
+                    <input
+                      v-model="form.paymentMethod"
+                      type="radio"
+                      value="card"
+                      class="mr-3"
+                    />
+                    <div class="flex-1">
+                      <div class="font-semibold">💳 Tarjeta de Crédito/Débito</div>
+                      <div class="text-sm text-gray-600">Visa, Mastercard, American Express</div>
+                    </div>
+                  </label>
+
+                  <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
+                    :class="form.paymentMethod === 'pse' ? 'border-primary bg-primary bg-opacity-5' : 'border-gray-300 hover:border-primary'">
+                    <input
+                      v-model="form.paymentMethod"
+                      type="radio"
+                      value="pse"
+                      class="mr-3"
+                    />
+                    <div class="flex-1">
+                      <div class="font-semibold">🏦 PSE</div>
+                      <div class="text-sm text-gray-600">Pago seguro en línea</div>
+                    </div>
+                  </label>
+
+                  <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
+                    :class="form.paymentMethod === 'cash' ? 'border-primary bg-primary bg-opacity-5' : 'border-gray-300 hover:border-primary'">
+                    <input
+                      v-model="form.paymentMethod"
+                      type="radio"
+                      value="cash"
+                      class="mr-3"
+                    />
+                    <div class="flex-1">
+                      <div class="font-semibold">💵 Contra Entrega</div>
+                      <div class="text-sm text-gray-600">Paga al recibir tu pedido</div>
+                    </div>
+                  </label>
+                </div>
+
+                <!-- Card Details (only if card selected) -->
+                <div v-if="form.paymentMethod === 'card'" class="mt-6 p-4 bg-gray-50 rounded-lg">
+                  <h3 class="font-bold mb-4">Datos de la Tarjeta</h3>
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-semibold mb-2">Número de Tarjeta *</label>
+                      <input
+                        v-model="form.cardNumber"
+                        type="text"
+                        maxlength="19"
+                        class="input-field"
+                        placeholder="1234 5678 9012 3456"
+                        @input="formatCardNumber"
+                      />
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-sm font-semibold mb-2">Vencimiento (MM/AA) *</label>
+                        <input
+                          v-model="form.cardExpiry"
+                          type="text"
+                          maxlength="5"
+                          class="input-field"
+                          placeholder="12/25"
+                          @input="formatExpiry"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-sm font-semibold mb-2">CVV *</label>
+                        <input
+                          v-model="form.cardCvv"
+                          type="text"
+                          maxlength="4"
+                          class="input-field"
+                          placeholder="123"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-semibold mb-2">Nombre en la Tarjeta *</label>
+                      <input
+                        v-model="form.cardName"
+                        type="text"
+                        class="input-field"
+                        placeholder="JUAN PEREZ"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terms & Conditions -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+              <label class="flex items-start">
+                <input
+                  v-model="form.acceptTerms"
+                  type="checkbox"
+                  class="mt-1 mr-3"
+                />
+                <span class="text-sm">
+                  Acepto los <a href="#" class="text-primary hover:underline">términos y condiciones</a>
+                  y la <a href="#" class="text-primary hover:underline">política de privacidad</a> de Petunia Play
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Order Summary (Sticky) -->
+          <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+              <h2 class="text-2xl font-bold mb-6">Resumen del Pedido</h2>
+
+              <!-- Products -->
+              <div class="space-y-3 mb-6 max-h-64 overflow-y-auto">
+                <div
+                  v-for="item in cartStore.items"
+                  :key="item.product.id"
+                  class="flex gap-3 pb-3 border-b"
+                >
+                  <img
+                    :src="item.product.primary_image?.image_url || 'https://via.placeholder.com/60'"
+                    :alt="item.product.name"
+                    class="w-16 h-16 object-cover rounded"
+                  />
+                  <div class="flex-1">
+                    <p class="font-semibold text-sm">{{ item.product.name }}</p>
+                    <p class="text-xs text-gray-600">Cantidad: {{ item.quantity }}</p>
+                    <p class="text-primary font-bold">
+                      ${{ formatPrice(parseFloat(item.product.final_price) * item.quantity) }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Totals -->
+              <div class="space-y-3 mb-6">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">Subtotal</span>
+                  <span class="font-semibold">${{ formatPrice(cartStore.subtotal) }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">IVA (19%)</span>
+                  <span class="font-semibold">${{ formatPrice(cartStore.tax) }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">Envío</span>
+                  <span v-if="cartStore.shipping === 0" class="text-green-600 font-semibold">
+                    ¡Gratis!
+                  </span>
+                  <span v-else class="font-semibold">
+                    ${{ formatPrice(cartStore.shipping) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Total -->
+              <div class="border-t pt-4 mb-6">
+                <div class="flex justify-between items-center">
+                  <span class="text-xl font-bold">Total</span>
+                  <span class="text-3xl font-bold text-primary">
+                    ${{ formatPrice(cartStore.total) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Place Order Button -->
+              <button
+                @click="placeOrder"
+                :disabled="processing || !form.acceptTerms"
+                class="btn-primary w-full text-lg"
+                :class="{ 'opacity-50 cursor-not-allowed': processing || !form.acceptTerms }"
+              >
+                {{ processing ? 'Procesando...' : 'Realizar Pedido' }}
+              </button>
+
+              <!-- Security Icons -->
+              <div class="mt-6 pt-6 border-t">
+                <p class="text-xs text-gray-600 text-center mb-3">🔒 Pago 100% Seguro</p>
+                <div class="flex justify-center items-center gap-3 text-xs text-gray-600">
+                  <span>SSL Cifrado</span>
+                  <span>•</span>
+                  <span>Datos Protegidos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCartStore } from '../stores/cartStore'
+import orderService from '../services/orderService'
+
+const router = useRouter()
+const cartStore = useCartStore()
+
+const processing = ref(false)
+
+const form = reactive({
+  // Personal Info
+  name: '',
+  email: '',
+  phone: '',
+  document: '',
+
+  // Shipping
+  address: '',
+  city: '',
+  state: '',
+  zipCode: '',
+  notes: '',
+
+  // Payment
+  paymentMethod: 'card',
+  cardNumber: '',
+  cardExpiry: '',
+  cardCvv: '',
+  cardName: '',
+
+  // Terms
+  acceptTerms: false
+})
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('es-CO').format(price)
+}
+
+const formatCardNumber = (event) => {
+  let value = event.target.value.replace(/\s/g, '')
+  let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value
+  form.cardNumber = formattedValue
+}
+
+const formatExpiry = (event) => {
+  let value = event.target.value.replace(/\D/g, '')
+  if (value.length >= 2) {
+    value = value.slice(0, 2) + '/' + value.slice(2, 4)
+  }
+  form.cardExpiry = value
+}
+
+const validateForm = () => {
+  if (!form.name || !form.email || !form.phone || !form.document) {
+    alert('Por favor completa todos los campos personales')
+    return false
+  }
+
+  if (!form.address || !form.city || !form.state) {
+    alert('Por favor completa la dirección de envío')
+    return false
+  }
+
+  if (form.paymentMethod === 'card') {
+    if (!form.cardNumber || !form.cardExpiry || !form.cardCvv || !form.cardName) {
+      alert('Por favor completa todos los datos de la tarjeta')
+      return false
+    }
+  }
+
+  if (!form.acceptTerms) {
+    alert('Debes aceptar los términos y condiciones')
+    return false
+  }
+
+  return true
+}
+
+const placeOrder = async () => {
+  if (!validateForm()) return
+
+  processing.value = true
+
+  try {
+    // Preparar datos del pedido
+    const orderData = {
+      customer: {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        document: form.document
+      },
+      shipping: {
+        address: form.address,
+        city: form.city,
+        state: form.state,
+        zipCode: form.zipCode,
+        notes: form.notes
+      },
+      payment: {
+        method: form.paymentMethod,
+        amount: cartStore.total
+      },
+      items: cartStore.items.map(item => ({
+        product_id: item.product.id,
+        quantity: item.quantity,
+        price: parseFloat(item.product.final_price)
+      })),
+      totals: {
+        subtotal: cartStore.subtotal,
+        tax: cartStore.tax,
+        shipping: cartStore.shipping,
+        total: cartStore.total
+      }
+    }
+
+    // Enviar pedido a la API
+    const response = await orderService.create(orderData)
+    const order = response.data.data
+
+    // Limpiar carrito
+    cartStore.clearCart()
+
+    // Redirigir a página de confirmación
+    alert(`✅ ¡Pedido realizado exitosamente!\n\nNúmero de orden: ${order.order_number}\n\nRecibirás un email de confirmación pronto.`)
+
+    router.push('/')
+
+  } catch (error) {
+    console.error('Error al procesar el pedido:', error)
+
+    // Mostrar mensaje de error más específico
+    const errorMessage = error.response?.data?.message || 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.'
+    alert(`❌ ${errorMessage}`)
+  } finally {
+    processing.value = false
+  }
+}
+</script>

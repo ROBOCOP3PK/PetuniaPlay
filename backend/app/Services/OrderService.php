@@ -5,7 +5,11 @@ namespace App\Services;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Models\OrderItem;
+use App\Models\User;
+use App\Models\Address;
+use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OrderService
 {
@@ -38,41 +42,71 @@ class OrderService
     public function createOrder($userId, array $orderData)
     {
         return DB::transaction(function () use ($userId, $orderData) {
-            // Calcular totales
-            $subtotal = 0;
-            $items = $orderData['items'];
+            // Si no hay usuario autenticado, crear uno como guest
+            if (!$userId) {
+                $user = User::firstOrCreate(
+                    ['email' => $orderData['customer']['email']],
+                    [
+                        'name' => $orderData['customer']['name'],
+                        'email' => $orderData['customer']['email'],
+                        'phone' => $orderData['customer']['phone'],
+                        'document' => $orderData['customer']['document'],
+                        'password' => bcrypt(Str::random(32)), // Password aleatorio para guest
+                        'role' => 'customer',
+                    ]
+                );
+                $userId = $user->id;
+            }
 
+            // Crear dirección de envío
+            $shippingAddress = Address::create([
+                'user_id' => $userId,
+                'type' => 'shipping',
+                'address' => $orderData['shipping']['address'],
+                'city' => $orderData['shipping']['city'],
+                'state' => $orderData['shipping']['state'],
+                'zip_code' => $orderData['shipping']['zipCode'] ?? null,
+                'country' => 'Colombia',
+                'is_default' => false,
+            ]);
+
+            // Verificar stock de todos los productos
+            $items = $orderData['items'];
             foreach ($items as $item) {
                 $product = $this->productRepository->findOrFail($item['product_id']);
 
-                // Verificar stock
                 if ($product->stock < $item['quantity']) {
                     throw new \Exception("Stock insuficiente para {$product->name}");
                 }
-
-                $itemSubtotal = $product->final_price * $item['quantity'];
-                $subtotal += $itemSubtotal;
             }
 
-            // Aplicar descuento si hay cupón
-            $discount = $orderData['discount'] ?? 0;
-            $tax = $orderData['tax'] ?? ($subtotal * 0.19); // 19% IVA Colombia
-            $shippingCost = $orderData['shipping_cost'] ?? 0;
-            $total = $subtotal + $tax + $shippingCost - $discount;
+            // Usar los totales que vienen del frontend (ya calculados correctamente)
+            $subtotal = $orderData['totals']['subtotal'];
+            $tax = $orderData['totals']['tax'];
+            $shippingCost = $orderData['totals']['shipping'];
+            $total = $orderData['totals']['total'];
+
+            // Mapear método de pago del frontend al backend
+            $paymentMethodMap = [
+                'card' => 'stripe',
+                'pse' => 'payu',
+                'cash' => 'cash_on_delivery'
+            ];
+            $paymentMethod = $paymentMethodMap[$orderData['payment']['method']] ?? 'stripe';
 
             // Crear orden
             $order = $this->orderRepository->create([
                 'user_id' => $userId,
-                'shipping_address_id' => $orderData['shipping_address_id'],
-                'billing_address_id' => $orderData['billing_address_id'] ?? $orderData['shipping_address_id'],
+                'shipping_address_id' => $shippingAddress->id,
+                'billing_address_id' => $shippingAddress->id,
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'shipping_cost' => $shippingCost,
-                'discount' => $discount,
+                'discount' => 0,
                 'total' => $total,
                 'status' => 'pending',
                 'payment_status' => 'pending',
-                'notes' => $orderData['notes'] ?? null,
+                'notes' => $orderData['shipping']['notes'] ?? null,
             ]);
 
             // Crear items de la orden
@@ -84,16 +118,29 @@ class OrderService
                     'product_id' => $product->id,
                     'product_name' => $product->name,
                     'product_sku' => $product->sku,
-                    'price' => $product->final_price,
+                    'price' => $item['price'],
                     'quantity' => $item['quantity'],
-                    'subtotal' => $product->final_price * $item['quantity'],
+                    'subtotal' => $item['price'] * $item['quantity'],
                 ]);
 
                 // Reducir stock
                 $this->productRepository->updateStock($product->id, $item['quantity']);
             }
 
-            return $order->load(['items', 'shippingAddress', 'billingAddress']);
+            // Crear registro de pago
+            Payment::create([
+                'order_id' => $order->id,
+                'transaction_id' => 'TXN-' . strtoupper(Str::random(10)),
+                'payment_method' => $paymentMethod,
+                'amount' => $total,
+                'status' => 'pending',
+                'payment_details' => json_encode([
+                    'method' => $orderData['payment']['method'],
+                    'amount' => $orderData['payment']['amount']
+                ])
+            ]);
+
+            return $order->load(['items', 'shippingAddress', 'billingAddress', 'user']);
         });
     }
 

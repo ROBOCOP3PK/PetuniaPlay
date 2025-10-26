@@ -201,11 +201,14 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '../stores/productStore'
+import { useCartStore } from '../stores/cartStore'
 
 const route = useRoute()
+const router = useRouter()
 const productStore = useProductStore()
+const cartStore = useCartStore()
 
 const quantity = ref(1)
 const selectedImage = ref(null)
@@ -217,9 +220,21 @@ const formatPrice = (price) => {
 }
 
 const addToCart = () => {
-  // TODO: Implementar funcionalidad de carrito
-  console.log(`Agregar ${quantity.value} x ${product.value.name} al carrito`)
-  alert(`${quantity.value} x ${product.value.name} agregado al carrito`)
+  try {
+    cartStore.addItem(product.value, quantity.value)
+
+    // Preguntar si quiere ir al carrito o seguir comprando
+    const goToCart = confirm(`✅ ${quantity.value} x ${product.value.name} agregado al carrito.\n\n¿Deseas ir al carrito?`)
+
+    if (goToCart) {
+      router.push('/cart')
+    } else {
+      // Reset quantity
+      quantity.value = 1
+    }
+  } catch (error) {
+    alert(`❌ ${error.message}`)
+  }
 }
 
 const loadProduct = async () => {
