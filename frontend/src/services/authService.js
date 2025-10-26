@@ -41,6 +41,18 @@ export const authService = {
     return api.put('/user/password', passwordData)
   },
 
+  // Recuperar contraseña (enviar email)
+  async forgotPassword(email) {
+    await this.getCsrfToken()
+    return api.post('/forgot-password', { email })
+  },
+
+  // Restablecer contraseña
+  async resetPassword(data) {
+    await this.getCsrfToken()
+    return api.post('/reset-password', data)
+  },
+
   // Verificar si el usuario está autenticado
   isAuthenticated() {
     return !!localStorage.getItem('auth_token')

@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\FileUploadController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\ShipmentController;
+use App\Http\Controllers\Api\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,8 @@ Route::prefix('v1')->group(function () {
     // Auth routes (public)
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
     // Products
     Route::get('/products', [ProductController::class, 'index']);
@@ -46,6 +49,9 @@ Route::prefix('v1')->group(function () {
 
     // Shipments (public - tracking)
     Route::get('/shipments/track/{trackingNumber}', [ShipmentController::class, 'trackByNumber']);
+
+    // Contact
+    Route::post('/contact', [ContactController::class, 'send']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);

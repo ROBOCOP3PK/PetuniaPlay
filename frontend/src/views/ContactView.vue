@@ -208,6 +208,10 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { contactService } from '../services/contactService'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 const form = reactive({
   name: '',
@@ -227,14 +231,17 @@ const handleSubmit = async () => {
   error.value = ''
 
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    // TODO: Implementar envío real de email
-    console.log('Formulario enviado:', form)
+    const response = await contactService.send({
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      subject: form.subject,
+      message: form.message
+    })
 
     // Show success message
     success.value = true
+    toast.success(response.data.message || 'Mensaje enviado exitosamente')
 
     // Reset form
     form.name = ''
@@ -248,7 +255,8 @@ const handleSubmit = async () => {
       success.value = false
     }, 5000)
   } catch (err) {
-    error.value = 'Hubo un error al enviar tu mensaje. Por favor intenta nuevamente.'
+    error.value = err.response?.data?.message || 'Hubo un error al enviar tu mensaje. Por favor intenta nuevamente.'
+    toast.error(error.value)
   } finally {
     submitting.value = false
   }
