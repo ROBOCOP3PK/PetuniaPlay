@@ -75,6 +75,11 @@ const router = createRouter({
       name: 'shipping',
       component: () => import('../views/ShippingView.vue'),
     },
+    {
+      path: '/unsubscribe',
+      name: 'unsubscribe',
+      component: () => import('../views/UnsubscribeView.vue'),
+    },
     // Auth routes
     {
       path: '/login',

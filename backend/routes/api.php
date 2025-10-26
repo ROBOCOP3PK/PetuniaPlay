@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\ShipmentController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\UnsubscribeController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -56,6 +57,10 @@ Route::prefix('v1')->group(function () {
 
     // Contact
     Route::post('/contact', [ContactController::class, 'send']);
+
+    // Unsubscribe (public)
+    Route::get('/unsubscribe/{token}', [UnsubscribeController::class, 'unsubscribe']);
+    Route::get('/resubscribe/{token}', [UnsubscribeController::class, 'resubscribe']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);

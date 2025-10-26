@@ -170,10 +170,15 @@ class OrderService
             // Cargar relaciones necesarias para el email
             $order->load(['items', 'shippingAddress', 'billingAddress', 'user']);
 
-            // Enviar email de confirmación
+            // Enviar email de confirmación (verificar preferencias del usuario)
             try {
-                Mail::to($orderData['customer']['email'])
-                    ->send(new OrderConfirmation($order));
+                $user = User::find($userId);
+
+                // Solo enviar si el usuario tiene habilitadas las notificaciones por email
+                if ($user && $user->email_notifications) {
+                    Mail::to($orderData['customer']['email'])
+                        ->send(new OrderConfirmation($order));
+                }
             } catch (\Exception $e) {
                 // Log el error pero no falla la orden
                 \Log::error('Error enviando email de confirmación: ' . $e->getMessage());

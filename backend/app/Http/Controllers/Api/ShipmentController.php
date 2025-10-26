@@ -82,9 +82,9 @@ class ShipmentController extends Controller
         // Cargar relaciones
         $shipment->load(['order.user', 'order.shippingAddress']);
 
-        // Enviar email de notificación
+        // Enviar email de notificación (verificar preferencias del usuario)
         try {
-            if ($order->user && $order->user->email) {
+            if ($order->user && $order->user->email && $order->user->email_notifications) {
                 Mail::to($order->user->email)
                     ->send(new ShipmentNotification($shipment));
             }
