@@ -12,18 +12,14 @@
         const THEME_KEY = 'petunia-theme'
         const savedTheme = localStorage.getItem(THEME_KEY)
 
+        // Solo aplicar dark mode si el usuario lo seleccionó explícitamente
         if (savedTheme === 'dark') {
           document.documentElement.classList.add('dark')
           document.documentElement.setAttribute('data-theme', 'dark')
-        } else if (savedTheme === 'light') {
+        } else {
+          // Por defecto siempre modo claro
           document.documentElement.classList.remove('dark')
           document.documentElement.setAttribute('data-theme', 'light')
-        } else {
-          // Detectar preferencia del sistema si no hay tema guardado
-          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark')
-            document.documentElement.setAttribute('data-theme', 'dark')
-          }
         }
       })()
     </script>
