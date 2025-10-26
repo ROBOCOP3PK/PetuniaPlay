@@ -153,6 +153,102 @@
               </div>
             </div>
 
+            <!-- Shipment Info -->
+            <div>
+              <div class="flex justify-between items-center mb-3">
+                <h3 class="font-bold text-lg">Información de Envío</h3>
+                <button
+                  v-if="!orderShipment && !showShipmentForm"
+                  @click="showShipmentForm = true"
+                  class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition"
+                >
+                  📦 Crear Envío
+                </button>
+              </div>
+
+              <!-- Existing Shipment -->
+              <div v-if="orderShipment" class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <p class="text-sm text-gray-600">Tracking Number</p>
+                    <p class="font-mono font-bold">{{ orderShipment.tracking_number }}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600">Transportadora</p>
+                    <p class="font-semibold">{{ orderShipment.carrier }}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600">Estado</p>
+                    <span :class="getShipmentStatusClass(orderShipment.status)">
+                      {{ orderShipment.status_label }}
+                    </span>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-600">Días en tránsito</p>
+                    <p>{{ orderShipment.days_in_transit || '-' }}</p>
+                  </div>
+                </div>
+                <div v-if="orderShipment.notes" class="mt-3 pt-3 border-t">
+                  <p class="text-sm text-gray-600">Notas:</p>
+                  <p class="text-sm">{{ orderShipment.notes }}</p>
+                </div>
+              </div>
+
+              <!-- Create Shipment Form -->
+              <div v-if="showShipmentForm && !orderShipment" class="bg-gray-50 p-4 rounded-lg space-y-3">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Número de Tracking *</label>
+                  <input
+                    v-model="shipmentForm.tracking_number"
+                    type="text"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                    placeholder="Ej: TRK-123456789"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Transportadora *</label>
+                  <select
+                    v-model="shipmentForm.carrier"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                    required
+                  >
+                    <option value="">Seleccionar...</option>
+                    <option value="Servientrega">Servientrega</option>
+                    <option value="Coordinadora">Coordinadora</option>
+                    <option value="Deprisa">Deprisa</option>
+                    <option value="TCC">TCC</option>
+                    <option value="Envía">Envía</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Notas (opcional)</label>
+                  <textarea
+                    v-model="shipmentForm.notes"
+                    rows="2"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                    placeholder="Notas adicionales sobre el envío..."
+                  ></textarea>
+                </div>
+                <div class="flex space-x-2">
+                  <button
+                    @click="createShipment"
+                    :disabled="creatingShipment"
+                    class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition disabled:opacity-50"
+                  >
+                    {{ creatingShipment ? 'Creando...' : 'Crear Envío' }}
+                  </button>
+                  <button
+                    @click="cancelShipmentForm"
+                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <!-- Order Items -->
             <div>
               <h3 class="font-bold text-lg mb-3">Productos</h3>
@@ -196,9 +292,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import { adminService } from '../../services/adminService'
+import { shipmentService } from '../../services/shipmentService'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
@@ -209,6 +306,16 @@ const search = ref('')
 const filterStatus = ref('')
 const filterDate = ref('')
 const selectedOrder = ref(null)
+
+// Shipment state
+const orderShipment = ref(null)
+const showShipmentForm = ref(false)
+const creatingShipment = ref(false)
+const shipmentForm = ref({
+  tracking_number: '',
+  carrier: '',
+  notes: ''
+})
 
 const filteredOrders = computed(() => {
   let filtered = orders.value
@@ -273,8 +380,79 @@ const updateStatus = async (order) => {
   }
 }
 
-const viewOrder = (order) => {
+const viewOrder = async (order) => {
   selectedOrder.value = order
+  orderShipment.value = null
+  showShipmentForm.value = false
+
+  // Load shipment for this order if exists
+  await loadOrderShipment(order.id)
+}
+
+const loadOrderShipment = async (orderId) => {
+  try {
+    const response = await shipmentService.getAll({ order_id: orderId })
+    if (response.data.data && response.data.data.length > 0) {
+      orderShipment.value = response.data.data[0]
+    }
+  } catch (error) {
+    console.error('Error loading shipment:', error)
+  }
+}
+
+const createShipment = async () => {
+  if (!shipmentForm.value.tracking_number || !shipmentForm.value.carrier) {
+    toast.error('Por favor completa los campos requeridos')
+    return
+  }
+
+  creatingShipment.value = true
+  try {
+    const response = await shipmentService.create({
+      order_id: selectedOrder.value.id,
+      tracking_number: shipmentForm.value.tracking_number,
+      carrier: shipmentForm.value.carrier,
+      notes: shipmentForm.value.notes
+    })
+
+    orderShipment.value = response.data.data
+    showShipmentForm.value = false
+    shipmentForm.value = {
+      tracking_number: '',
+      carrier: '',
+      notes: ''
+    }
+
+    toast.success('Envío creado exitosamente')
+
+    // Recargar pedidos para reflejar el cambio de estado
+    loadOrders()
+  } catch (error) {
+    console.error('Error creating shipment:', error)
+    toast.error(error.response?.data?.message || 'Error al crear el envío')
+  } finally {
+    creatingShipment.value = false
+  }
+}
+
+const cancelShipmentForm = () => {
+  showShipmentForm.value = false
+  shipmentForm.value = {
+    tracking_number: '',
+    carrier: '',
+    notes: ''
+  }
+}
+
+const getShipmentStatusClass = (status) => {
+  const classes = {
+    pending: 'px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800',
+    in_transit: 'px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800',
+    delivered: 'px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800',
+    failed: 'px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800',
+    returned: 'px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800'
+  }
+  return classes[status] || classes.pending
 }
 
 const loadOrders = async () => {

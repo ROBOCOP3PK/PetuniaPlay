@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\FileUploadController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\CouponController;
+use App\Http\Controllers\Api\ShipmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,9 @@ Route::prefix('v1')->group(function () {
 
     // Coupons (public - validation)
     Route::post('/coupons/validate', [CouponController::class, 'validate']);
+
+    // Shipments (public - tracking)
+    Route::get('/shipments/track/{trackingNumber}', [ShipmentController::class, 'trackByNumber']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);
@@ -128,6 +132,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::delete('/coupons/{id}', [CouponController::class, 'destroy']);
         Route::put('/coupons/{id}/toggle-status', [CouponController::class, 'toggleStatus']);
         Route::get('/admin/coupons/stats', [CouponController::class, 'stats']);
+
+        // Shipments Management
+        Route::get('/shipments', [ShipmentController::class, 'index']);
+        Route::post('/shipments', [ShipmentController::class, 'store']);
+        Route::get('/shipments/{id}', [ShipmentController::class, 'show']);
+        Route::put('/shipments/{id}', [ShipmentController::class, 'update']);
+        Route::delete('/shipments/{id}', [ShipmentController::class, 'destroy']);
+        Route::get('/admin/shipments/stats', [ShipmentController::class, 'stats']);
     });
 
     // Admin only routes (only accessible by admin)
