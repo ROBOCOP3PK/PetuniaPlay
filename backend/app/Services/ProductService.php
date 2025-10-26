@@ -46,6 +46,10 @@ class ProductService
 
     public function createProduct(array $data)
     {
+        // Extraer imágenes del array
+        $images = $data['images'] ?? [];
+        unset($data['images']);
+
         // Generar slug si no existe
         if (!isset($data['slug'])) {
             $data['slug'] = Str::slug($data['name']);
@@ -56,17 +60,57 @@ class ProductService
             $data['sku'] = 'SKU-' . strtoupper(uniqid());
         }
 
-        return $this->productRepository->create($data);
+        // Crear producto
+        $product = $this->productRepository->create($data);
+
+        // Crear imágenes si existen
+        if (!empty($images)) {
+            foreach ($images as $index => $imageUrl) {
+                $product->images()->create([
+                    'image_url' => $imageUrl,
+                    'is_primary' => $index === 0, // Primera imagen es la principal
+                    'order' => $index + 1
+                ]);
+            }
+        }
+
+        // Recargar producto con imágenes
+        return $product->load(['category', 'images']);
     }
 
     public function updateProduct($id, array $data)
     {
+        // Extraer imágenes del array si existen
+        $images = $data['images'] ?? null;
+        unset($data['images']);
+
         // Actualizar slug si cambió el nombre
         if (isset($data['name']) && !isset($data['slug'])) {
             $data['slug'] = Str::slug($data['name']);
         }
 
-        return $this->productRepository->update($id, $data);
+        // Actualizar producto
+        $product = $this->productRepository->update($id, $data);
+
+        // Actualizar imágenes si se enviaron
+        if ($images !== null) {
+            // Eliminar imágenes existentes
+            $product->images()->delete();
+
+            // Crear nuevas imágenes
+            if (!empty($images)) {
+                foreach ($images as $index => $imageUrl) {
+                    $product->images()->create([
+                        'image_url' => $imageUrl,
+                        'is_primary' => $index === 0,
+                        'order' => $index + 1
+                    ]);
+                }
+            }
+        }
+
+        // Recargar producto con imágenes
+        return $product->load(['category', 'images']);
     }
 
     public function deleteProduct($id)
