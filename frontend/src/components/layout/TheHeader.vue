@@ -4,8 +4,8 @@
     <div class="bg-primary text-white py-2">
       <div class="container mx-auto px-4 flex justify-between items-center text-sm">
         <div class="flex items-center space-x-4">
-          <span>📧 contacto@petuniaplay.com</span>
-          <span>📞 +57 300 123 4567</span>
+          <span>petuniaplay@gmail.com</span>
+          <span>+57 305 759 40 88</span>
         </div>
         <div class="flex items-center space-x-4">
           <router-link to="/login" class="hover:text-beige transition">Iniciar Sesión</router-link>
