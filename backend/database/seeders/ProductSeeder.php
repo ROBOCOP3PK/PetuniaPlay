@@ -254,7 +254,13 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $product) {
+        $brands = ['Pedigree', 'Royal Canin', 'Pro Plan', 'Hills', 'Eukanuba', 'Chunky', 'Dog Chow', 'Cat Chow', 'Whiskas', 'Felix', null];
+
+        foreach ($products as $index => $product) {
+            // Agregar brand y low_stock_threshold
+            $product['brand'] = $brands[array_rand($brands)];
+            $product['low_stock_threshold'] = rand(5, 15);
+
             $productId = DB::table('products')->insertGetId(array_merge($product, [
                 'created_at' => now(),
                 'updated_at' => now(),
