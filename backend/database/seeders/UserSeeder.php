@@ -14,50 +14,66 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = \Faker\Factory::create('es_CO');
+
         // Usuario Administrador
         User::create([
-            'name' => 'Admin Petunia',
+            'name' => $faker->name(),
             'email' => 'admin@petuniaplay.com',
-            'password' => Hash::make('password'),
-            'phone' => '+57 305 759 4088',
+            'password' => Hash::make('admin123'),
+            'phone' => $faker->phoneNumber(),
+            'document' => $faker->numerify('##########'),
             'role' => 'admin',
-            'birth_date' => '1990-05-15',
+            'birth_date' => $faker->dateTimeBetween('-60 years', '-25 years')->format('Y-m-d'),
             'is_active' => true,
+            'email_notifications' => true,
             'email_verified_at' => now(),
         ]);
 
-        // Clientes de prueba
+        // Usuario Manager
         User::create([
-            'name' => 'María González',
-            'email' => 'maria@example.com',
-            'password' => Hash::make('password'),
-            'phone' => '+57 310 234 5678',
-            'role' => 'customer',
-            'birth_date' => '1995-08-20',
+            'name' => $faker->name(),
+            'email' => 'manager@petuniaplay.com',
+            'password' => Hash::make('manager123'),
+            'phone' => $faker->phoneNumber(),
+            'document' => $faker->numerify('##########'),
+            'role' => 'manager',
+            'birth_date' => $faker->dateTimeBetween('-50 years', '-22 years')->format('Y-m-d'),
             'is_active' => true,
+            'email_notifications' => true,
             'email_verified_at' => now(),
         ]);
 
-        User::create([
-            'name' => 'Carlos Ramírez',
-            'email' => 'carlos@example.com',
-            'password' => Hash::make('password'),
-            'phone' => '+57 320 345 6789',
-            'role' => 'customer',
-            'birth_date' => '1988-03-10',
-            'is_active' => true,
-            'email_verified_at' => now(),
-        ]);
+        // Generar 20 clientes aleatorios
+        for ($i = 0; $i < 20; $i++) {
+            User::create([
+                'name' => $faker->name(),
+                'email' => $faker->unique()->safeEmail(),
+                'password' => Hash::make('customer123'),
+                'phone' => $faker->phoneNumber(),
+                'document' => $faker->numerify('##########'),
+                'role' => 'customer',
+                'birth_date' => $faker->dateTimeBetween('-65 years', '-18 years')->format('Y-m-d'),
+                'is_active' => $faker->boolean(90), // 90% activos
+                'email_notifications' => $faker->boolean(70), // 70% con notificaciones
+                'email_verified_at' => $faker->boolean(85) ? now() : null, // 85% verificados
+            ]);
+        }
 
-        User::create([
-            'name' => 'Laura Martínez',
-            'email' => 'laura@example.com',
-            'password' => Hash::make('password'),
-            'phone' => '+57 315 456 7890',
-            'role' => 'customer',
-            'birth_date' => '1992-11-25',
-            'is_active' => true,
-            'email_verified_at' => now(),
-        ]);
+        // Generar algunos usuarios inactivos específicos
+        for ($i = 0; $i < 5; $i++) {
+            User::create([
+                'name' => $faker->name(),
+                'email' => $faker->unique()->safeEmail(),
+                'password' => Hash::make('customer123'),
+                'phone' => $faker->phoneNumber(),
+                'document' => $faker->numerify('##########'),
+                'role' => 'customer',
+                'birth_date' => $faker->dateTimeBetween('-70 years', '-18 years')->format('Y-m-d'),
+                'is_active' => false,
+                'email_notifications' => false,
+                'email_verified_at' => null,
+            ]);
+        }
     }
 }
