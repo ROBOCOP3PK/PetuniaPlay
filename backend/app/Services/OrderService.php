@@ -72,6 +72,8 @@ class OrderService
                 'state' => $orderData['shipping']['state'],
                 'postal_code' => $orderData['shipping']['zipCode'] ?? '000000',
                 'country' => 'Colombia',
+                'latitude' => $orderData['shipping']['latitude'] ?? null,
+                'longitude' => $orderData['shipping']['longitude'] ?? null,
                 'type' => 'shipping',
                 'is_default' => false,
             ]);

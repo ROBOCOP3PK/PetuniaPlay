@@ -70,57 +70,19 @@
             <!-- Shipping Address -->
             <div class="bg-white rounded-lg shadow-md p-6">
               <h2 class="text-2xl font-bold mb-6">2. Dirección de Envío</h2>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-semibold mb-2">Dirección Completa *</label>
-                  <input
-                    v-model="form.address"
-                    type="text"
-                    required
-                    class="input-field"
-                    placeholder="Calle 123 #45-67"
-                  />
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label class="block text-sm font-semibold mb-2">Ciudad *</label>
-                    <input
-                      v-model="form.city"
-                      type="text"
-                      required
-                      class="input-field"
-                      placeholder="Bogotá"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-semibold mb-2">Departamento *</label>
-                    <input
-                      v-model="form.state"
-                      type="text"
-                      required
-                      class="input-field"
-                      placeholder="Cundinamarca"
-                    />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-semibold mb-2">Código Postal</label>
-                    <input
-                      v-model="form.zipCode"
-                      type="text"
-                      class="input-field"
-                      placeholder="110111"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold mb-2">Notas de Entrega (Opcional)</label>
-                  <textarea
-                    v-model="form.notes"
-                    rows="3"
-                    class="input-field resize-none"
-                    placeholder="Apartamento 301, tocar timbre..."
-                  ></textarea>
-                </div>
+
+              <!-- Address Map Picker Component -->
+              <AddressMapPicker @update:address="handleAddressUpdate" />
+
+              <!-- Notes Field -->
+              <div class="mt-4">
+                <label class="block text-sm font-semibold mb-2">Notas de Entrega (Opcional)</label>
+                <textarea
+                  v-model="form.notes"
+                  rows="3"
+                  class="input-field resize-none"
+                  placeholder="Apartamento 301, tocar timbre..."
+                ></textarea>
               </div>
             </div>
 
@@ -389,6 +351,7 @@ import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cartStore'
 import { useToast } from 'vue-toastification'
 import orderService from '../services/orderService'
+import AddressMapPicker from '../components/AddressMapPicker.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -411,6 +374,8 @@ const form = reactive({
   city: '',
   state: '',
   zipCode: '',
+  latitude: null,
+  longitude: null,
   notes: '',
 
   // Payment
@@ -440,6 +405,16 @@ const formatExpiry = (event) => {
     value = value.slice(0, 2) + '/' + value.slice(2, 4)
   }
   form.cardExpiry = value
+}
+
+// Handle address update from map picker
+const handleAddressUpdate = (addressData) => {
+  form.address = addressData.address
+  form.city = addressData.city
+  form.state = addressData.state
+  form.zipCode = addressData.zipCode || ''
+  form.latitude = addressData.latitude
+  form.longitude = addressData.longitude
 }
 
 // Coupon functions
@@ -520,6 +495,8 @@ const placeOrder = async () => {
         city: form.city,
         state: form.state,
         zipCode: form.zipCode,
+        latitude: form.latitude,
+        longitude: form.longitude,
         notes: form.notes
       },
       payment: {
