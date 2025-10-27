@@ -9,15 +9,24 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#A97447', // Marrón caramelo
-          dark: '#8B5E3C',
-          light: '#C08B5F',
+          DEFAULT: '#6B5D54', // Gris oscuro con toque café (inspirado en Beagle)
+          dark: '#4A423C',    // Gris carbón oscuro
+          light: '#8B7D74',   // Gris café claro
         },
-        cream: '#F8F4EC',  // Blanco crema
-        dark: '#2B2B2B',   // Negro profundo
-        beige: '#D6B890',  // Beige cálido
+        cream: '#F8F4EC',     // Blanco crema (mantiene modo claro)
+        dark: {
+          DEFAULT: '#2B2826', // Negro con tinte cálido
+          soft: '#3A3632',    // Gris oscuro cálido
+          lighter: '#4F4943', // Gris medio cálido
+        },
+        beige: '#D6C4B0',     // Beige suave Beagle
         gray: {
-          soft: '#B0A99F', // Gris suave
+          soft: '#A8A09A',    // Gris cálido suave
+          warm: '#8A827C',    // Gris tibio medio
+        },
+        accent: {
+          DEFAULT: '#9B8B7E', // Café grisáceo suave
+          light: '#B5A99D',   // Café gris claro
         },
       },
       fontFamily: {

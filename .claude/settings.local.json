@@ -17,7 +17,11 @@
       "Bash(npm install:*)",
       "Bash(npx tailwindcss:*)",
       "Bash(npm run dev:*)",
-      "Bash(composer require:*)"
+      "Bash(composer require:*)",
+      "Read(//c/xampp/php/**)",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"SHOW DATABASES LIKE ''petunia_play'';\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"SELECT 1;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"CREATE DATABASE IF NOT EXISTS petunia_play CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\")"
     ],
     "deny": [],
     "ask": []
