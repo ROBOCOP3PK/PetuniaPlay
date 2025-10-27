@@ -8,31 +8,108 @@
 
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <p class="text-gray-600 dark:text-gray-400 text-sm">Total Envíos</p>
-          <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.total_shipments || 0 }}</p>
+        <div class="bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-900 dark:to-orange-800 rounded-lg shadow-md p-6 border-l-4 border-orange-500">
+          <p class="text-orange-800 dark:text-orange-200 text-sm font-semibold">⏳ Por Despachar</p>
+          <p class="text-3xl font-bold text-orange-900 dark:text-white">{{ shippingStats.pending_shipment || 0 }}</p>
+          <p class="text-xs text-orange-700 dark:text-orange-300 mt-1">Órdenes pagadas sin envío</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <p class="text-gray-600 dark:text-gray-400 text-sm">Pendientes</p>
-          <p class="text-3xl font-bold text-yellow-600">{{ stats.pending || 0 }}</p>
+        <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 dark:from-yellow-900 dark:to-yellow-800 rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+          <p class="text-yellow-800 dark:text-yellow-200 text-sm font-semibold">📦 Listas</p>
+          <p class="text-3xl font-bold text-yellow-900 dark:text-white">{{ shippingStats.ready_to_ship || 0 }}</p>
+          <p class="text-xs text-yellow-700 dark:text-yellow-300 mt-1">Status: Processing</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <p class="text-gray-600 dark:text-gray-400 text-sm">En Tránsito</p>
-          <p class="text-3xl font-bold text-blue-600">{{ stats.in_transit || 0 }}</p>
+        <div class="bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900 dark:to-blue-800 rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+          <p class="text-blue-800 dark:text-blue-200 text-sm font-semibold">🚚 En Tránsito</p>
+          <p class="text-3xl font-bold text-blue-900 dark:text-white">{{ shippingStats.in_transit || 0 }}</p>
+          <p class="text-xs text-blue-700 dark:text-blue-300 mt-1">Envíos en camino</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <p class="text-gray-600 dark:text-gray-400 text-sm">Entregados</p>
-          <p class="text-3xl font-bold text-green-600">{{ stats.delivered || 0 }}</p>
+        <div class="bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900 dark:to-green-800 rounded-lg shadow-md p-6 border-l-4 border-green-500">
+          <p class="text-green-800 dark:text-green-200 text-sm font-semibold">✅ Entregados</p>
+          <p class="text-3xl font-bold text-green-900 dark:text-white">{{ shippingStats.delivered || 0 }}</p>
+          <p class="text-xs text-green-700 dark:text-green-300 mt-1">Completados</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <p class="text-gray-600 dark:text-gray-400 text-sm">Tiempo Promedio</p>
-          <p class="text-3xl font-bold text-purple-600">{{ stats.avg_delivery_days || '-' }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">días</p>
+        <div class="bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-900 dark:to-purple-800 rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+          <p class="text-purple-800 dark:text-purple-200 text-sm font-semibold">📊 Total Despachados</p>
+          <p class="text-3xl font-bold text-purple-900 dark:text-white">{{ shippingStats.shipped || 0 }}</p>
+          <p class="text-xs text-purple-700 dark:text-purple-300 mt-1">Histórico</p>
         </div>
       </div>
 
-      <!-- Filters & Search -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <!-- Urgent Orders Alert -->
+      <div v-if="shippingStats.oldest_pending && shippingStats.oldest_pending.length > 0" class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 rounded-lg shadow-md p-6">
+        <div class="flex items-start">
+          <div class="text-3xl mr-4">⚠️</div>
+          <div class="flex-1">
+            <h3 class="text-lg font-bold text-red-900 dark:text-red-200 mb-2">
+              ¡Órdenes Urgentes! - {{ shippingStats.oldest_pending.length }} órdenes esperando despacho
+            </h3>
+            <div class="space-y-2">
+              <div v-for="order in shippingStats.oldest_pending" :key="order.order_number" class="bg-white dark:bg-gray-800 rounded p-3 flex items-center justify-between">
+                <div>
+                  <span class="font-mono font-bold text-red-600 dark:text-red-400">{{ order.order_number }}</span>
+                  <span class="text-gray-600 dark:text-gray-400 ml-3">{{ order.customer }}</span>
+                  <span class="text-sm text-gray-500 dark:text-gray-500 ml-3">${{ formatPrice(order.total) }}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-3 py-1 rounded-full text-sm font-bold">
+                    {{ order.days_waiting }} días
+                  </span>
+                  <button
+                    @click="createShipmentForOrder(order)"
+                    class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition font-semibold text-sm"
+                  >
+                    📦 Crear Envío
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div class="border-b border-gray-200 dark:border-gray-700">
+          <nav class="flex -mb-px">
+            <button
+              @click="activeTab = 'pending'"
+              :class="[
+                'px-6 py-4 text-sm font-medium border-b-2 transition',
+                activeTab === 'pending'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+              ]"
+            >
+              ⏳ Pendientes de Despacho ({{ shippingStats.pending_shipment || 0 }})
+            </button>
+            <button
+              @click="activeTab = 'shipped'"
+              :class="[
+                'px-6 py-4 text-sm font-medium border-b-2 transition',
+                activeTab === 'shipped'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+              ]"
+            >
+              📦 Ya Despachadas ({{ shippingStats.shipped || 0 }})
+            </button>
+            <button
+              @click="activeTab = 'all'"
+              :class="[
+                'px-6 py-4 text-sm font-medium border-b-2 transition',
+                activeTab === 'all'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+              ]"
+            >
+              📋 Todos los Envíos
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Filters & Search (only for 'all' tab) -->
+      <div v-if="activeTab === 'all'" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <input
@@ -75,8 +152,72 @@
         </div>
       </div>
 
-      <!-- Shipments Table -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+      <!-- Pending Orders Table (activeTab === 'pending') -->
+      <div v-if="activeTab === 'pending'" class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Pedido</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cliente</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Total</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Dirección</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Días</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acción</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tr v-if="loadingPending">
+                <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                  Cargando órdenes pendientes...
+                </td>
+              </tr>
+              <tr v-else-if="pendingOrders.length === 0">
+                <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                  🎉 ¡No hay órdenes pendientes de despacho!
+                </td>
+              </tr>
+              <tr v-for="order in pendingOrders" :key="order.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="font-mono font-bold text-gray-900 dark:text-white">{{ order.order_number }}</span>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">{{ order.status }}</div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-gray-900 dark:text-white">{{ order.user?.name }}</div>
+                  <div class="text-sm text-gray-500 dark:text-gray-400">{{ order.user?.email }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">
+                  ${{ formatPrice(order.total) }}
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-gray-900 dark:text-white">{{ order.shipping_address?.city }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">{{ order.shipping_address?.address_line_1 }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  {{ formatDate(order.created_at) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span :class="getDaysWaitingClass(order)">
+                    {{ calculateDaysWaiting(order.created_at) }} días
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <button
+                    @click="openCreateShipmentModal(order)"
+                    class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition font-semibold text-sm"
+                  >
+                    📦 Crear Envío
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Shipments Table (activeTab === 'shipped' or 'all') -->
+      <div v-if="activeTab === 'shipped' || activeTab === 'all'" class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full">
             <thead class="bg-gray-50 dark:bg-gray-700">
@@ -189,7 +330,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-              {{ modalMode === 'view' ? 'Detalles del Envío' : 'Editar Envío' }}
+              {{ modalMode === 'view' ? 'Detalles del Envío' : modalMode === 'create' ? 'Crear Envío' : 'Editar Envío' }}
             </h2>
           </div>
 
@@ -197,17 +338,19 @@
             <!-- Order Info -->
             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Información del Pedido</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Pedido:</strong> {{ selectedShipment?.order_number }}</p>
-              <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Cliente:</strong> {{ selectedShipment?.order?.user?.name }}</p>
-              <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Email:</strong> {{ selectedShipment?.order?.user?.email }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Pedido:</strong> {{ modalMode === 'create' ? selectedOrder?.order_number : selectedShipment?.order_number }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Cliente:</strong> {{ modalMode === 'create' ? selectedOrder?.user?.name : selectedShipment?.order?.user?.name }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Email:</strong> {{ modalMode === 'create' ? selectedOrder?.user?.email : selectedShipment?.order?.user?.email }}</p>
+              <p v-if="modalMode === 'create'" class="text-sm text-gray-600 dark:text-gray-400"><strong>Total:</strong> ${{ formatPrice(selectedOrder?.total) }}</p>
             </div>
 
-            <div v-if="modalMode === 'edit'">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Número de Tracking</label>
+            <div v-if="modalMode === 'edit' || modalMode === 'create'">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Número de Tracking *</label>
               <input
                 v-model="shipmentForm.tracking_number"
                 type="text"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary"
+                placeholder="SERV-ABC123456"
                 required
               />
             </div>
@@ -215,8 +358,8 @@
               <p class="text-sm"><strong>Tracking:</strong> <span class="font-mono">{{ selectedShipment?.tracking_number }}</span></p>
             </div>
 
-            <div v-if="modalMode === 'edit'">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Transportadora</label>
+            <div v-if="modalMode === 'edit' || modalMode === 'create'">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Transportadora *</label>
               <select
                 v-model="shipmentForm.carrier"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary"
@@ -234,7 +377,7 @@
               <p class="text-sm"><strong>Transportadora:</strong> {{ selectedShipment?.carrier }}</p>
             </div>
 
-            <div v-if="modalMode === 'edit'">
+            <div v-if="modalMode === 'edit' || modalMode === 'create'">
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estado</label>
               <select
                 v-model="shipmentForm.status"
@@ -255,12 +398,13 @@
               </p>
             </div>
 
-            <div v-if="modalMode === 'edit'">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notas</label>
+            <div v-if="modalMode === 'edit' || modalMode === 'create'">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notas (Opcional)</label>
               <textarea
                 v-model="shipmentForm.notes"
                 rows="3"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary"
+                placeholder="Información adicional sobre el envío..."
               ></textarea>
             </div>
             <div v-else-if="selectedShipment?.notes">
@@ -268,13 +412,21 @@
             </div>
 
             <!-- Shipping Address -->
-            <div v-if="selectedShipment?.order?.shipping_address" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+            <div v-if="(modalMode === 'create' && selectedOrder?.shipping_address) || selectedShipment?.order?.shipping_address" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Dirección de Envío</h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
-                {{ selectedShipment.order.shipping_address.full_name }}<br>
-                {{ selectedShipment.order.shipping_address.address_line_1 }}<br>
-                {{ selectedShipment.order.shipping_address.city }}, {{ selectedShipment.order.shipping_address.state }}<br>
-                {{ selectedShipment.order.shipping_address.country }}
+                <template v-if="modalMode === 'create'">
+                  {{ selectedOrder.shipping_address.full_name }}<br>
+                  {{ selectedOrder.shipping_address.address_line_1 }}<br>
+                  {{ selectedOrder.shipping_address.city }}, {{ selectedOrder.shipping_address.state }}<br>
+                  {{ selectedOrder.shipping_address.country }}
+                </template>
+                <template v-else>
+                  {{ selectedShipment.order.shipping_address.full_name }}<br>
+                  {{ selectedShipment.order.shipping_address.address_line_1 }}<br>
+                  {{ selectedShipment.order.shipping_address.city }}, {{ selectedShipment.order.shipping_address.state }}<br>
+                  {{ selectedShipment.order.shipping_address.country }}
+                </template>
               </p>
             </div>
           </div>
@@ -287,12 +439,12 @@
               {{ modalMode === 'view' ? 'Cerrar' : 'Cancelar' }}
             </button>
             <button
-              v-if="modalMode === 'edit'"
+              v-if="modalMode === 'edit' || modalMode === 'create'"
               @click="saveShipment"
               :disabled="saving"
               class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition disabled:opacity-50"
             >
-              {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+              {{ saving ? 'Guardando...' : modalMode === 'create' ? 'Crear Envío' : 'Guardar Cambios' }}
             </button>
           </div>
         </div>
@@ -302,20 +454,35 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import { shipmentService } from '../../services/shipmentService'
+import api from '../../services/api'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 
+// Tab management
+const activeTab = ref('pending') // 'pending', 'shipped', 'all'
+
+// Data refs
 const shipments = ref([])
+const pendingOrders = ref([])
+const shippedOrders = ref([])
 const stats = ref({})
+const shippingStats = ref({})
+
+// Loading states
 const loading = ref(false)
+const loadingPending = ref(false)
+const loadingShipped = ref(false)
 const saving = ref(false)
+
+// Modal states
 const showModal = ref(false)
-const modalMode = ref('view') // 'view' or 'edit'
+const modalMode = ref('view') // 'view', 'edit', or 'create'
 const selectedShipment = ref(null)
+const selectedOrder = ref(null)
 
 const filters = ref({
   search: '',
@@ -420,14 +587,30 @@ const editShipment = (shipment) => {
 const saveShipment = async () => {
   saving.value = true
   try {
-    await shipmentService.update(selectedShipment.value.id, shipmentForm.value)
-    toast.success('Envío actualizado exitosamente')
-    closeModal()
-    loadShipments(pagination.value.current_page)
-    loadStats()
+    if (modalMode.value === 'create') {
+      // Create new shipment
+      await shipmentService.create({
+        order_id: selectedOrder.value.id,
+        ...shipmentForm.value
+      })
+      toast.success('Envío creado exitosamente')
+      closeModal()
+      loadPendingOrders()
+      loadShippedOrders()
+      loadShippingStats()
+    } else {
+      // Update existing shipment
+      await shipmentService.update(selectedShipment.value.id, shipmentForm.value)
+      toast.success('Envío actualizado exitosamente')
+      closeModal()
+      loadShipments(pagination.value.current_page)
+      loadShippedOrders()
+      loadShippingStats()
+      loadStats()
+    }
   } catch (error) {
-    console.error('Error updating shipment:', error)
-    toast.error(error.response?.data?.message || 'Error al actualizar el envío')
+    console.error('Error saving shipment:', error)
+    toast.error(error.response?.data?.message || 'Error al guardar el envío')
   } finally {
     saving.value = false
   }
@@ -450,6 +633,7 @@ const confirmDelete = async (shipment) => {
 const closeModal = () => {
   showModal.value = false
   selectedShipment.value = null
+  selectedOrder.value = null
   shipmentForm.value = {
     tracking_number: '',
     carrier: '',
@@ -484,8 +668,106 @@ const formatDate = (dateString) => {
   })
 }
 
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('es-CO').format(price)
+}
+
+const calculateDaysWaiting = (createdAt) => {
+  const created = new Date(createdAt)
+  const now = new Date()
+  const diffTime = Math.abs(now - created)
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  return diffDays
+}
+
+const getDaysWaitingClass = (order) => {
+  const days = calculateDaysWaiting(order.created_at)
+  if (days >= 3) {
+    return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-3 py-1 rounded-full text-sm font-bold'
+  } else if (days >= 2) {
+    return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-bold'
+  } else {
+    return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-bold'
+  }
+}
+
+// Load pending orders (orders without shipment)
+const loadPendingOrders = async () => {
+  loadingPending.value = true
+  try {
+    const response = await api.get('/api/v1/admin/orders/pending-shipment')
+    pendingOrders.value = response.data.data
+  } catch (error) {
+    console.error('Error loading pending orders:', error)
+    toast.error('Error al cargar órdenes pendientes')
+  } finally {
+    loadingPending.value = false
+  }
+}
+
+// Load shipped orders (orders with shipment)
+const loadShippedOrders = async () => {
+  loadingShipped.value = true
+  try {
+    const response = await api.get('/api/v1/admin/orders/shipped')
+    shippedOrders.value = response.data.data
+  } catch (error) {
+    console.error('Error loading shipped orders:', error)
+    toast.error('Error al cargar órdenes despachadas')
+  } finally {
+    loadingShipped.value = false
+  }
+}
+
+// Load shipping statistics
+const loadShippingStats = async () => {
+  try {
+    const response = await api.get('/api/v1/admin/orders/shipping-stats')
+    shippingStats.value = response.data
+  } catch (error) {
+    console.error('Error loading shipping stats:', error)
+  }
+}
+
+// Open create shipment modal for an order
+const openCreateShipmentModal = (order) => {
+  selectedOrder.value = order
+  shipmentForm.value = {
+    tracking_number: '',
+    carrier: 'Servientrega',
+    status: 'pending',
+    notes: ''
+  }
+  modalMode.value = 'create'
+  showModal.value = true
+}
+
+// Create shipment for order from urgent alerts
+const createShipmentForOrder = (order) => {
+  // Find full order data from pendingOrders
+  const fullOrder = pendingOrders.value.find(o => o.order_number === order.order_number)
+  if (fullOrder) {
+    openCreateShipmentModal(fullOrder)
+  } else {
+    toast.error('No se pudo encontrar la orden')
+  }
+}
+
+
+// Watch for tab changes
+watch(activeTab, (newTab) => {
+  if (newTab === 'pending') {
+    loadPendingOrders()
+  } else if (newTab === 'shipped') {
+    loadShippedOrders()
+  } else if (newTab === 'all') {
+    loadShipments()
+  }
+})
+
 onMounted(() => {
-  loadShipments()
-  loadStats()
+  loadShippingStats()
+  loadPendingOrders() // Load pending by default
+  loadStats() // Load shipment stats for 'all' tab
 })
 </script>

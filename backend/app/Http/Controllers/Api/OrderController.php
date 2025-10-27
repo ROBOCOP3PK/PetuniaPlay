@@ -160,4 +160,88 @@ class OrderController extends Controller
 
         return $pdf->download($filename);
     }
+
+    /**
+     * Get orders pending shipment (admin only)
+     * Órdenes que están listas para despachar (status processing y sin shipment)
+     */
+    public function pendingShipment(Request $request)
+    {
+        $orders = \App\Models\Order::with(['user', 'shippingAddress', 'items.product'])
+            ->whereIn('status', ['pending', 'processing'])
+            ->whereDoesntHave('shipment')
+            ->where('payment_status', 'paid') // Solo órdenes pagadas
+            ->orderBy('created_at', 'asc') // Más antiguas primero
+            ->paginate($request->get('per_page', 20));
+
+        return OrderResource::collection($orders);
+    }
+
+    /**
+     * Get orders that have been shipped (admin only)
+     * Órdenes que ya fueron despachadas (tienen shipment)
+     */
+    public function shipped(Request $request)
+    {
+        $orders = \App\Models\Order::with(['user', 'shippingAddress', 'items.product', 'shipment'])
+            ->whereHas('shipment')
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->get('per_page', 20));
+
+        return OrderResource::collection($orders);
+    }
+
+    /**
+     * Get shipping statistics (admin only)
+     * Estadísticas de despacho para el dashboard
+     */
+    public function shippingStats()
+    {
+        $pendingShipment = \App\Models\Order::whereIn('status', ['pending', 'processing'])
+            ->whereDoesntHave('shipment')
+            ->where('payment_status', 'paid')
+            ->count();
+
+        $readyToShip = \App\Models\Order::where('status', 'processing')
+            ->whereDoesntHave('shipment')
+            ->where('payment_status', 'paid')
+            ->count();
+
+        $shipped = \App\Models\Order::whereHas('shipment')
+            ->whereIn('status', ['shipped', 'delivered'])
+            ->count();
+
+        $inTransit = \App\Models\Order::whereHas('shipment', function($query) {
+            $query->where('status', 'in_transit');
+        })->count();
+
+        $delivered = \App\Models\Order::where('status', 'delivered')->count();
+
+        // Órdenes más antiguas sin despachar
+        $oldestPending = \App\Models\Order::with(['user'])
+            ->whereIn('status', ['pending', 'processing'])
+            ->whereDoesntHave('shipment')
+            ->where('payment_status', 'paid')
+            ->orderBy('created_at', 'asc')
+            ->take(5)
+            ->get()
+            ->map(function($order) {
+                return [
+                    'order_number' => $order->order_number,
+                    'customer' => $order->user->name,
+                    'total' => $order->total,
+                    'days_waiting' => now()->diffInDays($order->created_at),
+                    'created_at' => $order->created_at->format('Y-m-d H:i')
+                ];
+            });
+
+        return response()->json([
+            'pending_shipment' => $pendingShipment,
+            'ready_to_ship' => $readyToShip,
+            'shipped' => $shipped,
+            'in_transit' => $inTransit,
+            'delivered' => $delivered,
+            'oldest_pending' => $oldestPending,
+        ]);
+    }
 }

@@ -145,6 +145,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/admin/orders', [OrderController::class, 'adminIndex']);
         Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 
+        // Orders - Shipping Control
+        Route::get('/admin/orders/pending-shipment', [OrderController::class, 'pendingShipment']);
+        Route::get('/admin/orders/shipped', [OrderController::class, 'shipped']);
+        Route::get('/admin/orders/shipping-stats', [OrderController::class, 'shippingStats']);
+
         // Reviews Management
         Route::get('/admin/reviews', [ReviewController::class, 'adminIndex']);
         Route::put('/admin/reviews/{id}/toggle-approval', [ReviewController::class, 'toggleApproval']);
