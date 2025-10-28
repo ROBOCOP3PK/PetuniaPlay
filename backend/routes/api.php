@@ -17,6 +17,10 @@ use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\UnsubscribeController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Api\LoyaltyController;
+use App\Http\Controllers\Api\Admin\LoyaltyProgramController;
+use App\Http\Controllers\Api\Admin\LoyaltyRewardController;
+use App\Http\Controllers\Api\Admin\LoyaltyRedemptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -184,5 +188,33 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'users']);
         Route::put('/admin/users/{id}/role', [AdminController::class, 'updateUserRole']);
         Route::put('/admin/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus']);
+    });
+});
+
+// Loyalty routes
+Route::prefix('v1')->group(function () {
+    // Cliente (require authentication)
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/loyalty/my-rewards', [LoyaltyController::class, 'myRewards']);
+        Route::get('/loyalty/my-redemptions', [LoyaltyController::class, 'myRedemptions']);
+        Route::post('/loyalty/redeem', [LoyaltyController::class, 'redeem']);
+    });
+
+    // Admin Loyalty routes (require manager or admin role)
+    Route::middleware(['auth:sanctum', 'manager'])->prefix('admin/loyalty')->group(function () {
+        // Program
+        Route::get('/program', [LoyaltyProgramController::class, 'index']);
+        Route::post('/program', [LoyaltyProgramController::class, 'store']);
+        Route::post('/program/toggle', [LoyaltyProgramController::class, 'activate']);
+        Route::get('/statistics', [LoyaltyProgramController::class, 'statistics']);
+
+        // Rewards
+        Route::apiResource('rewards', LoyaltyRewardController::class);
+        Route::post('/rewards/{reward}/toggle', [LoyaltyRewardController::class, 'toggle']);
+
+        // Redemptions
+        Route::get('/redemptions', [LoyaltyRedemptionController::class, 'index']);
+        Route::get('/redemptions/{redemption}', [LoyaltyRedemptionController::class, 'show']);
+        Route::post('/redemptions/{redemption}/process', [LoyaltyRedemptionController::class, 'process']);
     });
 });

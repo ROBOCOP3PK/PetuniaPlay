@@ -74,6 +74,11 @@ class Order extends Model
         return $this->belongsTo(Coupon::class);
     }
 
+    public function loyaltyRedemption()
+    {
+        return $this->hasOne(LoyaltyRedemption::class);
+    }
+
     // Scopes
 
     public function scopePending($query)

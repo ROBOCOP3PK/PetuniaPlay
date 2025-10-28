@@ -161,6 +161,18 @@ const router = createRouter({
       component: () => import('../views/admin/AdminUsersView.vue'),
       meta: { requiresAuth: true, requiresAdmin: true }
     },
+    {
+      path: '/admin/loyalty',
+      name: 'admin-loyalty',
+      component: () => import('../views/admin/AdminLoyaltyView.vue'),
+      meta: { requiresAuth: true, requiresManager: true }
+    },
+    {
+      path: '/loyalty',
+      name: 'loyalty',
+      component: () => import('../views/LoyaltyView.vue'),
+      meta: { requiresAuth: true }
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

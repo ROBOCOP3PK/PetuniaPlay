@@ -94,6 +94,11 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
     }
 
+    public function loyaltyRedemptions()
+    {
+        return $this->hasMany(LoyaltyRedemption::class);
+    }
+
     // Helpers
 
     public function isAdmin()

@@ -45,6 +45,13 @@
                 >
                   Mis Pedidos
                 </router-link>
+                <router-link
+                  to="/loyalty"
+                  class="block px-4 py-2 text-dark dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition flex items-center gap-2"
+                >
+                  <i class="pi pi-gift"></i>
+                  Programa de Lealtad
+                </router-link>
                 <!-- Admin Panel Link (only for manager and admin) -->
                 <router-link
                   v-if="authStore.hasManagerAccess"
