@@ -5,6 +5,11 @@ import { createPinia } from 'pinia'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 
+// PrimeVue
+import PrimeVue from 'primevue/config'
+import Aura from '@primevue/themes/aura'
+import 'primeicons/primeicons.css'
+
 import App from './App.vue'
 import router from './router'
 import { useAuthStore } from './stores/authStore'
@@ -32,6 +37,20 @@ const toastOptions = {
 }
 
 const pinia = createPinia()
+
+// Configuración de PrimeVue con tema personalizado
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+    options: {
+      darkModeSelector: '.dark',
+      cssLayer: {
+        name: 'primevue',
+        order: 'tailwind-base, primevue, tailwind-utilities'
+      }
+    }
+  }
+})
 
 app.use(pinia)
 app.use(router)

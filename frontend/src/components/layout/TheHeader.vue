@@ -21,10 +21,11 @@
                 @click="showUserMenu = !showUserMenu"
                 class="hover:text-beige transition flex items-center gap-2"
               >
-                <span>👤 {{ authStore.userName }}</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
+                <span class="flex items-center gap-2">
+                  <i class="pi pi-user"></i>
+                  {{ authStore.userName }}
+                </span>
+                <i class="pi pi-chevron-down"></i>
               </button>
               <!-- Dropdown Menu -->
               <div
@@ -48,9 +49,10 @@
                 <router-link
                   v-if="authStore.hasManagerAccess"
                   to="/admin"
-                  class="block px-4 py-2 text-primary dark:text-primary-light font-semibold hover:bg-primary hover:bg-opacity-10 dark:hover:bg-opacity-20 transition border-t dark:border-gray-700"
+                  class="block px-4 py-2 text-primary dark:text-primary-light font-semibold hover:bg-primary hover:bg-opacity-10 dark:hover:bg-opacity-20 transition border-t dark:border-gray-700 flex items-center gap-2"
                 >
-                  📊 Panel Admin
+                  <i class="pi pi-chart-bar"></i>
+                  Panel Admin
                 </router-link>
                 <button
                   @click="handleLogout"
@@ -96,9 +98,7 @@
             class="relative hover:text-primary transition"
             title="Lista de deseos"
           >
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
+            <i class="pi pi-heart text-3xl"></i>
             <span
               v-if="wishlistStore.itemCount > 0"
               class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
@@ -109,9 +109,7 @@
 
           <!-- Cart Icon -->
           <router-link to="/cart" class="relative hover:text-primary transition" title="Carrito">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
+            <i class="pi pi-shopping-cart text-3xl"></i>
             <span
               v-if="cartStore.itemCount > 0"
               class="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"

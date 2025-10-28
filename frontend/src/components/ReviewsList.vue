@@ -24,19 +24,7 @@
       v-else-if="!loading && reviews.length === 0"
       class="text-center py-12 bg-gray-50 rounded-lg"
     >
-      <svg
-        class="mx-auto h-12 w-12 text-gray-400"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-        />
-      </svg>
+      <i class="pi pi-comments text-6xl text-gray-400"></i>
       <h3 class="mt-2 text-sm font-medium text-gray-900">Sin reseñas</h3>
       <p class="mt-1 text-sm text-gray-500">
         Sé el primero en escribir una reseña para este producto
@@ -68,13 +56,7 @@
                   v-if="review.is_verified_purchase"
                   class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
                 >
-                  <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fill-rule="evenodd"
-                      d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
+                  <i class="pi pi-verified text-xs mr-1"></i>
                   Compra verificada
                 </span>
               </div>
@@ -89,28 +71,14 @@
               class="text-gray-400 hover:text-primary transition-colors"
               title="Editar reseña"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              </svg>
+              <i class="pi pi-pencil text-xl"></i>
             </button>
             <button
               @click="$emit('delete-review', review)"
               class="text-gray-400 hover:text-red-600 transition-colors"
               title="Eliminar reseña"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
+              <i class="pi pi-trash text-xl"></i>
             </button>
           </div>
         </div>
@@ -160,7 +128,7 @@
 <script setup>
 import { computed } from 'vue'
 import StarRating from './StarRating.vue'
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '../stores/authStore'
 
 const props = defineProps({
   reviews: {

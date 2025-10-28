@@ -17,9 +17,7 @@
 
       <!-- Search Icon -->
       <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+        <i class="pi pi-search text-xl"></i>
       </div>
 
       <!-- Clear Button -->
@@ -28,9 +26,7 @@
         @click="clearSearch"
         class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <i class="pi pi-times text-xl"></i>
       </button>
 
       <!-- Loading Spinner -->
@@ -66,9 +62,7 @@
               class="w-12 h-12 object-cover rounded"
             />
             <div v-else class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
-              <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+              <i class="pi pi-image text-2xl text-gray-400"></i>
             </div>
           </div>
 
@@ -102,7 +96,7 @@
 
       <!-- No Results -->
       <div v-else-if="searchQuery && !loading" class="p-4 text-center text-gray-500">
-        <div class="text-4xl mb-2">🔍</div>
+        <i class="pi pi-search text-6xl mb-2 block text-gray-300"></i>
         <p>No se encontraron productos</p>
         <p class="text-sm mt-1">Intenta con otro término de búsqueda</p>
       </div>

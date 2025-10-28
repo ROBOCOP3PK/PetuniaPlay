@@ -3,20 +3,20 @@
     <div class="container mx-auto px-4 py-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-4xl font-bold mb-2">Todos los Productos</h1>
-        <p class="text-gray-600">Encuentra todo lo que necesita tu mascota</p>
+        <h1 class="text-4xl font-bold mb-2 text-gray-900 dark:text-white">Todos los Productos</h1>
+        <p class="text-gray-600 dark:text-gray-400">Encuentra todo lo que necesita tu mascota</p>
       </div>
 
       <div class="flex flex-col lg:flex-row gap-6">
         <!-- Sidebar Filters -->
         <aside class="lg:w-64 flex-shrink-0">
-          <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-4 border border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center mb-4">
-              <h2 class="font-bold text-lg">Filtros</h2>
+              <h2 class="font-bold text-lg text-gray-900 dark:text-white">Filtros</h2>
               <button
                 v-if="hasActiveFilters"
                 @click="clearAllFilters"
-                class="text-sm text-primary hover:underline"
+                class="text-sm text-primary dark:text-primary-light hover:underline"
               >
                 Limpiar
               </button>
@@ -24,29 +24,29 @@
 
             <!-- Price Range Filter -->
             <div class="mb-6">
-              <h3 class="font-semibold mb-3 text-sm text-gray-700">Rango de Precio</h3>
+              <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Rango de Precio</h3>
               <div class="space-y-2">
                 <input
                   v-model.number="filters.min_price"
                   type="number"
                   placeholder="Mín $"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 />
                 <input
                   v-model.number="filters.max_price"
                   type="number"
                   placeholder="Máx $"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 />
               </div>
             </div>
 
             <!-- Brand Filter -->
             <div class="mb-6">
-              <h3 class="font-semibold mb-3 text-sm text-gray-700">Marca</h3>
+              <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Marca</h3>
               <select
                 v-model="filters.brand"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">Todas las marcas</option>
                 <option v-for="brand in productStore.brands" :key="brand" :value="brand">
@@ -57,11 +57,11 @@
 
             <!-- Category Filter -->
             <div class="mb-6">
-              <h3 class="font-semibold mb-3 text-sm text-gray-700">Categoría</h3>
+              <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Categoría</h3>
               <select
                 v-model="selectedCategory"
                 @change="handleCategoryFilter"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">Todas las categorías</option>
                 <option
@@ -76,29 +76,29 @@
 
             <!-- Stock Filter -->
             <div class="mb-6">
-              <h3 class="font-semibold mb-3 text-sm text-gray-700">Disponibilidad</h3>
+              <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Disponibilidad</h3>
               <label class="flex items-center space-x-2 cursor-pointer">
                 <input
                   v-model="filters.in_stock"
                   type="checkbox"
                   class="form-checkbox h-4 w-4 text-primary rounded focus:ring-2 focus:ring-primary"
                 />
-                <span class="text-sm">Solo en stock</span>
+                <span class="text-sm text-gray-700 dark:text-gray-300">Solo en stock</span>
               </label>
             </div>
 
             <!-- Rating Filter -->
             <div class="mb-6">
-              <h3 class="font-semibold mb-3 text-sm text-gray-700">Calificación mínima</h3>
+              <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Calificación mínima</h3>
               <select
                 v-model.number="filters.min_rating"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option :value="null">Cualquier calificación</option>
-                <option :value="4">4⭐ o más</option>
-                <option :value="3">3⭐ o más</option>
-                <option :value="2">2⭐ o más</option>
-                <option :value="1">1⭐ o más</option>
+                <option :value="4">4★ o más</option>
+                <option :value="3">3★ o más</option>
+                <option :value="2">2★ o más</option>
+                <option :value="1">1★ o más</option>
               </select>
             </div>
 
@@ -122,7 +122,7 @@
                 @input="handleSearch"
                 type="text"
                 placeholder="Buscar productos..."
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               />
             </div>
 
@@ -130,7 +130,7 @@
             <select
               v-model="filters.sort_by"
               @change="applyFilters"
-              class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary sm:w-64"
+              class="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary sm:w-64 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
               <option value="">Ordenar por</option>
               <option value="newest">Más recientes</option>
@@ -145,46 +145,46 @@
           <div v-if="hasActiveFilters" class="mb-4 flex flex-wrap gap-2">
             <span
               v-if="filters.min_price"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               Precio mín: ${{ filters.min_price }}
-              <button @click="filters.min_price = null; applyFilters()" class="hover:text-primary-dark">
+              <button @click="filters.min_price = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
             <span
               v-if="filters.max_price"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               Precio máx: ${{ filters.max_price }}
-              <button @click="filters.max_price = null; applyFilters()" class="hover:text-primary-dark">
+              <button @click="filters.max_price = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
             <span
               v-if="filters.brand"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               Marca: {{ filters.brand }}
-              <button @click="filters.brand = ''; applyFilters()" class="hover:text-primary-dark">
+              <button @click="filters.brand = ''; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
             <span
               v-if="filters.in_stock"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               En stock
-              <button @click="filters.in_stock = false; applyFilters()" class="hover:text-primary-dark">
+              <button @click="filters.in_stock = false; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
             <span
               v-if="filters.min_rating"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
-              {{ filters.min_rating }}⭐ o más
-              <button @click="filters.min_rating = null; applyFilters()" class="hover:text-primary-dark">
+              {{ filters.min_rating }}★ o más
+              <button @click="filters.min_rating = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -193,12 +193,12 @@
           <!-- Loading -->
           <div v-if="productStore.loading" class="text-center py-12">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            <p class="mt-4 text-gray-600">Cargando productos...</p>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">Cargando productos...</p>
           </div>
 
           <!-- Error -->
           <div v-else-if="productStore.error" class="text-center py-12">
-            <p class="text-red-600">{{ productStore.error }}</p>
+            <p class="text-red-600 dark:text-red-400">{{ productStore.error }}</p>
           </div>
 
           <!-- Products Grid -->
@@ -213,8 +213,8 @@
 
             <!-- Empty State -->
             <div v-if="productStore.products.length === 0" class="text-center py-12">
-              <div class="text-6xl mb-4">🔍</div>
-              <p class="text-gray-600 text-lg">No se encontraron productos</p>
+              <i class="pi pi-search text-6xl text-gray-300 dark:text-gray-600 mb-4 block"></i>
+              <p class="text-gray-600 dark:text-gray-400 text-lg">No se encontraron productos</p>
               <button
                 @click="clearAllFilters"
                 class="btn-primary mt-4"

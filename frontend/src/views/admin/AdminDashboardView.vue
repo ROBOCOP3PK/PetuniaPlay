@@ -7,7 +7,10 @@
 
       <!-- Sales Report Export Section -->
       <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-lg font-bold text-dark mb-4">📊 Exportar Reporte de Ventas</h2>
+        <h2 class="text-lg font-bold text-dark mb-4 flex items-center gap-2">
+          <i class="pi pi-chart-bar text-xl"></i>
+          Exportar Reporte de Ventas
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Inicio</label>
@@ -41,7 +44,7 @@
             :disabled="exportingReport"
             class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 font-semibold flex items-center justify-center space-x-2"
           >
-            <span>📊</span>
+            <i class="pi pi-file-excel text-xl"></i>
             <span>{{ exportingReport ? 'Exportando...' : 'Exportar Excel' }}</span>
           </button>
         </div>
@@ -66,9 +69,7 @@
                 </p>
               </div>
               <div class="bg-green-100 rounded-full p-3">
-                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <i class="pi pi-dollar text-3xl text-green-600"></i>
               </div>
             </div>
             <p class="text-sm text-gray-600 mt-2">
@@ -84,9 +85,7 @@
                 <p class="text-3xl font-bold text-dark mt-2">{{ stats.total_orders }}</p>
               </div>
               <div class="bg-blue-100 rounded-full p-3">
-                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
+                <i class="pi pi-clipboard text-3xl text-blue-600"></i>
               </div>
             </div>
             <p class="text-sm text-gray-600 mt-2">
@@ -102,9 +101,7 @@
                 <p class="text-3xl font-bold text-dark mt-2">{{ stats.total_products }}</p>
               </div>
               <div class="bg-purple-100 rounded-full p-3">
-                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
+                <i class="pi pi-box text-3xl text-purple-600"></i>
               </div>
             </div>
             <p class="text-sm text-gray-600 mt-2">
@@ -120,9 +117,7 @@
                 <p class="text-3xl font-bold text-dark mt-2">{{ stats.total_users }}</p>
               </div>
               <div class="bg-yellow-100 rounded-full p-3">
-                <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
+                <i class="pi pi-users text-3xl text-yellow-600"></i>
               </div>
             </div>
             <p class="text-sm text-gray-600 mt-2">
@@ -138,13 +133,12 @@
         >
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <svg class="h-8 w-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
+              <i class="pi pi-exclamation-triangle text-3xl text-yellow-400"></i>
             </div>
             <div class="ml-3 flex-1">
-              <h3 class="text-lg font-semibold text-yellow-800">
-                ⚠️ Alerta de Inventario
+              <h3 class="text-lg font-semibold text-yellow-800 flex items-center gap-2">
+                <i class="pi pi-exclamation-circle"></i>
+                Alerta de Inventario
               </h3>
               <p class="text-sm text-yellow-700 mt-1">
                 Tienes <strong>{{ stats.products_low_stock }}</strong> producto(s) con stock bajo
@@ -207,8 +201,9 @@
                 {{ stats.products_low_stock }} alertas
               </span>
             </div>
-            <div v-if="lowStockProducts.length === 0" class="text-center py-8 text-gray-500">
-              ✅ Todos los productos tienen stock adecuado
+            <div v-if="lowStockProducts.length === 0" class="text-center py-8 text-gray-500 flex items-center justify-center gap-2">
+              <i class="pi pi-check-circle text-green-500 text-xl"></i>
+              Todos los productos tienen stock adecuado
             </div>
             <div v-else class="space-y-3">
               <div
@@ -222,15 +217,17 @@
                     <p class="font-semibold text-dark">{{ product.name }}</p>
                     <span
                       v-if="product.is_out_of_stock"
-                      class="px-2 py-1 text-xs rounded-full bg-red-200 text-red-800 font-semibold"
+                      class="px-2 py-1 text-xs rounded-full bg-red-200 text-red-800 font-semibold flex items-center gap-1"
                     >
-                      ❌ Agotado
+                      <i class="pi pi-times-circle"></i>
+                      Agotado
                     </span>
                     <span
                       v-else-if="product.is_low_stock"
-                      class="px-2 py-1 text-xs rounded-full bg-yellow-200 text-yellow-800 font-semibold"
+                      class="px-2 py-1 text-xs rounded-full bg-yellow-200 text-yellow-800 font-semibold flex items-center gap-1"
                     >
-                      ⚠️ Bajo
+                      <i class="pi pi-exclamation-triangle"></i>
+                      Bajo
                     </span>
                   </div>
                   <p class="text-sm text-gray-600">
