@@ -83,3 +83,37 @@
 .Vue-Toastification__close-button:hover {
   opacity: 1;
 }
+
+/* Confirm Toast Customization */
+.confirm-toast-container {
+  min-width: 350px;
+  max-width: 450px;
+}
+
+.confirm-toast {
+  padding: 0.5rem 0;
+}
+
+.confirm-message {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: inherit;
+  margin-bottom: 1rem;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* Dark mode support for confirm toast */
+.dark .confirm-toast-container {
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+/* Custom toast positioning for confirms */
+.Vue-Toastification__container.top-center {
+  top: 2rem;
+}

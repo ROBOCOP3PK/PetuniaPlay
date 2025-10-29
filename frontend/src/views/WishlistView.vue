@@ -127,11 +127,13 @@ import { useWishlistStore } from '../stores/wishlistStore'
 import { useCartStore } from '../stores/cartStore'
 import { useToast } from 'vue-toastification'
 import { useRouter } from 'vue-router'
+import { useConfirm } from '../composables/useConfirm'
 
 const wishlistStore = useWishlistStore()
 const cartStore = useCartStore()
 const toast = useToast()
 const router = useRouter()
+const { confirm } = useConfirm()
 
 const loading = ref(false)
 
@@ -165,7 +167,13 @@ const handleAddToCart = (product) => {
 }
 
 const handleClearWishlist = async () => {
-  if (confirm('¿Estás seguro de que deseas eliminar todos los productos de tu lista de deseos?')) {
+  const confirmed = await confirm('¿Estás seguro de que deseas eliminar todos los productos de tu lista de deseos?', {
+    confirmText: 'Eliminar todo',
+    cancelText: 'Cancelar',
+    type: 'error'
+  })
+
+  if (confirmed) {
     const result = await wishlistStore.clearWishlist()
     if (result.success) {
       toast.success(result.message)

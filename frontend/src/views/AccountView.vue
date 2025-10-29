@@ -79,6 +79,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import { useToast } from 'vue-toastification'
+import { useConfirm } from '../composables/useConfirm'
 import ProfileSection from '../components/account/ProfileSection.vue'
 import OrdersSection from '../components/account/OrdersSection.vue'
 import AddressesSection from '../components/account/AddressesSection.vue'
@@ -86,6 +87,7 @@ import AddressesSection from '../components/account/AddressesSection.vue'
 const router = useRouter()
 const authStore = useAuthStore()
 const toast = useToast()
+const { confirm } = useConfirm()
 
 const activeTab = ref('profile')
 
@@ -96,7 +98,13 @@ const tabClass = (tab) => {
 }
 
 const handleLogout = async () => {
-  if (confirm('¿Estás seguro que deseas cerrar sesión?')) {
+  const confirmed = await confirm('¿Estás seguro que deseas cerrar sesión?', {
+    confirmText: 'Cerrar sesión',
+    cancelText: 'Cancelar',
+    type: 'info'
+  })
+
+  if (confirmed) {
     await authStore.logout()
     toast.info('Sesión cerrada exitosamente')
     router.push('/')
