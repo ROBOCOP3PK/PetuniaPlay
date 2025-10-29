@@ -180,6 +180,12 @@ const router = createRouter({
       meta: { requiresAuth: true, requiresManager: true }
     },
     {
+      path: '/admin/site-config',
+      name: 'admin-site-config',
+      component: () => import('../views/admin/AdminSiteConfigView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
       path: '/loyalty',
       name: 'loyalty',
       component: () => import('../views/LoyaltyView.vue'),

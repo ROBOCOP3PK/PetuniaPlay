@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import TheHeader from './components/layout/TheHeader.vue'
 import TheFooter from './components/layout/TheFooter.vue'
+import WhatsAppButton from './components/WhatsAppButton.vue'
 import { useTheme } from './composables/useTheme'
 
 const { initTheme } = useTheme()
@@ -22,6 +23,9 @@ onMounted(() => {
     </main>
 
     <TheFooter />
+
+    <!-- WhatsApp Floating Button -->
+    <WhatsAppButton />
   </div>
 </template>
 

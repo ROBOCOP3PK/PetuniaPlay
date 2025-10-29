@@ -123,6 +123,16 @@
             <i class="pi pi-users text-xl"></i>
             <span class="font-semibold">Usuarios</span>
           </router-link>
+
+          <router-link
+            v-if="authStore.isAdmin"
+            to="/admin/site-config"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition"
+            active-class="bg-primary"
+          >
+            <i class="pi pi-sliders-h text-xl"></i>
+            <span class="font-semibold">Configuración del Sitio</span>
+          </router-link>
         </nav>
 
         <!-- User Info -->

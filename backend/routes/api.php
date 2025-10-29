@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\Admin\LoyaltyRewardController;
 use App\Http\Controllers\Api\Admin\LoyaltyRedemptionController;
 use App\Http\Controllers\Api\ProductQuestionController;
 use App\Http\Controllers\Api\ShippingConfigController;
+use App\Http\Controllers\Api\SiteConfigController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +74,9 @@ Route::prefix('v1')->group(function () {
 
     // Shipping Configuration (public - read only)
     Route::get('/shipping-config', [ShippingConfigController::class, 'index']);
+
+    // Site Configuration (public - read only)
+    Route::get('/site-config', [SiteConfigController::class, 'index']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);
@@ -209,6 +213,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'users']);
         Route::put('/admin/users/{id}/role', [AdminController::class, 'updateUserRole']);
         Route::put('/admin/users/{id}/toggle-status', [AdminController::class, 'toggleUserStatus']);
+
+        // Site Configuration Management (admin only)
+        Route::put('/site-config', [SiteConfigController::class, 'update']);
     });
 });
 
