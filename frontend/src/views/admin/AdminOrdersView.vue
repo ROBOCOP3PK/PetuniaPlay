@@ -100,7 +100,7 @@
                   <select
                     v-model="order.status"
                     @change="updateStatus(order)"
-                    class="px-3 py-1 text-xs rounded-full font-semibold border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+                    class="px-3 py-1 text-xs rounded-full font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary border-2 border-transparent shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-500 transition-all"
                     :class="getStatusClass(order.status)"
                   >
                     <option value="pending">Pendiente</option>
