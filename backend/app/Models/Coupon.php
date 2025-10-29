@@ -16,6 +16,7 @@ class Coupon extends Model
         'min_purchase_amount',
         'usage_limit',
         'usage_count',
+        'max_usage_per_customer',
         'valid_from',
         'valid_until',
         'is_active',
@@ -28,10 +29,18 @@ class Coupon extends Model
             'min_purchase_amount' => 'decimal:2',
             'usage_limit' => 'integer',
             'usage_count' => 'integer',
+            'max_usage_per_customer' => 'integer',
             'valid_from' => 'datetime',
             'valid_until' => 'datetime',
             'is_active' => 'boolean',
         ];
+    }
+
+    // Relationships
+
+    public function redemptions()
+    {
+        return $this->hasMany(CouponRedemption::class);
     }
 
     // Scopes

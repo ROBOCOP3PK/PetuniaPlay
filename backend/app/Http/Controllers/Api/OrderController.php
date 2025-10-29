@@ -75,6 +75,11 @@ class OrderController extends Controller
      */
     public function updateStatus(Request $request, string $id)
     {
+        // Verificar que el usuario tenga permisos de manager o admin
+        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $request->validate([
             'status' => 'required|in:pending,processing,shipped,delivered,cancelled'
         ]);
@@ -114,6 +119,11 @@ class OrderController extends Controller
      */
     public function adminIndex(Request $request)
     {
+        // Verificar que el usuario tenga permisos de manager o admin
+        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $filters = $request->only(['status', 'payment_status', 'from_date', 'to_date']);
         $orders = $this->orderService->getAllOrders($filters);
 
@@ -125,6 +135,11 @@ class OrderController extends Controller
      */
     public function exportExcel(Request $request)
     {
+        // Verificar que el usuario tenga permisos de manager o admin
+        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $status = $request->input('status');
@@ -142,6 +157,11 @@ class OrderController extends Controller
      */
     public function exportPdf(Request $request)
     {
+        // Verificar que el usuario tenga permisos de manager o admin
+        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $status = $request->input('status');
@@ -167,6 +187,11 @@ class OrderController extends Controller
      */
     public function pendingShipment(Request $request)
     {
+        // Verificar que el usuario tenga permisos de manager o admin
+        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $orders = \App\Models\Order::with(['user', 'shippingAddress', 'items.product'])
             ->whereIn('status', ['pending', 'processing'])
             ->whereDoesntHave('shipment')
@@ -183,6 +208,11 @@ class OrderController extends Controller
      */
     public function shipped(Request $request)
     {
+        // Verificar que el usuario tenga permisos de manager o admin
+        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $orders = \App\Models\Order::with(['user', 'shippingAddress', 'items.product', 'shipment'])
             ->whereHas('shipment')
             ->orderBy('created_at', 'desc')
@@ -195,16 +225,22 @@ class OrderController extends Controller
      * Get shipping statistics (admin only)
      * Estadísticas de despacho para el dashboard
      */
-    public function shippingStats()
+    public function shippingStats(Request $request)
     {
-        $pendingShipment = \App\Models\Order::whereIn('status', ['pending', 'processing'])
-            ->whereDoesntHave('shipment')
-            ->where('payment_status', 'paid')
-            ->count();
+        // Verificar que el usuario tenga permisos de manager o admin
+        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
 
-        $readyToShip = \App\Models\Order::where('status', 'processing')
+        // Usar query base para evitar duplicación
+        $baseQuery = \App\Models\Order::whereIn('status', ['pending', 'processing'])
             ->whereDoesntHave('shipment')
-            ->where('payment_status', 'paid')
+            ->where('payment_status', 'paid');
+
+        $pendingShipment = (clone $baseQuery)->count();
+
+        $readyToShip = (clone $baseQuery)
+            ->where('status', 'processing')
             ->count();
 
         $shipped = \App\Models\Order::whereHas('shipment')
@@ -217,18 +253,16 @@ class OrderController extends Controller
 
         $delivered = \App\Models\Order::where('status', 'delivered')->count();
 
-        // Órdenes más antiguas sin despachar
-        $oldestPending = \App\Models\Order::with(['user'])
-            ->whereIn('status', ['pending', 'processing'])
-            ->whereDoesntHave('shipment')
-            ->where('payment_status', 'paid')
+        // Órdenes más antiguas sin despachar con eager loading
+        $oldestPending = (clone $baseQuery)
+            ->with('user') // Eager loading para evitar N+1
             ->orderBy('created_at', 'asc')
             ->take(5)
             ->get()
             ->map(function($order) {
                 return [
                     'order_number' => $order->order_number,
-                    'customer' => $order->user->name,
+                    'customer' => $order->user ? $order->user->name : 'N/A',
                     'total' => $order->total,
                     'days_waiting' => now()->diffInDays($order->created_at),
                     'created_at' => $order->created_at->format('Y-m-d H:i')

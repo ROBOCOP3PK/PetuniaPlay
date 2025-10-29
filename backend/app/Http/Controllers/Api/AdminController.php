@@ -42,8 +42,8 @@ class AdminController extends Controller
             'monthly_orders' => Order::where('created_at', '>=', now()->subMonth())->count(),
         ];
 
-        // Últimos pedidos
-        $recent_orders = Order::with(['user', 'items.product'])
+        // Últimos pedidos con eager loading completo
+        $recent_orders = Order::with(['user', 'items.product', 'items.product.category'])
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
@@ -78,13 +78,12 @@ class AdminController extends Controller
     /**
      * Get all users (admin only)
      */
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::orderBy('created_at', 'desc')->get();
+        $perPage = $request->get('per_page', 50);
+        $users = User::orderBy('created_at', 'desc')->paginate($perPage);
 
-        return response()->json([
-            'data' => $users
-        ]);
+        return response()->json($users);
     }
 
     /**

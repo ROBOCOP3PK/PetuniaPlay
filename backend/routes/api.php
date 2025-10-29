@@ -34,11 +34,13 @@ use App\Http\Controllers\Api\SiteConfigController;
 // Public routes
 Route::prefix('v1')->group(function () {
 
-    // Auth routes (public)
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    // Auth routes (public) - Rate limited to prevent brute force
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+        Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    });
 
     // Products
     Route::get('/products', [ProductController::class, 'index']);
@@ -59,14 +61,18 @@ Route::prefix('v1')->group(function () {
     // Product Questions (public)
     Route::get('/products/{productId}/questions', [ProductQuestionController::class, 'getByProduct']);
 
-    // Coupons (public - validation)
-    Route::post('/coupons/validate', [CouponController::class, 'validate']);
+    // Coupons (public - validation) - Rate limited to prevent abuse
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('/coupons/validate', [CouponController::class, 'validate']);
+    });
 
     // Shipments (public - tracking)
     Route::get('/shipments/track/{trackingNumber}', [ShipmentController::class, 'trackByNumber']);
 
-    // Contact
-    Route::post('/contact', [ContactController::class, 'send']);
+    // Contact - Rate limited to prevent spam
+    Route::middleware('throttle:5,60')->group(function () {
+        Route::post('/contact', [ContactController::class, 'send']);
+    });
 
     // Unsubscribe (public)
     Route::get('/unsubscribe/{token}', [UnsubscribeController::class, 'unsubscribe']);
@@ -85,8 +91,10 @@ Route::prefix('v1')->group(function () {
     Route::delete('/cart/remove/{productId}', [CartController::class, 'remove']);
     Route::delete('/cart/clear', [CartController::class, 'clear']);
 
-    // Orders - Guest checkout
-    Route::post('/orders', [OrderController::class, 'store']);
+    // Orders - Guest checkout - Rate limited to prevent abuse
+    Route::middleware('throttle:3,1')->group(function () {
+        Route::post('/orders', [OrderController::class, 'store']);
+    });
 });
 
 // Protected routes (require authentication)
@@ -200,11 +208,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Shipping Configuration Management
         Route::put('/shipping-config', [ShippingConfigController::class, 'update']);
 
-        // Export/Reports
-        Route::get('/admin/export/orders/excel', [OrderController::class, 'exportExcel']);
-        Route::get('/admin/export/orders/pdf', [OrderController::class, 'exportPdf']);
-        Route::get('/admin/export/products/excel', [ProductController::class, 'exportExcel']);
-        Route::get('/admin/export/sales-report', [ExportController::class, 'salesReport']);
+        // Export/Reports - Rate limited to prevent server overload
+        Route::middleware('throttle:10,60')->group(function () {
+            Route::get('/admin/export/orders/excel', [OrderController::class, 'exportExcel']);
+            Route::get('/admin/export/orders/pdf', [OrderController::class, 'exportPdf']);
+            Route::get('/admin/export/products/excel', [ProductController::class, 'exportExcel']);
+            Route::get('/admin/export/sales-report', [ExportController::class, 'salesReport']);
+        });
     });
 
     // Admin only routes (only accessible by admin)

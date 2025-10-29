@@ -4,7 +4,9 @@ import axios from 'axios'
 export const authService = {
   // Obtener el CSRF token (necesario para Sanctum)
   async getCsrfToken() {
-    return axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie', {
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1'
+    const apiBaseUrl = baseUrl.replace('/api/v1', '')
+    return axios.get(`${apiBaseUrl}/sanctum/csrf-cookie`, {
       withCredentials: true
     })
   },

@@ -18,13 +18,16 @@ class OrderService
 {
     protected $orderRepository;
     protected $productRepository;
+    protected $shippingCalculator;
 
     public function __construct(
         OrderRepository $orderRepository,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        ShippingCalculatorService $shippingCalculator
     ) {
         $this->orderRepository = $orderRepository;
         $this->productRepository = $productRepository;
+        $this->shippingCalculator = $shippingCalculator;
     }
 
     public function getUserOrders($userId, $perPage = 10)
@@ -88,10 +91,22 @@ class OrderService
                 }
             }
 
-            // Usar los totales que vienen del frontend (ya calculados correctamente)
+            // Validar el costo de envío recalculando en el backend
+            $calculatedShippingCost = $this->shippingCalculator->calculateFromOrderData($orderData);
+            $frontendShippingCost = $orderData['totals']['shipping'];
+
+            // Permitir una diferencia mínima por redondeo
+            if (abs($frontendShippingCost - $calculatedShippingCost) > 0.01) {
+                throw new \Exception(
+                    "El costo de envío no es válido. Esperado: $" . number_format($calculatedShippingCost, 0) .
+                    ", Recibido: $" . number_format($frontendShippingCost, 0)
+                );
+            }
+
+            // Usar los totales validados
             $subtotal = $orderData['totals']['subtotal'];
             $tax = $orderData['totals']['tax'];
-            $shippingCost = $orderData['totals']['shipping'];
+            $shippingCost = $calculatedShippingCost; // Usar el costo calculado en backend
             $discount = $orderData['totals']['discount'] ?? 0;
             $total = $orderData['totals']['total'];
 
@@ -99,17 +114,33 @@ class OrderService
             $couponId = null;
             $couponCode = null;
             if (isset($orderData['coupon_code']) && !empty($orderData['coupon_code'])) {
-                $coupon = Coupon::where('code', strtoupper($orderData['coupon_code']))->first();
+                // Usar lockForUpdate para prevenir race conditions
+                $coupon = Coupon::where('code', strtoupper($orderData['coupon_code']))
+                    ->lockForUpdate()
+                    ->first();
 
                 if ($coupon && $coupon->isValid()) {
                     // Verificar monto mínimo
-                    if (!$coupon->min_purchase_amount || $subtotal >= $coupon->min_purchase_amount) {
-                        $couponId = $coupon->id;
-                        $couponCode = $coupon->code;
-
-                        // Incrementar contador de uso
-                        $coupon->increment('usage_count');
+                    if ($coupon->min_purchase_amount && $subtotal < $coupon->min_purchase_amount) {
+                        throw new \Exception("El monto mínimo para este cupón es $" . number_format($coupon->min_purchase_amount, 0));
                     }
+
+                    // Verificar límite por usuario si existe
+                    if ($coupon->max_usage_per_customer) {
+                        $userUsageCount = \App\Models\CouponRedemption::where('coupon_id', $coupon->id)
+                            ->where('user_id', $userId)
+                            ->count();
+
+                        if ($userUsageCount >= $coupon->max_usage_per_customer) {
+                            throw new \Exception("Ya has usado este cupón el máximo de veces permitidas");
+                        }
+                    }
+
+                    $couponId = $coupon->id;
+                    $couponCode = $coupon->code;
+
+                    // Incrementar contador de uso de forma segura
+                    $coupon->increment('usage_count');
                 }
             }
 
@@ -138,6 +169,16 @@ class OrderService
                 'notes' => $orderData['shipping']['notes'] ?? null,
                 'night_delivery' => $orderData['shipping']['nightDelivery'] ?? false,
             ]);
+
+            // Registrar redención del cupón si se usó
+            if ($couponId) {
+                \App\Models\CouponRedemption::create([
+                    'coupon_id' => $couponId,
+                    'user_id' => $userId,
+                    'order_id' => $order->id,
+                    'discount_amount' => $discount,
+                ]);
+            }
 
             // Crear items de la orden
             foreach ($items as $item) {
