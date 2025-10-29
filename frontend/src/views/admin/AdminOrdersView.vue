@@ -1,20 +1,20 @@
 <template>
   <AdminLayout>
     <div>
-      <h1 class="text-3xl font-bold text-dark mb-8">Gestión de Pedidos</h1>
+      <h1 class="text-3xl font-bold text-dark dark:text-white mb-8">Gestión de Pedidos</h1>
 
       <!-- Filters -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <input
             v-model="search"
             type="text"
             placeholder="Buscar por número de pedido o cliente..."
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <select
             v-model="filterStatus"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="">Todos los estados</option>
             <option value="pending">Pendiente</option>
@@ -26,13 +26,13 @@
           <input
             v-model="filterDate"
             type="date"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
 
         <!-- Export Buttons -->
-        <div class="flex flex-wrap gap-2 pt-4 border-t">
-          <label class="text-sm font-semibold text-gray-700 mr-2 flex items-center">Exportar:</label>
+        <div class="flex flex-wrap gap-2 pt-4 border-t dark:border-gray-700">
+          <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 mr-2 flex items-center">Exportar:</label>
           <button
             @click="exportToExcel"
             :disabled="exportingExcel"
@@ -55,43 +55,43 @@
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p class="mt-4 text-gray-600">Cargando pedidos...</p>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Cargando pedidos...</p>
       </div>
 
       <!-- Orders Table -->
-      <div v-else class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div v-else class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50">
+            <thead class="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Pedido</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Cliente</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Fecha</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Total</th>
-                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Estado</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Pedido</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Cliente</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Fecha</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Total</th>
+                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Estado</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Acciones</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
               <tr
                 v-for="order in filteredOrders"
                 :key="order.id"
-                class="hover:bg-gray-50 transition"
+                class="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <td class="px-6 py-4">
                   <div>
-                    <p class="font-bold text-dark">#{{ order.order_number }}</p>
-                    <p class="text-sm text-gray-600">{{ order.items?.length || 0 }} productos</p>
+                    <p class="font-bold text-dark dark:text-white">#{{ order.order_number }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ order.items?.length || 0 }} productos</p>
                   </div>
                 </td>
                 <td class="px-6 py-4">
                   <div>
-                    <p class="font-semibold text-dark">{{ order.customer_name }}</p>
-                    <p class="text-sm text-gray-600">{{ order.customer_email }}</p>
+                    <p class="font-semibold text-dark dark:text-white">{{ order.customer_name }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ order.customer_email }}</p>
                   </div>
                 </td>
                 <td class="px-6 py-4">
-                  <p class="text-sm text-gray-700">{{ formatDate(order.created_at) }}</p>
+                  <p class="text-sm text-gray-700 dark:text-gray-300">{{ formatDate(order.created_at) }}</p>
                 </td>
                 <td class="px-6 py-4 text-right">
                   <p class="font-bold text-primary text-lg">${{ formatPrice(order.total) }}</p>
@@ -125,21 +125,21 @@
 
         <!-- Empty State -->
         <div v-if="filteredOrders.length === 0" class="text-center py-12">
-          <p class="text-gray-600">No se encontraron pedidos</p>
+          <p class="text-gray-600 dark:text-gray-400">No se encontraron pedidos</p>
         </div>
       </div>
 
       <!-- Order Details Modal -->
       <div
         v-if="selectedOrder"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4"
         @click.self="selectedOrder = null"
       >
-        <div class="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-          <div class="p-6 border-b sticky top-0 bg-white">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+          <div class="p-6 border-b dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
             <div class="flex justify-between items-center">
-              <h2 class="text-2xl font-bold">Pedido #{{ selectedOrder.order_number }}</h2>
-              <button @click="selectedOrder = null" class="text-gray-500 hover:text-gray-700">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Pedido #{{ selectedOrder.order_number }}</h2>
+              <button @click="selectedOrder = null" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -150,8 +150,8 @@
           <div class="p-6 space-y-6">
             <!-- Customer Info -->
             <div>
-              <h3 class="font-bold text-lg mb-3">Información del Cliente</h3>
-              <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Información del Cliente</h3>
+              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-gray-900 dark:text-gray-200">
                 <p><strong>Nombre:</strong> {{ selectedOrder.customer_name }}</p>
                 <p><strong>Email:</strong> {{ selectedOrder.customer_email }}</p>
                 <p><strong>Teléfono:</strong> {{ selectedOrder.customer_phone }}</p>
@@ -160,8 +160,8 @@
 
             <!-- Shipping Address -->
             <div>
-              <h3 class="font-bold text-lg mb-3">Dirección de Envío</h3>
-              <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Dirección de Envío</h3>
+              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-gray-900 dark:text-gray-200">
                 <p>{{ selectedOrder.shipping_address?.address_line_1 }}</p>
                 <p v-if="selectedOrder.shipping_address?.address_line_2">
                   {{ selectedOrder.shipping_address.address_line_2 }}
@@ -177,7 +177,7 @@
             <!-- Shipment Info -->
             <div>
               <div class="flex justify-between items-center mb-3">
-                <h3 class="font-bold text-lg">Información de Envío</h3>
+                <h3 class="font-bold text-lg text-gray-900 dark:text-white">Información de Envío</h3>
                 <button
                   v-if="!orderShipment && !showShipmentForm"
                   @click="showShipmentForm = true"
@@ -188,50 +188,50 @@
               </div>
 
               <!-- Existing Shipment -->
-              <div v-if="orderShipment" class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                <div class="grid grid-cols-2 gap-3">
+              <div v-if="orderShipment" class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 p-4 rounded-lg">
+                <div class="grid grid-cols-2 gap-3 text-gray-900 dark:text-gray-100">
                   <div>
-                    <p class="text-sm text-gray-600">Tracking Number</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Tracking Number</p>
                     <p class="font-mono font-bold">{{ orderShipment.tracking_number }}</p>
                   </div>
                   <div>
-                    <p class="text-sm text-gray-600">Transportadora</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Transportadora</p>
                     <p class="font-semibold">{{ orderShipment.carrier }}</p>
                   </div>
                   <div>
-                    <p class="text-sm text-gray-600">Estado</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Estado</p>
                     <span :class="getShipmentStatusClass(orderShipment.status)">
                       {{ orderShipment.status_label }}
                     </span>
                   </div>
                   <div>
-                    <p class="text-sm text-gray-600">Días en tránsito</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Días en tránsito</p>
                     <p>{{ orderShipment.days_in_transit || '-' }}</p>
                   </div>
                 </div>
-                <div v-if="orderShipment.notes" class="mt-3 pt-3 border-t">
-                  <p class="text-sm text-gray-600">Notas:</p>
-                  <p class="text-sm">{{ orderShipment.notes }}</p>
+                <div v-if="orderShipment.notes" class="mt-3 pt-3 border-t dark:border-blue-700">
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Notas:</p>
+                  <p class="text-sm text-gray-900 dark:text-gray-200">{{ orderShipment.notes }}</p>
                 </div>
               </div>
 
               <!-- Create Shipment Form -->
-              <div v-if="showShipmentForm && !orderShipment" class="bg-gray-50 p-4 rounded-lg space-y-3">
+              <div v-if="showShipmentForm && !orderShipment" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg space-y-3">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Número de Tracking *</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número de Tracking *</label>
                   <input
                     v-model="shipmentForm.tracking_number"
                     type="text"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary"
                     placeholder="Ej: TRK-123456789"
                     required
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Transportadora *</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transportadora *</label>
                   <select
                     v-model="shipmentForm.carrier"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary"
                     required
                   >
                     <option value="">Seleccionar...</option>
@@ -244,11 +244,11 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Notas (opcional)</label>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notas (opcional)</label>
                   <textarea
                     v-model="shipmentForm.notes"
                     rows="2"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary"
                     placeholder="Notas adicionales sobre el envío..."
                   ></textarea>
                 </div>
@@ -262,7 +262,7 @@
                   </button>
                   <button
                     @click="cancelShipmentForm"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition"
                   >
                     Cancelar
                   </button>
@@ -272,16 +272,16 @@
 
             <!-- Order Items -->
             <div>
-              <h3 class="font-bold text-lg mb-3">Productos</h3>
+              <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Productos</h3>
               <div class="space-y-3">
                 <div
                   v-for="item in selectedOrder.items"
                   :key="item.id"
-                  class="flex justify-between items-center bg-gray-50 p-4 rounded-lg"
+                  class="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
                 >
                   <div class="flex-1">
-                    <p class="font-semibold">{{ item.product?.name || item.product_name }}</p>
-                    <p class="text-sm text-gray-600">Cantidad: {{ item.quantity }}</p>
+                    <p class="font-semibold text-gray-900 dark:text-white">{{ item.product?.name || item.product_name }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Cantidad: {{ item.quantity }}</p>
                   </div>
                   <p class="font-bold text-primary">${{ formatPrice(item.price * item.quantity) }}</p>
                 </div>
@@ -289,7 +289,7 @@
             </div>
 
             <!-- Order Summary -->
-            <div class="border-t pt-4">
+            <div class="border-t dark:border-gray-700 pt-4 text-gray-900 dark:text-gray-200">
               <div class="space-y-2">
                 <div class="flex justify-between">
                   <span>Subtotal:</span>
@@ -299,7 +299,7 @@
                   <span>Envío:</span>
                   <span class="font-semibold">${{ formatPrice(selectedOrder.shipping_cost) }}</span>
                 </div>
-                <div class="flex justify-between text-lg font-bold border-t pt-2">
+                <div class="flex justify-between text-lg font-bold border-t dark:border-gray-700 pt-2">
                   <span>Total:</span>
                   <span class="text-primary">${{ formatPrice(selectedOrder.total) }}</span>
                 </div>
@@ -384,13 +384,13 @@ const formatDate = (dateString) => {
 
 const getStatusClass = (status) => {
   const classes = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    processing: 'bg-blue-100 text-blue-800',
-    shipped: 'bg-purple-100 text-purple-800',
-    delivered: 'bg-green-100 text-green-800',
-    cancelled: 'bg-red-100 text-red-800'
+    pending: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200',
+    processing: 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200',
+    shipped: 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200',
+    delivered: 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200',
+    cancelled: 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
   }
-  return classes[status] || 'bg-gray-100 text-gray-800'
+  return classes[status] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
 }
 
 const updateStatus = async (order) => {
@@ -469,11 +469,11 @@ const cancelShipmentForm = () => {
 
 const getShipmentStatusClass = (status) => {
   const classes = {
-    pending: 'px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800',
-    in_transit: 'px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800',
-    delivered: 'px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800',
-    failed: 'px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800',
-    returned: 'px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800'
+    pending: 'px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200',
+    in_transit: 'px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200',
+    delivered: 'px-3 py-1 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200',
+    failed: 'px-3 py-1 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200',
+    returned: 'px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200'
   }
   return classes[status] || classes.pending
 }

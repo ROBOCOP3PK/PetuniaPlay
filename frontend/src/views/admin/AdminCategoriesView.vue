@@ -14,7 +14,7 @@
       />
 
       <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-dark">Gestión de Categorías</h1>
+        <h1 class="text-3xl font-bold text-dark dark:text-white">Gestión de Categorías</h1>
         <button
           @click="openCreateModal"
           class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition"
@@ -24,17 +24,17 @@
       </div>
 
       <!-- Search and Filters -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
             v-model="search"
             type="text"
             placeholder="Buscar por nombre..."
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
           <select
             v-model="filterStatus"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="">Todos los estados</option>
             <option value="active">Activas</option>
@@ -46,29 +46,29 @@
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p class="mt-4 text-gray-600">Cargando categorías...</p>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Cargando categorías...</p>
       </div>
 
       <!-- Categories Table -->
-      <div v-else class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div v-else class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-50">
+            <thead class="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Categoría</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Slug</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Padre</th>
-                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Orden</th>
-                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Subcategorías</th>
-                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Estado</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Categoría</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Slug</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Padre</th>
+                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Orden</th>
+                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Subcategorías</th>
+                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Estado</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Acciones</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
               <tr
                 v-for="category in filteredCategories"
                 :key="category.id"
-                class="hover:bg-gray-50 transition"
+                class="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <td class="px-6 py-4">
                   <div class="flex items-center space-x-3">
@@ -82,20 +82,20 @@
                       <span class="text-primary font-bold text-lg">{{ category.name.charAt(0) }}</span>
                     </div>
                     <div>
-                      <p class="font-semibold text-dark">{{ category.name }}</p>
-                      <p class="text-sm text-gray-600">{{ truncate(category.description, 40) || 'Sin descripción' }}</p>
+                      <p class="font-semibold text-dark dark:text-white">{{ category.name }}</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-400">{{ truncate(category.description, 40) || 'Sin descripción' }}</p>
                     </div>
                   </div>
                 </td>
                 <td class="px-6 py-4">
-                  <code class="text-sm bg-gray-100 px-2 py-1 rounded">{{ category.slug }}</code>
+                  <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">{{ category.slug }}</code>
                 </td>
                 <td class="px-6 py-4">
-                  <span v-if="category.parent" class="text-sm text-gray-700">{{ category.parent.name }}</span>
-                  <span v-else class="text-sm text-gray-400 italic">Raíz</span>
+                  <span v-if="category.parent" class="text-sm text-gray-700 dark:text-gray-300">{{ category.parent.name }}</span>
+                  <span v-else class="text-sm text-gray-400 dark:text-gray-500 italic">Raíz</span>
                 </td>
                 <td class="px-6 py-4 text-center">
-                  <span class="font-semibold text-gray-700">{{ category.order }}</span>
+                  <span class="font-semibold text-gray-700 dark:text-gray-300">{{ category.order }}</span>
                 </td>
                 <td class="px-6 py-4 text-center">
                   <span class="text-sm font-semibold text-primary">
@@ -107,8 +107,8 @@
                     @click="toggleStatus(category)"
                     class="px-3 py-1 text-xs rounded-full font-semibold transition"
                     :class="category.is_active
-                      ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                      ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     "
                   >
                     {{ category.is_active ? 'Activa' : 'Inactiva' }}
@@ -144,23 +144,23 @@
 
         <!-- Empty State -->
         <div v-if="filteredCategories.length === 0" class="text-center py-12">
-          <p class="text-gray-600">No se encontraron categorías</p>
+          <p class="text-gray-600 dark:text-gray-400">No se encontraron categorías</p>
         </div>
       </div>
 
       <!-- Category Modal (Create/Edit) -->
       <div
         v-if="showModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center z-50 p-4"
         @click.self="closeModal"
       >
-        <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <div class="p-6 border-b sticky top-0 bg-white">
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div class="p-6 border-b dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
             <div class="flex justify-between items-center">
-              <h2 class="text-2xl font-bold">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                 {{ editingCategoryData ? 'Editar Categoría' : 'Nueva Categoría' }}
               </h2>
-              <button @click="closeModal" class="text-gray-500 hover:text-gray-700">
+              <button @click="closeModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -171,40 +171,40 @@
           <form @submit.prevent="saveCategoryForm" class="p-6 space-y-6">
             <!-- Basic Information -->
             <div>
-              <h3 class="font-bold text-lg mb-3">Información Básica</h3>
+              <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Información Básica</h3>
               <div class="space-y-4">
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre *</label>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nombre *</label>
                   <input
                     v-model="categoryForm.name"
                     type="text"
                     required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Slug</label>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Slug</label>
                   <input
                     v-model="categoryForm.slug"
                     type="text"
                     placeholder="Se genera automáticamente si se deja vacío"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
-                  <p class="text-xs text-gray-500 mt-1">URL amigable (ej: juguetes-perros)</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">URL amigable (ej: juguetes-perros)</p>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Descripción</label>
                   <textarea
                     v-model="categoryForm.description"
                     rows="3"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   ></textarea>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Imagen de la Categoría</label>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Imagen de la Categoría</label>
                   <ImageUpload
                     v-model="categoryForm.imageArray"
                     :multiple="false"
@@ -216,13 +216,13 @@
 
             <!-- Hierarchy & Order -->
             <div>
-              <h3 class="font-bold text-lg mb-3">Jerarquía y Orden</h3>
+              <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Jerarquía y Orden</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Categoría Padre</label>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Categoría Padre</label>
                   <select
                     v-model="categoryForm.parent_id"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   >
                     <option :value="null">Ninguna (Categoría Raíz)</option>
                     <option
@@ -233,41 +233,41 @@
                       {{ cat.name }}
                     </option>
                   </select>
-                  <p class="text-xs text-gray-500 mt-1">Deja en blanco para categoría principal</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Deja en blanco para categoría principal</p>
                 </div>
 
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Orden</label>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Orden</label>
                   <input
                     v-model.number="categoryForm.order"
                     type="number"
                     min="0"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   />
-                  <p class="text-xs text-gray-500 mt-1">Menor número = mayor prioridad</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Menor número = mayor prioridad</p>
                 </div>
               </div>
             </div>
 
             <!-- Status -->
             <div>
-              <h3 class="font-bold text-lg mb-3">Estado</h3>
+              <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Estado</h3>
               <label class="flex items-center gap-2 cursor-pointer">
                 <input
                   v-model="categoryForm.is_active"
                   type="checkbox"
                   class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary"
                 />
-                <span class="text-sm font-semibold text-gray-700">Categoría activa</span>
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Categoría activa</span>
               </label>
             </div>
 
             <!-- Form Actions -->
-            <div class="flex justify-end gap-3 pt-4 border-t">
+            <div class="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
               <button
                 type="button"
                 @click="closeModal"
-                class="px-6 py-2 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition"
+                class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition text-gray-700 dark:text-gray-300"
               >
                 Cancelar
               </button>

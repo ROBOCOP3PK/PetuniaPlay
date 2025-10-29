@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen py-8 bg-gray-50">
+  <div class="min-h-screen py-8 bg-gray-50 dark:bg-gray-900">
     <div class="container mx-auto px-4">
-      <h1 class="text-4xl font-bold mb-8">Carrito de Compras</h1>
+      <h1 class="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Carrito de Compras</h1>
 
       <!-- Confirm Dialog -->
       <ConfirmDialog
@@ -16,13 +16,13 @@
       />
 
       <!-- Empty Cart -->
-      <div v-if="!cartStore.hasItems" class="bg-white rounded-lg shadow-md p-12 text-center">
+      <div v-if="!cartStore.hasItems" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
         <div class="text-6xl mb-4">🛒</div>
-        <h2 class="text-2xl font-bold mb-2">Tu carrito está vacío</h2>
-        <p class="text-gray-600 mb-6">
+        <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Tu carrito está vacío</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
           Agrega productos a tu carrito para continuar comprando
         </p>
-        <router-link to="/products" class="btn-primary inline-block">
+        <router-link to="/products" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition inline-block">
           Explorar Productos
         </router-link>
       </div>
@@ -34,7 +34,7 @@
           <div
             v-for="item in cartStore.items"
             :key="item.product.id"
-            class="bg-white rounded-lg shadow-md p-6 flex gap-6"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex gap-6"
           >
             <!-- Product Image -->
             <router-link
@@ -52,17 +52,17 @@
             <div class="flex-1">
               <router-link
                 :to="`/product/${item.product.slug}`"
-                class="text-lg font-bold hover:text-primary transition mb-2 block"
+                class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary transition mb-2 block"
               >
                 {{ item.product.name }}
               </router-link>
 
-              <p class="text-sm text-gray-600 mb-2">SKU: {{ item.product.sku }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">SKU: {{ item.product.sku }}</p>
 
               <!-- Price -->
               <div class="mb-4">
                 <div v-if="item.product.has_discount" class="flex items-center gap-2">
-                  <span class="text-gray-400 line-through text-sm">
+                  <span class="text-gray-400 dark:text-gray-500 line-through text-sm">
                     ${{ formatPrice(item.product.price) }}
                   </span>
                   <span class="text-primary font-bold text-xl">
@@ -81,10 +81,10 @@
 
               <!-- Quantity Controls -->
               <div class="flex items-center gap-4">
-                <div class="flex items-center border border-gray-300 rounded-lg">
+                <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
                   <button
                     @click="decreaseQuantity(item.product.id)"
-                    class="px-3 py-1 hover:bg-gray-100 transition"
+                    class="px-3 py-1 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 transition"
                   >
                     -
                   </button>
@@ -94,11 +94,11 @@
                     type="number"
                     min="1"
                     :max="item.product.stock"
-                    class="w-16 text-center border-x border-gray-300 py-1 focus:outline-none"
+                    class="w-16 text-center border-x border-gray-300 dark:border-gray-600 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none"
                   />
                   <button
                     @click="increaseQuantity(item.product.id)"
-                    class="px-3 py-1 hover:bg-gray-100 transition"
+                    class="px-3 py-1 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 transition"
                   >
                     +
                   </button>
@@ -106,16 +106,16 @@
 
                 <button
                   @click="removeItem(item.product.id)"
-                  class="text-red-600 hover:text-red-800 font-semibold transition"
+                  class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-semibold transition"
                 >
-                  🗑️ Eliminar
+                  Eliminar
                 </button>
               </div>
             </div>
 
             <!-- Item Total -->
             <div class="text-right">
-              <p class="text-sm text-gray-600 mb-1">Subtotal</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Subtotal</p>
               <p class="text-2xl font-bold text-primary">
                 ${{ formatPrice(parseFloat(item.product.final_price) * item.quantity) }}
               </p>
@@ -125,40 +125,40 @@
 
         <!-- Order Summary -->
         <div class="lg:col-span-1">
-          <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-            <h2 class="text-2xl font-bold mb-6">Resumen del Pedido</h2>
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-24">
+            <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Resumen del Pedido</h2>
 
             <!-- Summary Items -->
             <div class="space-y-3 mb-6">
               <div class="flex justify-between">
-                <span class="text-gray-600">Subtotal ({{ cartStore.itemCount }} items)</span>
-                <span class="font-semibold">${{ formatPrice(cartStore.subtotal) }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Subtotal ({{ cartStore.itemCount }} items)</span>
+                <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.subtotal) }}</span>
               </div>
 
               <div class="flex justify-between">
-                <span class="text-gray-600">IVA (19%)</span>
-                <span class="font-semibold">${{ formatPrice(cartStore.tax) }}</span>
+                <span class="text-gray-600 dark:text-gray-400">IVA (19%)</span>
+                <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.tax) }}</span>
               </div>
 
               <div class="flex justify-between">
-                <span class="text-gray-600">Envío</span>
-                <span v-if="cartStore.shipping === 0" class="text-green-600 font-semibold">
+                <span class="text-gray-600 dark:text-gray-400">Envío</span>
+                <span v-if="cartStore.shipping === 0" class="text-green-600 dark:text-green-400 font-semibold">
                   ¡Gratis!
                 </span>
-                <span v-else class="font-semibold">
+                <span v-else class="font-semibold text-gray-900 dark:text-white">
                   ${{ formatPrice(cartStore.shipping) }}
                 </span>
               </div>
 
-              <div v-if="cartStore.shipping === 0" class="text-xs text-green-600">
+              <div v-if="cartStore.shipping === 0" class="text-xs text-green-600 dark:text-green-400">
                 ✅ Envío gratis en compras mayores a $100,000
               </div>
             </div>
 
             <!-- Total -->
-            <div class="border-t pt-4 mb-6">
+            <div class="border-t dark:border-gray-700 pt-4 mb-6">
               <div class="flex justify-between items-center">
-                <span class="text-xl font-bold">Total</span>
+                <span class="text-xl font-bold text-gray-900 dark:text-white">Total</span>
                 <span class="text-3xl font-bold text-primary">
                   ${{ formatPrice(cartStore.total) }}
                 </span>
@@ -167,25 +167,25 @@
 
             <!-- Action Buttons -->
             <div class="space-y-3">
-              <router-link to="/checkout" class="btn-primary w-full block text-center text-lg">
+              <router-link to="/checkout" class="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition w-full block text-center text-lg">
                 Proceder al Pago
               </router-link>
 
-              <router-link to="/products" class="btn-outline w-full block text-center">
+              <router-link to="/products" class="w-full block text-center px-6 py-3 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-lg font-semibold transition">
                 Continuar Comprando
               </router-link>
 
               <button
                 @click="clearCart"
-                class="w-full text-red-600 hover:text-red-800 font-semibold transition py-2"
+                class="w-full text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-semibold transition py-2"
               >
                 Vaciar Carrito
               </button>
             </div>
 
             <!-- Security Icons -->
-            <div class="mt-6 pt-6 border-t">
-              <p class="text-xs text-gray-600 text-center mb-3">Compra 100% Segura</p>
+            <div class="mt-6 pt-6 border-t dark:border-gray-700">
+              <p class="text-xs text-gray-600 dark:text-gray-400 text-center mb-3">Compra 100% Segura</p>
               <div class="flex justify-center items-center gap-4 text-2xl">
                 <span>🔒</span>
                 <span>💳</span>
@@ -201,12 +201,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cartStore'
 import { useToast } from 'vue-toastification'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 
-const router = useRouter()
 const cartStore = useCartStore()
 const toast = useToast()
 

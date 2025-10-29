@@ -9,6 +9,90 @@ use Illuminate\Support\Facades\DB;
 class ProductSeeder extends Seeder
 {
     /**
+     * Get demo images for products based on SKU
+     */
+    private function getProductImages(string $sku): array
+    {
+        // Mapeo de SKUs a imágenes demo de Unsplash/Picsum
+        $imageMap = [
+            // Alimentos para Perros
+            'FOOD-DOG-001' => [
+                'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1581888227599-779811939961?w=500&h=500&fit=crop',
+            ],
+            'SNACK-DOG-001' => [
+                'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1615751072497-5f5169febe17?w=500&h=500&fit=crop',
+            ],
+
+            // Juguetes para Perros
+            'TOY-DOG-001' => [
+                'https://images.unsplash.com/photo-1535294435445-d7249524ef2e?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1591768575338-74dd8e50f5f1?w=500&h=500&fit=crop',
+            ],
+            'TOY-DOG-002' => [
+                'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=500&h=500&fit=crop',
+            ],
+
+            // Alimentos para Gatos
+            'FOOD-CAT-001' => [
+                'https://images.unsplash.com/photo-1589652717521-10c0d092dea9?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1591650787194-d05c1d41b96f?w=500&h=500&fit=crop',
+            ],
+
+            // Juguetes para Gatos
+            'TOY-CAT-001' => [
+                'https://images.unsplash.com/photo-1545249390-6bdfa286032f?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=500&h=500&fit=crop',
+            ],
+            'TOY-CAT-002' => [
+                'https://images.unsplash.com/photo-1611003228941-98852ba62227?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=500&h=500&fit=crop',
+            ],
+
+            // Rascadores
+            'SCRA-CAT-001' => [
+                'https://images.unsplash.com/photo-1545529468-42764ef8c85f?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=500&h=500&fit=crop',
+            ],
+
+            // Collares y Correas
+            'COL-ACC-001' => [
+                'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=500&h=500&fit=crop',
+            ],
+            'LEA-ACC-001' => [
+                'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1522276498395-f4f68f7f8454?w=500&h=500&fit=crop',
+            ],
+
+            // Comederos y Bebederos
+            'BOWL-ACC-001' => [
+                'https://images.unsplash.com/photo-1591135905399-87b390a3a6e8?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1585664811087-47f65abbad64?w=500&h=500&fit=crop',
+            ],
+
+            // Transportadoras
+            'CARR-ACC-001' => [
+                'https://images.unsplash.com/photo-1603003573425-e4227c28e95e?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?w=500&h=500&fit=crop',
+            ],
+
+            // Camas
+            'BED-DOG-001' => [
+                'https://images.unsplash.com/photo-1563460716037-460a3ad24ba9?w=500&h=500&fit=crop',
+                'https://images.unsplash.com/photo-1585664811087-47f65abbad64?w=500&h=500&fit=crop',
+            ],
+        ];
+
+        return $imageMap[$sku] ?? [
+            'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=500&h=500&fit=crop',
+            'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=500&h=500&fit=crop',
+        ];
+    }
+
+    /**
      * Run the database seeds.
      */
     public function run(): void
@@ -266,15 +350,19 @@ class ProductSeeder extends Seeder
                 'updated_at' => now(),
             ]));
 
-            // Agregar imagen placeholder para cada producto
-            DB::table('product_images')->insert([
-                'product_id' => $productId,
-                'image_url' => 'https://via.placeholder.com/500x500.png?text=' . urlencode($product['name']),
-                'is_primary' => true,
-                'order' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            // Agregar imágenes demo para cada producto
+            $imageUrls = $this->getProductImages($product['sku']);
+
+            foreach ($imageUrls as $order => $imageUrl) {
+                DB::table('product_images')->insert([
+                    'product_id' => $productId,
+                    'image_url' => $imageUrl,
+                    'is_primary' => $order === 0,
+                    'order' => $order + 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 }
