@@ -1,6 +1,18 @@
 <template>
   <AdminLayout>
     <div class="space-y-6">
+      <!-- Confirm Dialog -->
+      <ConfirmDialog
+        v-model:isOpen="confirmDialog.isOpen"
+        :title="confirmDialog.title"
+        :message="confirmDialog.message"
+        :type="confirmDialog.type"
+        :confirm-text="confirmDialog.confirmText"
+        :cancel-text="confirmDialog.cancelText"
+        @confirm="confirmDialog.onConfirm"
+        @cancel="confirmDialog.onCancel"
+      />
+
       <!-- Header -->
       <div class="flex justify-between items-center">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Gestión de Envíos</h1>
@@ -456,11 +468,24 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import { shipmentService } from '../../services/shipmentService'
 import api from '../../services/api'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
+
+// Confirm Dialog State
+const confirmDialog = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  type: 'danger',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
 
 // Tab management
 const activeTab = ref('pending') // 'pending', 'shipped', 'all'
@@ -617,16 +642,25 @@ const saveShipment = async () => {
 }
 
 const confirmDelete = async (shipment) => {
-  if (confirm(`¿Estás seguro de eliminar el envío ${shipment.tracking_number}?`)) {
-    try {
-      await shipmentService.delete(shipment.id)
-      toast.success('Envío eliminado exitosamente')
-      loadShipments(pagination.value.current_page)
-      loadStats()
-    } catch (error) {
-      console.error('Error deleting shipment:', error)
-      toast.error(error.response?.data?.message || 'Error al eliminar el envío')
-    }
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Eliminar envío?',
+    message: `¿Estás seguro de eliminar el envío ${shipment.tracking_number}?`,
+    type: 'danger',
+    confirmText: 'Sí, eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: async () => {
+      try {
+        await shipmentService.delete(shipment.id)
+        toast.success('Envío eliminado exitosamente')
+        loadShipments(pagination.value.current_page)
+        loadStats()
+      } catch (error) {
+        console.error('Error deleting shipment:', error)
+        toast.error(error.response?.data?.message || 'Error al eliminar el envío')
+      }
+    },
+    onCancel: () => {}
   }
 }
 

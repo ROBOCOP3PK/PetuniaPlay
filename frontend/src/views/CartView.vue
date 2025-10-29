@@ -3,6 +3,18 @@
     <div class="container mx-auto px-4">
       <h1 class="text-4xl font-bold mb-8">Carrito de Compras</h1>
 
+      <!-- Confirm Dialog -->
+      <ConfirmDialog
+        v-model:isOpen="confirmDialog.isOpen"
+        :title="confirmDialog.title"
+        :message="confirmDialog.message"
+        :type="confirmDialog.type"
+        :confirm-text="confirmDialog.confirmText"
+        :cancel-text="confirmDialog.cancelText"
+        @confirm="confirmDialog.onConfirm"
+        @cancel="confirmDialog.onCancel"
+      />
+
       <!-- Empty Cart -->
       <div v-if="!cartStore.hasItems" class="bg-white rounded-lg shadow-md p-12 text-center">
         <div class="text-6xl mb-4">🛒</div>
@@ -188,13 +200,27 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cartStore'
 import { useToast } from 'vue-toastification'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
 const toast = useToast()
+
+// Confirm Dialog State
+const confirmDialog = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  type: 'danger',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO').format(price)
@@ -232,14 +258,34 @@ const updateQuantity = (productId, value) => {
 }
 
 const removeItem = (productId) => {
-  if (confirm('¿Estás seguro de eliminar este producto del carrito?')) {
-    cartStore.removeItem(productId)
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Eliminar producto?',
+    message: '¿Estás seguro de eliminar este producto del carrito?',
+    type: 'warning',
+    confirmText: 'Sí, eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: () => {
+      cartStore.removeItem(productId)
+      toast.success('Producto eliminado del carrito')
+    },
+    onCancel: () => {}
   }
 }
 
 const clearCart = () => {
-  if (confirm('¿Estás seguro de vaciar todo el carrito?')) {
-    cartStore.clearCart()
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Vaciar carrito?',
+    message: '¿Estás seguro de vaciar todo el carrito? Esta acción eliminará todos los productos.',
+    type: 'danger',
+    confirmText: 'Sí, vaciar todo',
+    cancelText: 'Cancelar',
+    onConfirm: () => {
+      cartStore.clearCart()
+      toast.success('Carrito vaciado exitosamente')
+    },
+    onCancel: () => {}
   }
 }
 </script>

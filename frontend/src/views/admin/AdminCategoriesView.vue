@@ -1,6 +1,18 @@
 <template>
   <AdminLayout>
     <div>
+      <!-- Confirm Dialog -->
+      <ConfirmDialog
+        v-model:isOpen="confirmDialog.isOpen"
+        :title="confirmDialog.title"
+        :message="confirmDialog.message"
+        :type="confirmDialog.type"
+        :confirm-text="confirmDialog.confirmText"
+        :cancel-text="confirmDialog.cancelText"
+        @confirm="confirmDialog.onConfirm"
+        @cancel="confirmDialog.onCancel"
+      />
+
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-dark">Gestión de Categorías</h1>
         <button
@@ -278,6 +290,7 @@
 import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import ImageUpload from '../../components/admin/ImageUpload.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useToast } from 'vue-toastification'
 import { adminService } from '../../services/adminService'
@@ -293,6 +306,18 @@ const filterStatus = ref('')
 const showModal = ref(false)
 const editingCategoryData = ref(null)
 const savingCategory = ref(false)
+
+// Confirm Dialog State
+const confirmDialog = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  type: 'danger',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
 
 // Category form
 const emptyForm = {
@@ -433,14 +458,23 @@ const deleteCategory = async (category) => {
     return
   }
 
-  if (confirm(`¿Estás seguro de eliminar la categoría "${category.name}"?\n\nEsta acción no se puede deshacer.`)) {
-    try {
-      await adminService.deleteCategory(category.id)
-      toast.success('Categoría eliminada exitosamente')
-      await categoryStore.fetchCategories()
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Error al eliminar categoría')
-    }
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Eliminar categoría?',
+    message: `¿Estás seguro de eliminar la categoría "${category.name}"? Esta acción no se puede deshacer.`,
+    type: 'danger',
+    confirmText: 'Sí, eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: async () => {
+      try {
+        await adminService.deleteCategory(category.id)
+        toast.success('Categoría eliminada exitosamente')
+        await categoryStore.fetchCategories()
+      } catch (error) {
+        toast.error(error.response?.data?.message || 'Error al eliminar categoría')
+      }
+    },
+    onCancel: () => {}
   }
 }
 

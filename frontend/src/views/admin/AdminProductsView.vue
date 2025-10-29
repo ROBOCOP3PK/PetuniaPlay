@@ -1,6 +1,18 @@
 <template>
   <AdminLayout>
     <div>
+      <!-- Confirm Dialog -->
+      <ConfirmDialog
+        v-model:isOpen="confirmDialog.isOpen"
+        :title="confirmDialog.title"
+        :message="confirmDialog.message"
+        :type="confirmDialog.type"
+        :confirm-text="confirmDialog.confirmText"
+        :cancel-text="confirmDialog.cancelText"
+        @confirm="confirmDialog.onConfirm"
+        @cancel="confirmDialog.onCancel"
+      />
+
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-dark">Gestión de Productos</h1>
         <div class="flex space-x-3">
@@ -420,6 +432,7 @@
 import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import ImageUpload from '../../components/admin/ImageUpload.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import { useProductStore } from '../../stores/productStore'
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useToast } from 'vue-toastification'
@@ -441,6 +454,18 @@ const exportingProducts = ref(false)
 const showModal = ref(false)
 const editingProductData = ref(null)
 const savingProduct = ref(false)
+
+// Confirm Dialog State
+const confirmDialog = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  type: 'danger',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
 
 // Product form
 const emptyForm = {
@@ -612,14 +637,23 @@ const saveProductForm = async () => {
 }
 
 const deleteProduct = async (product) => {
-  if (confirm(`¿Estás seguro de eliminar "${product.name}"?\n\nEsta acción no se puede deshacer.`)) {
-    try {
-      await adminService.deleteProduct(product.id)
-      toast.success('Producto eliminado exitosamente')
-      await productStore.fetchProducts()
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Error al eliminar producto')
-    }
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Eliminar producto?',
+    message: `¿Estás seguro de eliminar "${product.name}"? Esta acción no se puede deshacer.`,
+    type: 'danger',
+    confirmText: 'Sí, eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: async () => {
+      try {
+        await adminService.deleteProduct(product.id)
+        toast.success('Producto eliminado exitosamente')
+        await productStore.fetchProducts()
+      } catch (error) {
+        toast.error(error.response?.data?.message || 'Error al eliminar producto')
+      }
+    },
+    onCancel: () => {}
   }
 }
 

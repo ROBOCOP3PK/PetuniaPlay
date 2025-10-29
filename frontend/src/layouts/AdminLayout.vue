@@ -1,5 +1,17 @@
 <template>
   <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+    <!-- Confirm Dialog -->
+    <ConfirmDialog
+      v-model:isOpen="confirmDialog.isOpen"
+      :title="confirmDialog.title"
+      :message="confirmDialog.message"
+      :type="confirmDialog.type"
+      :confirm-text="confirmDialog.confirmText"
+      :cancel-text="confirmDialog.cancelText"
+      @confirm="confirmDialog.onConfirm"
+      @cancel="confirmDialog.onCancel"
+    />
+
     <!-- Sidebar -->
     <aside
       class="fixed inset-y-0 left-0 w-64 bg-dark dark:bg-gray-950 text-white transform transition-transform duration-300 ease-in-out z-30"
@@ -163,6 +175,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import { useToast } from 'vue-toastification'
 import ThemeToggle from '../components/ThemeToggle.vue'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -170,11 +183,32 @@ const toast = useToast()
 
 const sidebarOpen = ref(window.innerWidth >= 1024)
 
+// Confirm Dialog State
+const confirmDialog = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  type: 'danger',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
+
 const handleLogout = async () => {
-  if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-    await authStore.logout()
-    toast.info('Sesión cerrada exitosamente')
-    router.push('/login')
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Cerrar sesión?',
+    message: '¿Estás seguro de que deseas cerrar sesión?',
+    type: 'warning',
+    confirmText: 'Sí, cerrar sesión',
+    cancelText: 'Cancelar',
+    onConfirm: async () => {
+      await authStore.logout()
+      toast.info('Sesión cerrada exitosamente')
+      router.push('/login')
+    },
+    onCancel: () => {}
   }
 }
 </script>
