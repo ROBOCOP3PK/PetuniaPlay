@@ -29,6 +29,7 @@ class User extends Authenticatable
         'avatar',
         'is_active',
         'email_notifications',
+        'email_notifications_enabled',
     ];
 
     /**
@@ -54,6 +55,7 @@ class User extends Authenticatable
             'birth_date' => 'date',
             'is_active' => 'boolean',
             'email_notifications' => 'boolean',
+            'email_notifications_enabled' => 'boolean',
         ];
     }
 

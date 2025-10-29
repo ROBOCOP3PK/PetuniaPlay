@@ -243,4 +243,22 @@ class AuthController extends Controller
             'message' => 'Contraseña restablecida exitosamente'
         ]);
     }
+
+    /**
+     * Update notification preferences
+     */
+    public function updateNotificationPreferences(Request $request)
+    {
+        $validated = $request->validate([
+            'email_notifications_enabled' => 'required|boolean',
+        ]);
+
+        $user = $request->user();
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Preferencias de notificación actualizadas exitosamente',
+            'data' => $user
+        ]);
+    }
 }

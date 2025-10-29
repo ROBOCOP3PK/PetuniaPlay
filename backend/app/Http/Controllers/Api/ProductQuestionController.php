@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ProductQuestion;
 use App\Models\Product;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -152,10 +153,29 @@ class ProductQuestionController extends Controller
                 'is_public' => false // Será público cuando se responda
             ]);
 
+            // Cargar las relaciones
+            $question->load(['user', 'product']);
+
+            // Disparar notificación a los gestores
+            $notificationService = new NotificationService();
+            $notificationService->notifyManagers(
+                'new_product_question',
+                'Nueva pregunta sobre producto',
+                "El usuario {$question->user->name} hizo una pregunta sobre {$question->product->name}",
+                [
+                    'question_id' => $question->id,
+                    'product_id' => $question->product->id,
+                    'product_name' => $question->product->name,
+                    'user_name' => $question->user->name,
+                    'action_url' => config('app.frontend_url') . '/admin/questions',
+                    'action_text' => 'Ver pregunta'
+                ]
+            );
+
             return response()->json([
                 'success' => true,
                 'message' => 'Tu pregunta ha sido enviada. Será publicada cuando reciba respuesta.',
-                'data' => $question->load(['user', 'product'])
+                'data' => $question
             ], 201);
         } catch (\Exception $e) {
             return response()->json([

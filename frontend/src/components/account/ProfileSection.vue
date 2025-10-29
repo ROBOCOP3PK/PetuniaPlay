@@ -51,17 +51,17 @@
         <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Preferencias de Notificaciones</h3>
         <div class="flex items-start space-x-3">
           <input
-            id="email_notifications"
-            v-model="profileForm.email_notifications"
+            id="email_notifications_enabled"
+            v-model="profileForm.email_notifications_enabled"
             type="checkbox"
             class="mt-1 w-4 h-4 text-primary bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-primary focus:ring-2"
             :disabled="loading"
           />
-          <label for="email_notifications" class="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+          <label for="email_notifications_enabled" class="text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
             <span class="font-medium text-gray-900 dark:text-white">Recibir notificaciones por email</span>
             <p class="text-gray-500 dark:text-gray-400 mt-1">
-              Recibe actualizaciones sobre tus pedidos, ofertas especiales y novedades en tu correo electrónico.
-              Las notificaciones del sistema siempre estarán disponibles en la aplicación.
+              Recibe notificaciones sobre preguntas en productos, actualizaciones de pedidos y otras alertas importantes en tu correo electrónico.
+              Las notificaciones del sistema siempre estarán disponibles en la campana de notificaciones.
             </p>
           </label>
         </div>
@@ -137,6 +137,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from 'vue-toastification'
+import authService from '../../services/authService'
 
 const authStore = useAuthStore()
 const toast = useToast()
@@ -149,7 +150,7 @@ const profileForm = reactive({
   email: '',
   phone: '',
   document: '',
-  email_notifications: true
+  email_notifications_enabled: true
 })
 
 const passwordForm = reactive({
@@ -164,27 +165,41 @@ const loadUserData = () => {
     profileForm.email = authStore.user.email || ''
     profileForm.phone = authStore.user.phone || ''
     profileForm.document = authStore.user.document || ''
-    profileForm.email_notifications = authStore.user.email_notifications ?? true
+    profileForm.email_notifications_enabled = authStore.user.email_notifications_enabled ?? true
   }
 }
 
 const updateProfile = async () => {
   loading.value = true
 
-  const result = await authStore.updateProfile({
+  // Actualizar perfil
+  const profileResult = await authStore.updateProfile({
     name: profileForm.name,
     email: profileForm.email,
     phone: profileForm.phone,
-    document: profileForm.document,
-    email_notifications: profileForm.email_notifications
+    document: profileForm.document
   })
 
-  loading.value = false
+  if (!profileResult.success) {
+    loading.value = false
+    toast.error(profileResult.message)
+    return
+  }
 
-  if (result.success) {
-    toast.success('Perfil actualizado exitosamente')
-  } else {
-    toast.error(result.message)
+  // Actualizar preferencias de notificación
+  try {
+    await authService.updateNotificationPreferences({
+      email_notifications_enabled: profileForm.email_notifications_enabled
+    })
+
+    // Actualizar el usuario en el store
+    await authStore.fetchUser()
+
+    toast.success('Perfil y preferencias actualizados exitosamente')
+  } catch (error) {
+    toast.error('Perfil actualizado pero hubo un error al guardar las preferencias de notificación')
+  } finally {
+    loading.value = false
   }
 }
 

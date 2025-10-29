@@ -89,6 +89,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::put('/user/profile', [AuthController::class, 'updateProfile']);
     Route::put('/user/password', [AuthController::class, 'changePassword']);
+    Route::put('/user/notification-preferences', [AuthController::class, 'updateNotificationPreferences']);
 
     // Addresses
     Route::get('/user/addresses', [AddressController::class, 'index']);

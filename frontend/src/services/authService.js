@@ -41,6 +41,11 @@ export const authService = {
     return api.put('/user/password', passwordData)
   },
 
+  // Actualizar preferencias de notificación
+  async updateNotificationPreferences(preferences) {
+    return api.put('/user/notification-preferences', preferences)
+  },
+
   // Recuperar contraseña (enviar email)
   async forgotPassword(email) {
     await this.getCsrfToken()
