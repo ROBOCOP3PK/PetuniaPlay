@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => $faker->name(),
             'email' => 'admin@petuniaplay.com',
-            'password' => Hash::make('admin123'),
+            'password' => Hash::make('2025'),
             'phone' => $faker->phoneNumber(),
             'document' => $faker->numerify('##########'),
             'role' => 'admin',
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => $faker->name(),
             'email' => 'manager@petuniaplay.com',
-            'password' => Hash::make('manager123'),
+            'password' => Hash::make('2025'),
             'phone' => $faker->phoneNumber(),
             'document' => $faker->numerify('##########'),
             'role' => 'manager',
@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
             User::create([
                 'name' => $faker->name(),
                 'email' => $faker->unique()->safeEmail(),
-                'password' => Hash::make('customer123'),
+                'password' => Hash::make('2025'),
                 'phone' => $faker->phoneNumber(),
                 'document' => $faker->numerify('##########'),
                 'role' => 'customer',
@@ -65,7 +65,7 @@ class UserSeeder extends Seeder
             User::create([
                 'name' => $faker->name(),
                 'email' => $faker->unique()->safeEmail(),
-                'password' => Hash::make('customer123'),
+                'password' => Hash::make('2025'),
                 'phone' => $faker->phoneNumber(),
                 'document' => $faker->numerify('##########'),
                 'role' => 'customer',

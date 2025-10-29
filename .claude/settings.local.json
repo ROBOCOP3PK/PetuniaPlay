@@ -34,7 +34,11 @@
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\":*)",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as usuarios_actualizados FROM users;\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT email, name, role FROM users ORDER BY role, email LIMIT 15;\")",
-      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT email, name, role FROM users WHERE role IN (''admin'', ''manager'') ORDER BY role;\")"
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT email, name, role FROM users WHERE role IN (''admin'', ''manager'') ORDER BY role;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT p.name, pi.image_url FROM products p LEFT JOIN product_images pi ON p.id = pi.product_id LIMIT 5;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total_imagenes FROM product_images;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT email, role FROM users ORDER BY role, email LIMIT 5;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; UPDATE users SET password = ''$2y$12$ui2Z8BJJAwYda.FG3/zWd.mePo86XwVs51owUbiOQ6ujHyXLoznCm'';\")"
     ],
     "deny": [],
     "ask": []
