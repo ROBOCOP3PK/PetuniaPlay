@@ -139,7 +139,10 @@
 
         <!-- User Info -->
         <div class="p-4 border-t border-gray-700">
-          <div class="flex items-center space-x-3">
+          <router-link
+            to="/account"
+            class="flex items-center space-x-3 hover:bg-gray-800 p-2 rounded-lg transition cursor-pointer"
+          >
             <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center font-bold">
               {{ authStore.userName.charAt(0).toUpperCase() }}
             </div>
@@ -147,7 +150,7 @@
               <p class="text-sm font-semibold truncate">{{ authStore.userName }}</p>
               <p class="text-xs text-gray-400 capitalize">{{ authStore.userRole }}</p>
             </div>
-          </div>
+          </router-link>
         </div>
       </div>
     </aside>
