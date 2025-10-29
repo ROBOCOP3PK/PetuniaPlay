@@ -1,13 +1,13 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
     <div class="container mx-auto px-4">
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-dark">Mi Lista de Deseos</h1>
+        <h1 class="text-3xl font-bold text-dark dark:text-white">Mi Lista de Deseos</h1>
         <button
           v-if="wishlistStore.itemCount > 0"
           @click="handleClearWishlist"
-          class="text-red-600 hover:text-red-700 font-semibold transition"
+          class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-semibold transition"
         >
           Limpiar todo
         </button>
@@ -16,16 +16,16 @@
       <!-- Loading State -->
       <div v-if="loading" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p class="mt-4 text-gray-600">Cargando lista de deseos...</p>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Cargando lista de deseos...</p>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="wishlistStore.itemCount === 0" class="text-center py-16">
-        <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-24 h-24 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
-        <h2 class="text-2xl font-bold text-gray-700 mb-2">Tu lista de deseos está vacía</h2>
-        <p class="text-gray-600 mb-6">Agrega productos que te gusten para guardarlos aquí</p>
+        <h2 class="text-2xl font-bold text-gray-700 dark:text-gray-200 mb-2">Tu lista de deseos está vacía</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">Agrega productos que te gusten para guardarlos aquí</p>
         <router-link
           to="/products"
           class="inline-block bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition"
@@ -39,10 +39,10 @@
         <div
           v-for="item in wishlistStore.items"
           :key="item.id"
-          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
         >
           <!-- Product Image -->
-          <div class="relative aspect-square overflow-hidden bg-gray-100">
+          <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
             <router-link :to="`/product/${item.product.slug}`">
               <img
                 v-if="item.product.images && item.product.images.length > 0"
@@ -50,7 +50,7 @@
                 :alt="item.product.name"
                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
-              <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+              <div v-else class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
                 Sin imagen
               </div>
             </router-link>
@@ -58,7 +58,7 @@
             <!-- Remove Button -->
             <button
               @click="handleRemove(item.product.id)"
-              class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors"
+              class="absolute top-2 right-2 bg-white dark:bg-gray-700 p-2 rounded-full shadow-md hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
               title="Eliminar de favoritos"
             >
               <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 24 24">
@@ -78,12 +78,12 @@
           <div class="p-4">
             <router-link
               :to="`/product/${item.product.slug}`"
-              class="text-lg font-semibold text-dark hover:text-primary transition mb-2 block line-clamp-2"
+              class="text-lg font-semibold text-dark dark:text-white hover:text-primary transition mb-2 block line-clamp-2"
             >
               {{ item.product.name }}
             </router-link>
 
-            <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
               {{ item.product.description }}
             </p>
 
@@ -96,7 +96,7 @@
                 <p v-else class="text-2xl font-bold text-primary">
                   ${{ formatPrice(item.product.price) }}
                 </p>
-                <p v-if="item.product.sale_price" class="text-sm text-gray-500 line-through">
+                <p v-if="item.product.sale_price" class="text-sm text-gray-500 dark:text-gray-400 line-through">
                   ${{ formatPrice(item.product.price) }}
                 </p>
               </div>
@@ -104,14 +104,14 @@
               <button
                 @click="handleAddToCart(item.product)"
                 :disabled="item.product.stock <= 0"
-                class="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-dark transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                class="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-dark transition disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
               >
                 {{ item.product.stock > 0 ? 'Agregar' : 'Agotado' }}
               </button>
             </div>
 
             <!-- Added Date -->
-            <p class="text-xs text-gray-500 mt-3">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">
               Agregado el {{ formatDate(item.added_at) }}
             </p>
           </div>

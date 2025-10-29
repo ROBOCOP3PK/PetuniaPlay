@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen py-8">
+  <div class="min-h-screen py-8 dark:bg-gray-900">
     <div class="container mx-auto px-4">
       <!-- Header -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold mb-4">Contáctanos</h1>
-        <p class="text-gray-600 max-w-2xl mx-auto">
+        <h1 class="text-4xl font-bold mb-4 dark:text-white">Contáctanos</h1>
+        <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           ¿Tienes alguna pregunta o comentario? Estamos aquí para ayudarte.
           Envíanos un mensaje y te responderemos lo antes posible.
         </p>
@@ -12,13 +12,13 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <!-- Contact Form -->
-        <div class="bg-white rounded-lg shadow-md p-8">
-          <h2 class="text-2xl font-bold mb-6">Envíanos un Mensaje</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+          <h2 class="text-2xl font-bold mb-6 dark:text-white">Envíanos un Mensaje</h2>
 
           <form @submit.prevent="handleSubmit">
             <!-- Name -->
             <div class="mb-6">
-              <label for="name" class="block text-sm font-semibold mb-2">
+              <label for="name" class="block text-sm font-semibold mb-2 dark:text-gray-200">
                 Nombre Completo *
               </label>
               <input
@@ -26,14 +26,14 @@
                 type="text"
                 id="name"
                 required
-                class="input-field"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Juan Pérez"
               />
             </div>
 
             <!-- Email -->
             <div class="mb-6">
-              <label for="email" class="block text-sm font-semibold mb-2">
+              <label for="email" class="block text-sm font-semibold mb-2 dark:text-gray-200">
                 Correo Electrónico *
               </label>
               <input
@@ -41,35 +41,35 @@
                 type="email"
                 id="email"
                 required
-                class="input-field"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="juan@ejemplo.com"
               />
             </div>
 
             <!-- Phone -->
             <div class="mb-6">
-              <label for="phone" class="block text-sm font-semibold mb-2">
+              <label for="phone" class="block text-sm font-semibold mb-2 dark:text-gray-200">
                 Teléfono
               </label>
               <input
                 v-model="form.phone"
                 type="tel"
                 id="phone"
-                class="input-field"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="+57 305 759 4088"
               />
             </div>
 
             <!-- Subject -->
             <div class="mb-6">
-              <label for="subject" class="block text-sm font-semibold mb-2">
+              <label for="subject" class="block text-sm font-semibold mb-2 dark:text-gray-200">
                 Asunto *
               </label>
               <select
                 v-model="form.subject"
                 id="subject"
                 required
-                class="input-field"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="">Selecciona un asunto</option>
                 <option value="product">Consulta sobre producto</option>
@@ -82,7 +82,7 @@
 
             <!-- Message -->
             <div class="mb-6">
-              <label for="message" class="block text-sm font-semibold mb-2">
+              <label for="message" class="block text-sm font-semibold mb-2 dark:text-gray-200">
                 Mensaje *
               </label>
               <textarea
@@ -90,7 +90,7 @@
                 id="message"
                 required
                 rows="6"
-                class="input-field resize-none"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                 placeholder="Escribe tu mensaje aquí..."
               ></textarea>
             </div>
@@ -99,19 +99,19 @@
             <button
               type="submit"
               :disabled="submitting"
-              class="btn-primary w-full text-lg"
+              class="w-full bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition text-lg"
               :class="{ 'opacity-50 cursor-not-allowed': submitting }"
             >
               {{ submitting ? 'Enviando...' : 'Enviar Mensaje' }}
             </button>
 
             <!-- Success Message -->
-            <div v-if="success" class="mt-4 p-4 bg-green-100 text-green-700 rounded-lg">
+            <div v-if="success" class="mt-4 p-4 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-100 rounded-lg">
               ✅ ¡Mensaje enviado exitosamente! Te responderemos pronto.
             </div>
 
             <!-- Error Message -->
-            <div v-if="error" class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
+            <div v-if="error" class="mt-4 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded-lg">
               ❌ {{ error }}
             </div>
           </form>
@@ -122,7 +122,7 @@
           <!-- Info Cards -->
           <div class="space-y-6 mb-8">
             <!-- Email Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div class="flex items-start space-x-4">
                 <div class="bg-primary text-white p-3 rounded-lg">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,15 +130,15 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-bold text-lg mb-1">Correo Electrónico</h3>
-                  <p class="text-gray-600">contacto@petuniaplay.com</p>
-                  <p class="text-gray-600 text-sm mt-1">Respuesta en 24 horas</p>
+                  <h3 class="font-bold text-lg mb-1 dark:text-white">Correo Electrónico</h3>
+                  <p class="text-gray-600 dark:text-gray-300">contacto@petuniaplay.com</p>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Respuesta en 24 horas</p>
                 </div>
               </div>
             </div>
 
             <!-- Phone Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div class="flex items-start space-x-4">
                 <div class="bg-primary text-white p-3 rounded-lg">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,15 +146,15 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-bold text-lg mb-1">Teléfono</h3>
-                  <p class="text-gray-600">+57 305 759 4088</p>
-                  <p class="text-gray-600 text-sm mt-1">Lun - Vie: 9:00 AM - 6:00 PM</p>
+                  <h3 class="font-bold text-lg mb-1 dark:text-white">Teléfono</h3>
+                  <p class="text-gray-600 dark:text-gray-300">+57 305 759 4088</p>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Lun - Vie: 9:00 AM - 6:00 PM</p>
                 </div>
               </div>
             </div>
 
             <!-- Location Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div class="flex items-start space-x-4">
                 <div class="bg-primary text-white p-3 rounded-lg">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,15 +163,15 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-bold text-lg mb-1">Ubicación</h3>
-                  <p class="text-gray-600">Bogotá, Colombia</p>
-                  <p class="text-gray-600 text-sm mt-1">Envíos a todo el país</p>
+                  <h3 class="font-bold text-lg mb-1 dark:text-white">Ubicación</h3>
+                  <p class="text-gray-600 dark:text-gray-300">Bogotá, Colombia</p>
+                  <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Envíos a todo el país</p>
                 </div>
               </div>
             </div>
 
             <!-- Social Media Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div class="flex items-start space-x-4">
                 <div class="bg-primary text-white p-3 rounded-lg">
                   <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -179,7 +179,7 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-bold text-lg mb-1">Redes Sociales</h3>
+                  <h3 class="font-bold text-lg mb-1 dark:text-white">Redes Sociales</h3>
                   <div class="space-y-1">
                     <a href="#" class="text-primary hover:underline block">Facebook</a>
                     <a href="#" class="text-primary hover:underline block">Instagram</a>
@@ -191,12 +191,12 @@
           </div>
 
           <!-- FAQ Link -->
-          <div class="bg-beige rounded-lg p-6 text-center">
-            <h3 class="font-bold text-lg mb-2">¿Tienes una pregunta rápida?</h3>
-            <p class="text-gray-700 mb-4">
+          <div class="bg-beige dark:bg-gray-800 rounded-lg p-6 text-center">
+            <h3 class="font-bold text-lg mb-2 dark:text-white">¿Tienes una pregunta rápida?</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
               Revisa nuestras preguntas frecuentes, tal vez encuentres tu respuesta allí.
             </p>
-            <router-link to="/faq" class="btn-outline inline-block">
+            <router-link to="/faq" class="inline-block px-6 py-3 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-lg font-semibold transition dark:border-primary dark:text-primary dark:hover:bg-primary dark:hover:text-white">
               Ver FAQ
             </router-link>
           </div>
