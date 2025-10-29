@@ -54,6 +54,12 @@
   border-radius: 0.75rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   padding: 1rem 1.25rem;
+  z-index: 9998;
+}
+
+/* Contenedor de toasts debe estar debajo de modales pero encima de contenido normal */
+.Vue-Toastification__container {
+  z-index: 9998 !important;
 }
 
 .Vue-Toastification__toast--success {
@@ -113,7 +119,25 @@
   color: #f3f4f6;
 }
 
-/* Custom toast positioning for confirms */
+/* Custom toast positioning */
 .Vue-Toastification__container.top-center {
   top: 2rem;
+}
+
+.Vue-Toastification__container.bottom-right {
+  bottom: 2rem;
+  right: 2rem;
+}
+
+/* Asegurar que los toasts no interfieran con elementos de navegación */
+@media (max-width: 768px) {
+  .Vue-Toastification__container.bottom-right {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+
+  .Vue-Toastification__toast {
+    min-width: unset;
+  }
 }

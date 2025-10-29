@@ -19,7 +19,7 @@ const app = createApp(App)
 
 // Configuración de Toast
 const toastOptions = {
-  position: 'top-right',
+  position: 'bottom-right',
   timeout: 4000,
   closeOnClick: true,
   pauseOnFocusLoss: true,
