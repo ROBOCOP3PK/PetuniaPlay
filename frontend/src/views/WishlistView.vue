@@ -57,14 +57,10 @@
           <div class="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
             <router-link :to="`/product/${item.product.slug}`">
               <img
-                v-if="item.product.images && item.product.images.length > 0"
-                :src="item.product.images[0].url"
+                :src="item.product.primary_image?.image_url || 'https://via.placeholder.com/400'"
                 :alt="item.product.name"
                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
-              <div v-else class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
-                Sin imagen
-              </div>
             </router-link>
 
             <!-- Remove Button -->
