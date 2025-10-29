@@ -1,6 +1,18 @@
 <template>
   <AdminLayout>
     <div class="space-y-6">
+      <!-- Confirm Dialog -->
+      <ConfirmDialog
+        v-model:isOpen="confirmDialog.isOpen"
+        :title="confirmDialog.title"
+        :message="confirmDialog.message"
+        :type="confirmDialog.type"
+        :confirm-text="confirmDialog.confirmText"
+        :cancel-text="confirmDialog.cancelText"
+        @confirm="confirmDialog.onConfirm"
+        @cancel="confirmDialog.onCancel"
+      />
+
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
@@ -377,9 +389,22 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import AdminLayout from '../../layouts/AdminLayout.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import couponService from '../../services/couponService'
 
 const toast = useToast()
+
+// Confirm Dialog State
+const confirmDialog = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  type: 'danger',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
 
 // State
 const coupons = ref([])
@@ -534,18 +559,25 @@ const toggleStatus = async (coupon) => {
 }
 
 const confirmDelete = async (coupon) => {
-  if (!confirm(`¿Estás seguro de eliminar el cupón "${coupon.code}"?`)) {
-    return
-  }
-
-  try {
-    await couponService.delete(coupon.id)
-    toast.success('Cupón eliminado exitosamente')
-    loadCoupons()
-    loadStats()
-  } catch (error) {
-    const message = error.response?.data?.message || 'Error al eliminar cupón'
-    toast.error(message)
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Eliminar cupón?',
+    message: `¿Estás seguro de eliminar el cupón "${coupon.code}"?`,
+    type: 'danger',
+    confirmText: 'Sí, eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: async () => {
+      try {
+        await couponService.delete(coupon.id)
+        toast.success('Cupón eliminado exitosamente')
+        loadCoupons()
+        loadStats()
+      } catch (error) {
+        const message = error.response?.data?.message || 'Error al eliminar cupón'
+        toast.error(message)
+      }
+    },
+    onCancel: () => {}
   }
 }
 

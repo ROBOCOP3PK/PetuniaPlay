@@ -1,6 +1,18 @@
 <template>
   <div class="min-h-screen py-8">
     <div class="container mx-auto px-4">
+      <!-- Confirm Dialog -->
+      <ConfirmDialog
+        v-model:isOpen="confirmDialog.isOpen"
+        :title="confirmDialog.title"
+        :message="confirmDialog.message"
+        :type="confirmDialog.type"
+        :confirm-text="confirmDialog.confirmText"
+        :cancel-text="confirmDialog.cancelText"
+        @confirm="confirmDialog.onConfirm"
+        @cancel="confirmDialog.onCancel"
+      />
+
       <!-- Breadcrumb -->
       <nav class="text-sm mb-8">
         <ol class="flex items-center space-x-2 text-gray-600">
@@ -303,6 +315,7 @@ import { useCartStore } from '../stores/cartStore'
 import { useWishlistStore } from '../stores/wishlistStore'
 import { useAuthStore } from '../stores/authStore'
 import { useToast } from 'vue-toastification'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 import StarRating from '../components/StarRating.vue'
 import ReviewsList from '../components/ReviewsList.vue'
 import ReviewForm from '../components/ReviewForm.vue'
@@ -315,6 +328,18 @@ const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
 const authStore = useAuthStore()
 const toast = useToast()
+
+// Confirm Dialog State
+const confirmDialog = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  type: 'danger',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
 
 const quantity = ref(1)
 const selectedImage = ref(null)
@@ -466,19 +491,26 @@ const handleReviewSubmit = async (reviewData) => {
 }
 
 const confirmDeleteReview = async (review) => {
-  if (!confirm('¿Estás seguro de que deseas eliminar esta reseña?')) {
-    return
-  }
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Eliminar reseña?',
+    message: '¿Estás seguro de que deseas eliminar esta reseña?',
+    type: 'danger',
+    confirmText: 'Sí, eliminar',
+    cancelText: 'Cancelar',
+    onConfirm: async () => {
+      try {
+        await reviewService.delete(review.id)
+        toast.success('Reseña eliminada exitosamente')
 
-  try {
-    await reviewService.delete(review.id)
-    toast.success('Reseña eliminada exitosamente')
-
-    // Reload reviews and stats
-    await loadReviews()
-    await loadReviewStats()
-  } catch (error) {
-    toast.error('Error al eliminar la reseña')
+        // Reload reviews and stats
+        await loadReviews()
+        await loadReviewStats()
+      } catch (error) {
+        toast.error('Error al eliminar la reseña')
+      }
+    },
+    onCancel: () => {}
   }
 }
 

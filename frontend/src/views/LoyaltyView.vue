@@ -1,6 +1,18 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-200">
     <div class="container mx-auto px-4 max-w-7xl">
+      <!-- Confirm Dialog -->
+      <ConfirmDialog
+        v-model:isOpen="confirmDialog.isOpen"
+        :title="confirmDialog.title"
+        :message="confirmDialog.message"
+        :type="confirmDialog.type"
+        :confirm-text="confirmDialog.confirmText"
+        :cancel-text="confirmDialog.cancelText"
+        @confirm="confirmDialog.onConfirm"
+        @cancel="confirmDialog.onCancel"
+      />
+
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -262,9 +274,22 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 import loyaltyService from '../services/loyaltyService'
 
 const toast = useToast()
+
+// Confirm Dialog State
+const confirmDialog = ref({
+  isOpen: false,
+  title: '',
+  message: '',
+  type: 'info',
+  confirmText: 'Confirmar',
+  cancelText: 'Cancelar',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
 
 // State
 const loading = ref(true)
@@ -313,21 +338,28 @@ const canRedeem = (reward) => {
 }
 
 const handleRedeem = async (reward) => {
-  if (!confirm(`¿Deseas canjear la recompensa "${reward.name}"?`)) {
-    return
-  }
-
-  redeeming.value = true
-  try {
-    await loyaltyService.redeemReward(reward.id)
-    toast.success('Recompensa canjeada exitosamente')
-    await loadData() // Reload data
-  } catch (error) {
-    console.error('Error redeeming reward:', error)
-    const message = error.response?.data?.message || 'Error al canjear la recompensa'
-    toast.error(message)
-  } finally {
-    redeeming.value = false
+  confirmDialog.value = {
+    isOpen: true,
+    title: '¿Canjear recompensa?',
+    message: `¿Deseas canjear la recompensa "${reward.name}"?`,
+    type: 'success',
+    confirmText: 'Sí, canjear',
+    cancelText: 'Cancelar',
+    onConfirm: async () => {
+      redeeming.value = true
+      try {
+        await loyaltyService.redeemReward(reward.id)
+        toast.success('Recompensa canjeada exitosamente')
+        await loadData() // Reload data
+      } catch (error) {
+        console.error('Error redeeming reward:', error)
+        const message = error.response?.data?.message || 'Error al canjear la recompensa'
+        toast.error(message)
+      } finally {
+        redeeming.value = false
+      }
+    },
+    onCancel: () => {}
   }
 }
 
