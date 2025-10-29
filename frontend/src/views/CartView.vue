@@ -96,7 +96,7 @@
                   @click="removeItem(item.product.id)"
                   class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-semibold transition"
                 >
-                  🗑️ Eliminar
+                  Eliminar
                 </button>
               </div>
             </div>

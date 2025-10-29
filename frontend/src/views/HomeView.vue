@@ -5,7 +5,7 @@
       <div class="container mx-auto px-4">
         <div class="max-w-3xl">
           <h1 class="text-5xl font-bold mb-4">
-            Todo para tu Mascota
+            Más detalles para consentirlos
           </h1>
           <p class="text-xl mb-8 text-white text-opacity-90">
             Encuentra los mejores productos para el cuidado, alimentación y diversión de tus compañeros peludos

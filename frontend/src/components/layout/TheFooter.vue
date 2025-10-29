@@ -182,7 +182,7 @@
             rel="noopener noreferrer"
             class="text-primary hover:text-primary-dark font-semibold transition"
           >
-            David González
+            David Gonzalez
           </a>
           • Full Stack Developer
         </p>

@@ -175,7 +175,7 @@
               </tr>
               <tr v-else-if="pendingOrders.length === 0">
                 <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                  🎉 ¡No hay órdenes pendientes de despacho!
+                  ¡No hay órdenes pendientes de despacho!
                 </td>
               </tr>
               <tr v-for="order in pendingOrders" :key="order.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
