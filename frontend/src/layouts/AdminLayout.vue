@@ -97,6 +97,15 @@
           </router-link>
 
           <router-link
+            to="/admin/questions"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition"
+            active-class="bg-primary"
+          >
+            <i class="pi pi-question-circle text-xl"></i>
+            <span class="font-semibold">Preguntas</span>
+          </router-link>
+
+          <router-link
             v-if="authStore.isAdmin"
             to="/admin/users"
             class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition"

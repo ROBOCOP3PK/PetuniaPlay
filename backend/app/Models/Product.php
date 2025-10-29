@@ -74,6 +74,11 @@ class Product extends Model
         return $this->hasMany(WishlistItem::class);
     }
 
+    public function questions()
+    {
+        return $this->hasMany(ProductQuestion::class);
+    }
+
     // Scopes
 
     public function scopeActive($query)

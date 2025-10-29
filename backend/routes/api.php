@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\LoyaltyController;
 use App\Http\Controllers\Api\Admin\LoyaltyProgramController;
 use App\Http\Controllers\Api\Admin\LoyaltyRewardController;
 use App\Http\Controllers\Api\Admin\LoyaltyRedemptionController;
+use App\Http\Controllers\Api\ProductQuestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,9 @@ Route::prefix('v1')->group(function () {
     // Reviews (public)
     Route::get('/products/{productId}/reviews', [ReviewController::class, 'index']);
     Route::get('/products/{productId}/reviews/stats', [ReviewController::class, 'stats']);
+
+    // Product Questions (public)
+    Route::get('/products/{productId}/questions', [ProductQuestionController::class, 'getByProduct']);
 
     // Coupons (public - validation)
     Route::post('/coupons/validate', [CouponController::class, 'validate']);
@@ -112,6 +116,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/reviews/{id}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
 
+    // Product Questions (authenticated)
+    Route::post('/product-questions', [ProductQuestionController::class, 'store']);
+
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
@@ -157,6 +164,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Reviews Management
         Route::get('/admin/reviews', [ReviewController::class, 'adminIndex']);
         Route::put('/admin/reviews/{id}/toggle-approval', [ReviewController::class, 'toggleApproval']);
+
+        // Product Questions Management
+        Route::get('/admin/product-questions', [ProductQuestionController::class, 'index']);
+        Route::get('/admin/product-questions/stats', [ProductQuestionController::class, 'stats']);
+        Route::put('/admin/product-questions/{id}/answer', [ProductQuestionController::class, 'answer']);
+        Route::delete('/admin/product-questions/{id}', [ProductQuestionController::class, 'destroy']);
 
         // Coupons Management
         Route::get('/coupons', [CouponController::class, 'index']);

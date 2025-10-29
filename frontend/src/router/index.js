@@ -168,6 +168,12 @@ const router = createRouter({
       meta: { requiresAuth: true, requiresManager: true }
     },
     {
+      path: '/admin/questions',
+      name: 'admin-questions',
+      component: () => import('../views/admin/AdminQuestionsView.vue'),
+      meta: { requiresAuth: true, requiresManager: true }
+    },
+    {
       path: '/loyalty',
       name: 'loyalty',
       component: () => import('../views/LoyaltyView.vue'),

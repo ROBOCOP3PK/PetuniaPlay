@@ -285,6 +285,122 @@
         </div>
       </section>
 
+      <!-- Questions & Answers Section -->
+      <section v-if="product" class="mt-16">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">Preguntas y Respuestas</h2>
+            <button
+              @click="openQuestionForm"
+              class="btn-primary"
+            >
+              Hacer una pregunta
+            </button>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="loadingQuestions" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p class="mt-2 text-gray-600">Cargando preguntas...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="!questions || questions.length === 0" class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-gray-600 mb-4">Aún no hay preguntas sobre este producto</p>
+            <button
+              @click="openQuestionForm"
+              class="text-primary hover:underline font-semibold"
+            >
+              Sé el primero en preguntar
+            </button>
+          </div>
+
+          <!-- Questions List -->
+          <div v-else class="space-y-6">
+            <div
+              v-for="question in questions"
+              :key="question.id"
+              class="border-b pb-6 last:border-b-0"
+            >
+              <!-- Question -->
+              <div class="flex items-start gap-3 mb-4">
+                <svg class="w-6 h-6 text-primary flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="flex-1">
+                  <p class="text-gray-900 font-medium">{{ question.question }}</p>
+                  <p class="text-sm text-gray-500 mt-1">
+                    Por {{ question.user?.name }} - {{ new Date(question.created_at).toLocaleDateString('es-ES') }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Answer -->
+              <div v-if="question.answer" class="flex items-start gap-3 ml-9 bg-gray-50 p-4 rounded-lg">
+                <svg class="w-6 h-6 text-green-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="flex-1">
+                  <p class="text-gray-900">{{ question.answer }}</p>
+                  <p class="text-sm text-gray-500 mt-1">
+                    Respondido por {{ question.answered_by?.name }} - {{ new Date(question.answered_at).toLocaleDateString('es-ES') }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question Form Modal -->
+          <Teleport to="body">
+            <Transition name="modal">
+              <div
+                v-if="showQuestionForm"
+                class="fixed inset-0 z-[9999] flex items-center justify-center px-4 bg-black bg-opacity-50"
+                @click.self="showQuestionForm = false"
+              >
+                <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6">
+                  <h3 class="text-2xl font-bold mb-4">Hacer una pregunta</h3>
+
+                  <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      Tu pregunta sobre: {{ product.name }}
+                    </label>
+                    <textarea
+                      v-model="newQuestion"
+                      rows="4"
+                      class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Escribe tu pregunta aquí (mínimo 10 caracteres)"
+                    ></textarea>
+                    <p class="text-sm text-gray-500 mt-1">
+                      {{ newQuestion.length }} / 500 caracteres
+                    </p>
+                  </div>
+
+                  <div class="flex justify-end gap-3">
+                    <button
+                      @click="showQuestionForm = false"
+                      class="btn-secondary"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      @click="submitQuestion"
+                      class="btn-primary"
+                      :disabled="!newQuestion || newQuestion.length < 10"
+                    >
+                      Enviar pregunta
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </Teleport>
+        </div>
+      </section>
+
       <!-- Related Products -->
       <section v-if="product" class="mt-16">
         <h2 class="text-3xl font-bold mb-8">Productos Relacionados</h2>
@@ -320,6 +436,7 @@ import StarRating from '../components/StarRating.vue'
 import ReviewsList from '../components/ReviewsList.vue'
 import ReviewForm from '../components/ReviewForm.vue'
 import reviewService from '../services/reviewService'
+import productQuestionService from '../services/productQuestionService'
 
 const route = useRoute()
 const router = useRouter()
@@ -351,6 +468,12 @@ const reviewsPagination = ref(null)
 const loadingReviews = ref(false)
 const showReviewForm = ref(false)
 const editingReview = ref(null)
+
+// Questions state
+const questions = ref([])
+const loadingQuestions = ref(false)
+const showQuestionForm = ref(false)
+const newQuestion = ref('')
 
 const product = computed(() => productStore.currentProduct)
 const isInWishlist = computed(() => {
@@ -411,6 +534,7 @@ const loadProduct = async () => {
   if (product.value) {
     loadReviews()
     loadReviewStats()
+    loadQuestions()
   }
 }
 
@@ -511,6 +635,51 @@ const confirmDeleteReview = async (review) => {
       }
     },
     onCancel: () => {}
+  }
+}
+
+// Questions methods
+const loadQuestions = async () => {
+  if (!product.value) return
+
+  loadingQuestions.value = true
+  try {
+    const response = await productQuestionService.getProductQuestions(product.value.id)
+    questions.value = response.data.data
+  } catch (error) {
+    console.error('Error loading questions:', error)
+    toast.error('Error al cargar las preguntas')
+  } finally {
+    loadingQuestions.value = false
+  }
+}
+
+const openQuestionForm = () => {
+  if (!authStore.isAuthenticated) {
+    toast.warning('Debes iniciar sesión para hacer una pregunta')
+    router.push({ name: 'login', query: { redirect: route.fullPath } })
+    return
+  }
+  showQuestionForm.value = true
+}
+
+const submitQuestion = async () => {
+  if (!newQuestion.value || newQuestion.value.trim().length < 10) {
+    toast.error('La pregunta debe tener al menos 10 caracteres')
+    return
+  }
+
+  try {
+    await productQuestionService.create({
+      product_id: product.value.id,
+      question: newQuestion.value
+    })
+    toast.success('Pregunta enviada. Será publicada cuando reciba respuesta.')
+    newQuestion.value = ''
+    showQuestionForm.value = false
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || 'Error al enviar la pregunta'
+    toast.error(errorMessage)
   }
 }
 
