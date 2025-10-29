@@ -729,7 +729,7 @@ const getDaysWaitingClass = (order) => {
 const loadPendingOrders = async () => {
   loadingPending.value = true
   try {
-    const response = await api.get('/api/v1/admin/orders/pending-shipment')
+    const response = await api.get('/admin/orders/pending-shipment')
     pendingOrders.value = response.data.data
   } catch (error) {
     console.error('Error loading pending orders:', error)
@@ -743,7 +743,7 @@ const loadPendingOrders = async () => {
 const loadShippedOrders = async () => {
   loadingShipped.value = true
   try {
-    const response = await api.get('/api/v1/admin/orders/shipped')
+    const response = await api.get('/admin/orders/shipped')
     shippedOrders.value = response.data.data
   } catch (error) {
     console.error('Error loading shipped orders:', error)
@@ -756,7 +756,7 @@ const loadShippedOrders = async () => {
 // Load shipping statistics
 const loadShippingStats = async () => {
   try {
-    const response = await api.get('/api/v1/admin/orders/shipping-stats')
+    const response = await api.get('/admin/orders/shipping-stats')
     shippingStats.value = response.data
   } catch (error) {
     console.error('Error loading shipping stats:', error)
