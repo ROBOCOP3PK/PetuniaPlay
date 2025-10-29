@@ -39,7 +39,8 @@
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total_imagenes FROM product_images;\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT email, role FROM users ORDER BY role, email LIMIT 5;\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; UPDATE users SET password = ''$2y$12$ui2Z8BJJAwYda.FG3/zWd.mePo86XwVs51owUbiOQ6ujHyXLoznCm'';\")",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

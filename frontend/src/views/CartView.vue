@@ -142,16 +142,13 @@
 
               <div class="flex justify-between">
                 <span class="text-gray-600 dark:text-gray-400">Envío</span>
-                <span v-if="cartStore.shipping === 0" class="text-green-600 dark:text-green-400 font-semibold">
-                  ¡Gratis!
-                </span>
-                <span v-else class="font-semibold text-gray-900 dark:text-white">
-                  ${{ formatPrice(cartStore.shipping) }}
+                <span class="font-semibold text-gray-900 dark:text-white">
+                  A calcular
                 </span>
               </div>
 
-              <div v-if="cartStore.shipping === 0" class="text-xs text-green-600 dark:text-green-400">
-                ✅ Envío gratis en compras mayores a $100,000
+              <div class="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 p-2 rounded">
+                💡 <strong>Envío gratis en Bogotá</strong> al comprar más de 3 artículos
               </div>
             </div>
 

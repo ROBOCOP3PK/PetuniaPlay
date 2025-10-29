@@ -295,13 +295,22 @@
                 </div>
                 <div class="flex justify-between text-sm">
                   <span class="text-gray-600">Envío</span>
-                  <span v-if="cartStore.shipping === 0" class="text-green-600 font-semibold">
-                    ¡Gratis!
+                  <span v-if="shippingCost === 0" class="text-green-600 font-semibold">
+                    ¡Gratis! (Bogotá, +3 artículos)
                   </span>
                   <span v-else class="font-semibold">
-                    ${{ formatPrice(cartStore.shipping) }}
+                    ${{ formatPrice(shippingCost) }}
                   </span>
                 </div>
+
+                <!-- Shipping Info -->
+                <div v-if="shippingCost > 0 && cartStore.itemCount > 3" class="text-xs text-blue-600 bg-blue-50 p-2 rounded">
+                  💡 Envío gratis disponible en Bogotá con más de 3 artículos
+                </div>
+                <div v-else-if="shippingCost > 0 && cartStore.itemCount <= 3" class="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                  ℹ️ Agrega {{ 4 - cartStore.itemCount }} artículo(s) más para envío gratis en Bogotá
+                </div>
+
                 <div v-if="cartStore.hasCoupon" class="flex justify-between text-sm text-green-600">
                   <span class="font-semibold">Descuento</span>
                   <span class="font-bold">-${{ formatPrice(cartStore.discount) }}</span>
@@ -313,7 +322,7 @@
                 <div class="flex justify-between items-center">
                   <span class="text-xl font-bold">Total</span>
                   <span class="text-3xl font-bold text-primary">
-                    ${{ formatPrice(cartStore.total) }}
+                    ${{ formatPrice(orderTotal) }}
                   </span>
                 </div>
               </div>
@@ -346,7 +355,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cartStore'
 import { useToast } from 'vue-toastification'
@@ -356,6 +365,16 @@ import AddressMapPicker from '../components/AddressMapPicker.vue'
 const router = useRouter()
 const cartStore = useCartStore()
 const toast = useToast()
+
+// Computed para calcular el costo de envío dinámicamente basado en la ciudad
+const shippingCost = computed(() => {
+  return cartStore.calculateShipping(form.city)
+})
+
+// Computed para el total con el shipping correcto
+const orderTotal = computed(() => {
+  return cartStore.subtotal + cartStore.tax + shippingCost.value - cartStore.discount
+})
 
 const processing = ref(false)
 const couponCode = ref('')
@@ -501,7 +520,7 @@ const placeOrder = async () => {
       },
       payment: {
         method: form.paymentMethod,
-        amount: cartStore.total
+        amount: orderTotal.value
       },
       items: cartStore.items.map(item => ({
         product_id: item.product.id,
@@ -511,9 +530,9 @@ const placeOrder = async () => {
       totals: {
         subtotal: cartStore.subtotal,
         tax: cartStore.tax,
-        shipping: cartStore.shipping,
+        shipping: shippingCost.value,
         discount: cartStore.discount,
-        total: cartStore.total
+        total: orderTotal.value
       },
       coupon_code: cartStore.appliedCoupon?.code || null
     }

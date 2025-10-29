@@ -44,13 +44,23 @@ export const useCartStore = defineStore('cart', () => {
     return subtotal.value * 0.19
   })
 
-  const shipping = computed(() => {
-    // Envío gratis para compras mayores a $100,000
-    if (subtotal.value >= 100000) {
-      return 0
+  // Método para calcular envío basado en ciudad
+  const calculateShipping = (city = '') => {
+    const totalItems = itemCount.value
+    const cityNormalized = city.toLowerCase().trim()
+
+    // Envío gratis en Bogotá si compra más de 3 artículos
+    if (cityNormalized === 'bogotá' || cityNormalized === 'bogota') {
+      return totalItems > 3 ? 0 : 10000
     }
-    // Envío fijo de $10,000 para compras menores
+
+    // Para otras ciudades, siempre $10,000
     return 10000
+  }
+
+  // Computed por defecto (sin ciudad específica)
+  const shipping = computed(() => {
+    return 10000 // Valor por defecto
   })
 
   const discount = computed(() => {
@@ -214,5 +224,6 @@ export const useCartStore = defineStore('cart', () => {
     applyCoupon,
     removeCoupon,
     clearCoupon,
+    calculateShipping,
   }
 })
