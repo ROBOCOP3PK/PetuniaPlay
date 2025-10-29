@@ -5,9 +5,11 @@
         <!-- About -->
         <div>
           <div class="flex items-center space-x-2 mb-4">
-            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-              PP
-            </div>
+            <img
+              src="/assets/images/logo_full_sin_fondo.jpeg"
+              alt="Petunia Play Logo"
+              class="h-10 w-auto object-contain"
+            />
             <span class="text-xl font-bold">Petunia Play</span>
           </div>
           <p class="text-gray-300 text-sm">

@@ -78,10 +78,12 @@
     <div class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
         <!-- Logo -->
-        <router-link to="/" class="flex items-center space-x-2">
-          <div class="w-12 h-12 bg-primary dark:bg-primary-light rounded-full flex items-center justify-center text-white font-bold text-xl">
-            PP
-          </div>
+        <router-link to="/" class="flex items-center space-x-3">
+          <img
+            src="/assets/images/logo_full_sin_fondo.jpeg"
+            alt="Petunia Play Logo"
+            class="h-12 w-auto object-contain"
+          />
           <span class="text-2xl font-bold text-primary dark:text-primary-light">Petunia Play</span>
         </router-link>
 
