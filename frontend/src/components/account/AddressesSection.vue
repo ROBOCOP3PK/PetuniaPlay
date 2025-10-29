@@ -9,14 +9,14 @@
 
     <!-- Loading -->
     <div v-if="loading" class="text-center py-12">
-      <p class="text-gray-600">Cargando direcciones...</p>
+      <p class="text-gray-600 dark:text-gray-400">Cargando direcciones...</p>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="addresses.length === 0" class="text-center py-12">
       <div class="text-6xl mb-4">📍</div>
-      <h3 class="text-2xl font-bold mb-2">No tienes direcciones guardadas</h3>
-      <p class="text-gray-600 mb-6">
+      <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">No tienes direcciones guardadas</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">
         Agrega una dirección de envío para agilizar tus compras
       </p>
     </div>
@@ -26,8 +26,8 @@
       <div
         v-for="address in addresses"
         :key="address.id"
-        class="border rounded-lg p-6 relative"
-        :class="{ 'border-primary border-2': address.is_default }"
+        class="border rounded-lg p-6 relative bg-white dark:bg-gray-800 dark:border-gray-700"
+        :class="{ 'border-primary border-2 dark:border-primary': address.is_default }"
       >
         <!-- Default Badge -->
         <span
@@ -38,14 +38,14 @@
         </span>
 
         <!-- Address Info -->
-        <h3 class="font-bold text-lg mb-2">{{ address.full_name }}</h3>
-        <p class="text-gray-600 text-sm mb-1">{{ address.phone }}</p>
-        <p class="text-gray-800">{{ address.address_line_1 }}</p>
-        <p v-if="address.address_line_2" class="text-gray-800">{{ address.address_line_2 }}</p>
-        <p class="text-gray-800">
+        <h3 class="font-bold text-lg mb-2 text-gray-900 dark:text-white">{{ address.full_name }}</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm mb-1">{{ address.phone }}</p>
+        <p class="text-gray-800 dark:text-gray-200">{{ address.address_line_1 }}</p>
+        <p v-if="address.address_line_2" class="text-gray-800 dark:text-gray-200">{{ address.address_line_2 }}</p>
+        <p class="text-gray-800 dark:text-gray-200">
           {{ address.city }}, {{ address.state }} {{ address.postal_code }}
         </p>
-        <p class="text-gray-600">{{ address.country }}</p>
+        <p class="text-gray-600 dark:text-gray-400">{{ address.country }}</p>
 
         <!-- Actions -->
         <div class="mt-4 flex gap-2">
@@ -64,7 +64,7 @@
           </button>
           <button
             @click="deleteAddress(address.id)"
-            class="text-red-600 hover:bg-red-50 px-3 py-2 rounded transition"
+            class="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 dark:hover:bg-opacity-20 px-3 py-2 rounded transition"
           >
             🗑️
           </button>
@@ -80,16 +80,16 @@
     >
       <div
         @click.stop
-        class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8"
+        class="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8"
       >
-        <h2 class="text-2xl font-bold mb-6">
+        <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           {{ editingAddress ? 'Editar Dirección' : 'Nueva Dirección' }}
         </h2>
 
         <form @submit.prevent="saveAddress" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-semibold mb-2">Nombre Completo *</label>
+              <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">Nombre Completo *</label>
               <input
                 v-model="addressForm.full_name"
                 type="text"
@@ -99,7 +99,7 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold mb-2">Teléfono *</label>
+              <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">Teléfono *</label>
               <input
                 v-model="addressForm.phone"
                 type="tel"
@@ -110,7 +110,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold mb-2">Dirección Línea 1 *</label>
+            <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">Dirección Línea 1 *</label>
             <input
               v-model="addressForm.address_line_1"
               type="text"
@@ -121,7 +121,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold mb-2">Dirección Línea 2 (Opcional)</label>
+            <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">Dirección Línea 2 (Opcional)</label>
             <input
               v-model="addressForm.address_line_2"
               type="text"
@@ -132,7 +132,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="block text-sm font-semibold mb-2">Ciudad *</label>
+              <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">Ciudad *</label>
               <input
                 v-model="addressForm.city"
                 type="text"
@@ -142,7 +142,7 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold mb-2">Departamento *</label>
+              <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">Departamento *</label>
               <input
                 v-model="addressForm.state"
                 type="text"
@@ -152,7 +152,7 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold mb-2">Código Postal</label>
+              <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">Código Postal</label>
               <input
                 v-model="addressForm.postal_code"
                 type="text"
@@ -162,7 +162,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold mb-2">País</label>
+            <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">País</label>
             <input
               v-model="addressForm.country"
               type="text"
@@ -177,7 +177,7 @@
                 type="checkbox"
                 class="mr-2"
               />
-              <span class="text-sm">Marcar como dirección predeterminada</span>
+              <span class="text-sm text-gray-700 dark:text-gray-200">Marcar como dirección predeterminada</span>
             </label>
           </div>
 
