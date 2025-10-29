@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import couponService from '../services/couponService'
+import shippingConfigService from '../services/shippingConfigService'
 
 export const useCartStore = defineStore('cart', () => {
   // State
@@ -8,6 +9,7 @@ export const useCartStore = defineStore('cart', () => {
   const loading = ref(false)
   const appliedCoupon = ref(null)
   const couponDiscount = ref(0)
+  const shippingConfig = ref(null)
 
   // Load cart from localStorage on initialization
   const loadCart = () => {
@@ -44,18 +46,51 @@ export const useCartStore = defineStore('cart', () => {
     return subtotal.value * 0.19
   })
 
-  // Método para calcular envío basado en ciudad
-  const calculateShipping = (city = '') => {
-    const totalItems = itemCount.value
-    const cityNormalized = city.toLowerCase().trim()
+  // Load shipping configuration from API
+  const loadShippingConfig = async () => {
+    try {
+      const response = await shippingConfigService.getConfig()
+      if (response.data.success) {
+        shippingConfig.value = response.data.data
+      }
+    } catch (error) {
+      console.error('Error loading shipping config:', error)
+      // Use default values if API fails
+      shippingConfig.value = {
+        night_delivery_enabled: true,
+        night_delivery_start_time: '21:00:00',
+        night_delivery_end_time: '02:00:00',
+        free_shipping_min_items: 4,
+        standard_shipping_cost: 10000
+      }
+    }
+  }
 
-    // Envío gratis en Bogotá si compra más de 3 artículos
-    if (cityNormalized === 'bogotá' || cityNormalized === 'bogota') {
-      return totalItems > 3 ? 0 : 10000
+  // Método para calcular envío basado en ciudad y opciones de entrega
+  const calculateShipping = (city = '', nightDelivery = false) => {
+    // Si no hay configuración cargada, usar valores por defecto
+    const config = shippingConfig.value || {
+      night_delivery_enabled: true,
+      free_shipping_min_items: 4,
+      standard_shipping_cost: 10000
     }
 
-    // Para otras ciudades, siempre $10,000
-    return 10000
+    const totalItems = itemCount.value
+    const cityNormalized = city.toLowerCase().trim()
+    const isBogota = cityNormalized === 'bogotá' || cityNormalized === 'bogota'
+
+    // Envío gratis en Bogotá si elige entrega nocturna y está habilitada
+    if (isBogota && nightDelivery && config.night_delivery_enabled) {
+      return 0
+    }
+
+    // Envío gratis en Bogotá si compra más artículos que el mínimo configurado
+    if (isBogota && totalItems >= config.free_shipping_min_items) {
+      return 0
+    }
+
+    // Para Bogotá sin cumplir condiciones, o para otras ciudades
+    return parseFloat(config.standard_shipping_cost)
   }
 
   // Computed por defecto (sin ciudad específica)
@@ -196,8 +231,9 @@ export const useCartStore = defineStore('cart', () => {
     removeCoupon()
   }
 
-  // Initialize cart from localStorage
+  // Initialize cart from localStorage and load shipping config
   loadCart()
+  loadShippingConfig()
 
   return {
     // State
@@ -205,6 +241,7 @@ export const useCartStore = defineStore('cart', () => {
     loading,
     appliedCoupon,
     couponDiscount,
+    shippingConfig,
     // Getters
     itemCount,
     subtotal,
@@ -221,6 +258,7 @@ export const useCartStore = defineStore('cart', () => {
     clearCart,
     getItemQuantity,
     loadCart,
+    loadShippingConfig,
     applyCoupon,
     removeCoupon,
     clearCoupon,

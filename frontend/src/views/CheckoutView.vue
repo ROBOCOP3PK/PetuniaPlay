@@ -84,6 +84,30 @@
                   placeholder="Apartamento 301, tocar timbre..."
                 ></textarea>
               </div>
+
+              <!-- Night Delivery Option (Only for Bogotá and if enabled) -->
+              <div v-if="isBogota && nightDeliveryEnabled" class="mt-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-lg">
+                <div class="flex items-start space-x-3">
+                  <input
+                    id="nightDelivery"
+                    v-model="form.nightDelivery"
+                    type="checkbox"
+                    class="mt-1 w-5 h-5 text-purple-600 bg-white border-purple-300 rounded focus:ring-purple-500 focus:ring-2 cursor-pointer"
+                  />
+                  <label for="nightDelivery" class="cursor-pointer flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="text-lg">🌙</span>
+                      <span class="font-bold text-gray-900">Entrega Nocturna - ¡ENVÍO GRATIS!</span>
+                    </div>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                      Recibe tu pedido en horario nocturno <strong>({{ nightDeliveryTime.start }} - {{ nightDeliveryTime.end }})</strong> sin costo adicional.
+                      <span class="block mt-1 text-purple-700 font-semibold">
+                        ✨ Exclusivo para Bogotá - Ahorra ${{ formatPrice(cartStore.shippingConfig?.standard_shipping_cost || 10000) }} en envío
+                      </span>
+                    </p>
+                  </label>
+                </div>
+              </div>
             </div>
 
             <!-- Payment Method -->
@@ -296,7 +320,8 @@
                 <div class="flex justify-between text-sm">
                   <span class="text-gray-600">Envío</span>
                   <span v-if="shippingCost === 0" class="text-green-600 font-semibold">
-                    ¡Gratis! (Bogotá, +3 artículos)
+                    <span v-if="form.nightDelivery">¡Gratis! 🌙 Entrega nocturna</span>
+                    <span v-else>¡Gratis! (+{{ freeShippingMinItems - 1 }} artículos)</span>
                   </span>
                   <span v-else class="font-semibold">
                     ${{ formatPrice(shippingCost) }}
@@ -304,11 +329,16 @@
                 </div>
 
                 <!-- Shipping Info -->
-                <div v-if="shippingCost > 0 && cartStore.itemCount > 3" class="text-xs text-blue-600 bg-blue-50 p-2 rounded">
-                  💡 Envío gratis disponible en Bogotá con más de 3 artículos
+                <div v-if="shippingCost === 0 && form.nightDelivery" class="text-xs text-purple-700 bg-purple-50 p-2 rounded border border-purple-200">
+                  🌙 <strong>Entrega nocturna seleccionada</strong> - Tu pedido llegará entre {{ nightDeliveryTime.start }} y {{ nightDeliveryTime.end }}
                 </div>
-                <div v-else-if="shippingCost > 0 && cartStore.itemCount <= 3" class="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                  ℹ️ Agrega {{ 4 - cartStore.itemCount }} artículo(s) más para envío gratis en Bogotá
+                <div v-else-if="shippingCost > 0 && isBogota && cartStore.itemCount < freeShippingMinItems" class="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                  💡 <strong>Opciones de envío gratis:</strong><br>
+                  • Agrega {{ freeShippingMinItems - cartStore.itemCount }} artículo(s) más<br>
+                  <span v-if="nightDeliveryEnabled">• O selecciona entrega nocturna ({{ nightDeliveryTime.startShort }}-{{ nightDeliveryTime.endShort }})</span>
+                </div>
+                <div v-else-if="shippingCost > 0 && !isBogota" class="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                  ℹ️ Envío gratis disponible solo en Bogotá
                 </div>
 
                 <div v-if="cartStore.hasCoupon" class="flex justify-between text-sm text-green-600">
@@ -366,14 +396,64 @@ const router = useRouter()
 const cartStore = useCartStore()
 const toast = useToast()
 
-// Computed para calcular el costo de envío dinámicamente basado en la ciudad
+// Computed para calcular el costo de envío dinámicamente basado en la ciudad y opciones
 const shippingCost = computed(() => {
-  return cartStore.calculateShipping(form.city)
+  return cartStore.calculateShipping(form.city, form.nightDelivery)
 })
 
 // Computed para el total con el shipping correcto
 const orderTotal = computed(() => {
   return cartStore.subtotal + cartStore.tax + shippingCost.value - cartStore.discount
+})
+
+// Computed para saber si es Bogotá
+const isBogota = computed(() => {
+  const city = form.city.toLowerCase().trim()
+  return city === 'bogotá' || city === 'bogota'
+})
+
+// Computed para obtener el horario formateado desde la configuración
+const nightDeliveryTime = computed(() => {
+  if (!cartStore.shippingConfig) {
+    return { start: '9:00 PM', end: '2:00 AM' }
+  }
+
+  const formatTime = (time) => {
+    if (!time) return ''
+    const [hours, minutes] = time.substring(0, 5).split(':')
+    const hour = parseInt(hours)
+
+    if (hour === 0) {
+      return `12:${minutes} AM`
+    } else if (hour < 12) {
+      return `${hour}:${minutes} AM`
+    } else if (hour === 12) {
+      return `12:${minutes} PM`
+    } else {
+      return `${hour - 12}:${minutes} PM`
+    }
+  }
+
+  return {
+    start: formatTime(cartStore.shippingConfig.night_delivery_start_time),
+    end: formatTime(cartStore.shippingConfig.night_delivery_end_time),
+    startShort: cartStore.shippingConfig.night_delivery_start_time.substring(0, 5).replace(':', '') > '1200'
+      ? parseInt(cartStore.shippingConfig.night_delivery_start_time.substring(0, 2)) - 12 + 'PM'
+      : cartStore.shippingConfig.night_delivery_start_time.substring(0, 2) + 'PM',
+    endShort: cartStore.shippingConfig.night_delivery_end_time.substring(0, 5).replace(':', '') < '1200'
+      ? cartStore.shippingConfig.night_delivery_end_time.substring(0, 2) + 'AM'
+      : parseInt(cartStore.shippingConfig.night_delivery_end_time.substring(0, 2)) - 12 + 'PM'
+  }
+})
+
+// Computed para verificar si la entrega nocturna está habilitada
+const nightDeliveryEnabled = computed(() => {
+  return cartStore.shippingConfig?.night_delivery_enabled ?? true
+})
+
+// Computed para obtener el mínimo de artículos para envío gratis
+const freeShippingMinItems = computed(() => {
+  return cartStore.shippingConfig?.free_shipping_min_items ?? 4
 })
 
 const processing = ref(false)
@@ -396,6 +476,7 @@ const form = reactive({
   latitude: null,
   longitude: null,
   notes: '',
+  nightDelivery: false,
 
   // Payment
   paymentMethod: 'card',
@@ -516,7 +597,8 @@ const placeOrder = async () => {
         zipCode: form.zipCode,
         latitude: form.latitude,
         longitude: form.longitude,
-        notes: form.notes
+        notes: form.notes,
+        nightDelivery: form.nightDelivery
       },
       payment: {
         method: form.paymentMethod,

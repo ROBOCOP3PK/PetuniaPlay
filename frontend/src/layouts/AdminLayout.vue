@@ -88,6 +88,15 @@
           </router-link>
 
           <router-link
+            to="/admin/shipping-config"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition"
+            active-class="bg-primary"
+          >
+            <i class="pi pi-cog text-xl"></i>
+            <span class="font-semibold">Configuración de Envíos</span>
+          </router-link>
+
+          <router-link
             to="/admin/loyalty"
             class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition"
             active-class="bg-primary"

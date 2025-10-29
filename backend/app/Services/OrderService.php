@@ -136,6 +136,7 @@ class OrderService
                 'status' => 'pending',
                 'payment_status' => 'pending',
                 'notes' => $orderData['shipping']['notes'] ?? null,
+                'night_delivery' => $orderData['shipping']['nightDelivery'] ?? false,
             ]);
 
             // Crear items de la orden

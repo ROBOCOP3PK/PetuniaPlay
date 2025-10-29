@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\Admin\LoyaltyProgramController;
 use App\Http\Controllers\Api\Admin\LoyaltyRewardController;
 use App\Http\Controllers\Api\Admin\LoyaltyRedemptionController;
 use App\Http\Controllers\Api\ProductQuestionController;
+use App\Http\Controllers\Api\ShippingConfigController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +70,9 @@ Route::prefix('v1')->group(function () {
     // Unsubscribe (public)
     Route::get('/unsubscribe/{token}', [UnsubscribeController::class, 'unsubscribe']);
     Route::get('/resubscribe/{token}', [UnsubscribeController::class, 'resubscribe']);
+
+    // Shipping Configuration (public - read only)
+    Route::get('/shipping-config', [ShippingConfigController::class, 'index']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);
@@ -188,6 +192,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::put('/shipments/{id}', [ShipmentController::class, 'update']);
         Route::delete('/shipments/{id}', [ShipmentController::class, 'destroy']);
         Route::get('/admin/shipments/stats', [ShipmentController::class, 'stats']);
+
+        // Shipping Configuration Management
+        Route::put('/shipping-config', [ShippingConfigController::class, 'update']);
 
         // Export/Reports
         Route::get('/admin/export/orders/excel', [OrderController::class, 'exportExcel']);

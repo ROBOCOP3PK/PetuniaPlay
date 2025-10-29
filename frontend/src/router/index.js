@@ -174,6 +174,12 @@ const router = createRouter({
       meta: { requiresAuth: true, requiresManager: true }
     },
     {
+      path: '/admin/shipping-config',
+      name: 'admin-shipping-config',
+      component: () => import('../views/admin/AdminShippingConfigView.vue'),
+      meta: { requiresAuth: true, requiresManager: true }
+    },
+    {
       path: '/loyalty',
       name: 'loyalty',
       component: () => import('../views/LoyaltyView.vue'),

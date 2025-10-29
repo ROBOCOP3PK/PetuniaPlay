@@ -24,6 +24,7 @@ class Order extends Model
         'status',
         'payment_status',
         'notes',
+        'night_delivery',
     ];
 
     protected function casts(): array
@@ -34,6 +35,7 @@ class Order extends Model
             'shipping_cost' => 'decimal:2',
             'discount' => 'decimal:2',
             'total' => 'decimal:2',
+            'night_delivery' => 'boolean',
         ];
     }
 
