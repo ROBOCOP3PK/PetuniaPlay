@@ -41,7 +41,13 @@
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; UPDATE users SET password = ''$2y$12$ui2Z8BJJAwYda.FG3/zWd.mePo86XwVs51owUbiOQ6ujHyXLoznCm'';\")",
       "mcp__ide__getDiagnostics",
       "Bash(find:*)",
-      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; DESCRIBE orders;\")"
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; DESCRIBE orders;\")",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nSe crea PROJECT_CONTEXT.md para mantener contexto completo del proyecto\n\n- Archivo de documentación unificado con arquitectura, modelos, funcionalidades\n- Incluye decisiones técnicas, convenciones, y estado actual del sistema\n- Facilita onboarding y mantiene contexto actualizado entre sesiones\n- Ubicado en raíz del proyecto para fácil acceso\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(chmod:*)",
+      "Bash(.gitignore)",
+      "Bash(./generate-commit-message.sh:*)"
     ],
     "deny": [],
     "ask": []

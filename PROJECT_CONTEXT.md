@@ -88,7 +88,7 @@ Clientes: (generados por seeder) / 2025
 ### Blog Base (2 modelos)
 - **BlogPost**, **BlogCategory** (no implementados en frontend)
 
-**Total:** 22 modelos + 35 migraciones
+**Total:** 22 modelos + 37 migraciones + 31 tablas en BD
 
 ---
 
@@ -219,97 +219,229 @@ Clientes: (generados por seeder) / 2025
 
 ## 🎨 Frontend - Stack y Arquitectura
 
-**Framework:** Vue.js 3.5.22 (Composition API)
-**Router:** Vue Router 4 con guards de autenticación
-**State:** Pinia 2 (stores modulares)
-**HTTP:** Axios con interceptors
-**UI:** PrimeVue 4 + Tailwind CSS 3
-**Build:** Vite 7
+**Framework:** Vue.js 3.5.22 (Composition API con `<script setup>`)
+**Router:** Vue Router 4.6.3 con guards de autenticación multinivel
+**State:** Pinia 3.0.3 (stores modulares con persistencia)
+**HTTP:** Axios 1.12.2 con interceptors (auth, error handling)
+**UI:** PrimeVue 4.4.1 + Tailwind CSS 3.4.18 + PrimeIcons 7.0.0
+**Maps:** @googlemaps/js-api-loader 2.0.1
+**Notifications:** vue-toastification 2.0.0-rc.5
+**Build:** Vite 7.1.11
+**Node:** ^20.19.0 || >=22.12.0
+
+**Estructura:**
+- 33 vistas (views) - Incluye admin panel completo
+- 28 componentes reutilizables
+- 7 stores Pinia
+- 17 servicios API
+- 2 composables
 
 ### Stores Pinia (7)
-- `authStore` - Usuario, token, roles
+- `authStore` - Usuario, token, roles (persistencia en localStorage)
 - `cartStore` - Carrito (localStorage)
-- `wishlistStore` - Lista de deseos
-- `productStore` - Productos, filtros
-- `categoryStore` - Categorías
-- `notificationStore` - Notificaciones in-app
+- `wishlistStore` - Lista de deseos (persistencia en localStorage)
+- `productStore` - Productos, filtros, búsqueda
+- `categoryStore` - Categorías jerárquicas
+- `notificationStore` - Notificaciones in-app en tiempo real
+- `counter` - Store demo (no usado en producción)
 
-### Servicios API (18)
+### Servicios API (17)
 Todos en `frontend/src/services/`:
-- api.js (cliente base con interceptors)
-- authService, productService, orderService
-- categoryService, addressService, wishlistService
-- reviewService, couponService, shipmentService
-- notificationService, adminService, contactService
-- loyaltyService, productQuestionService
-- shippingConfigService, siteConfigService
+- `api.js` - Cliente base Axios con interceptors (auth, error handling)
+- `authService` - Login, registro, recuperación de contraseña
+- `productService` - CRUD productos, búsqueda, autocomplete, brands
+- `orderService` - Crear órdenes, historial, tracking, exportar
+- `categoryService` - Categorías jerárquicas
+- `addressService` - CRUD direcciones, set default
+- `wishlistService` - Agregar/remover wishlist, check status
+- `reviewService` - CRUD reseñas, moderación, stats
+- `couponService` - CRUD cupones, validar, toggle status, stats
+- `shipmentService` - CRUD shipments, tracking público, stats
+- `notificationService` - Listar, marcar leídas, eliminar
+- `adminService` - Dashboard stats, usuarios, roles
+- `contactService` - Envío formulario de contacto
+- `loyaltyService` - Recompensas, redenciones, redimir
+- `productQuestionService` - CRUD preguntas, responder, stats
+- `shippingConfigService` - Get/Update configuración de envíos
+- `siteConfigService` - Get/Update configuración del sitio
 
 ### Composables (2)
 - `useTheme()` - Dark mode (localStorage)
 - `useConfirm()` - Diálogos de confirmación
 
-### Rutas Importantes
-- `/admin/*` - Panel admin (requiresManager)
-- `/admin/users` - Gestión usuarios (requiresAdmin)
-- `/account` - Cuenta del usuario (requiresAuth)
-- `/loyalty` - Programa de fidelidad (requiresAuth)
+### Rutas Principales (Router)
+**Públicas (14):**
+- `/` - Home
+- `/products` - Catálogo de productos
+- `/product/:slug` - Detalle de producto
+- `/category/:slug` - Productos por categoría
+- `/cart` - Carrito de compras
+- `/checkout` - Proceso de pago
+- `/contact`, `/faq`, `/tracking` - Páginas de soporte
+- `/about`, `/terms`, `/privacy`, `/returns`, `/shipping` - Información legal
+- `/unsubscribe` - Cancelar suscripción de emails
 
-**Guards:**
-- `requiresAuth` → redirecciona a /login
-- `requiresManager` → solo manager/admin
-- `requiresAdmin` → solo admin
-- `guest` → solo no autenticados
+**Auth (Guest only - 4):**
+- `/login`, `/register` - Acceso y registro
+- `/forgot-password`, `/reset-password` - Recuperación de contraseña
+
+**Protegidas (requiresAuth - 3):**
+- `/account` - Panel de usuario (perfil, órdenes, direcciones)
+- `/wishlist` - Lista de deseos
+- `/loyalty` - Programa de fidelidad del cliente
+
+**Admin Panel (requiresManager - 9):**
+- `/admin` - Dashboard con métricas
+- `/admin/products` - Gestión de productos
+- `/admin/categories` - Gestión de categorías
+- `/admin/orders` - Gestión de órdenes y envíos
+- `/admin/coupons` - Gestión de cupones
+- `/admin/shipments` - Control de despachos
+- `/admin/loyalty` - Gestión programa de fidelidad
+- `/admin/questions` - Responder preguntas de clientes
+- `/admin/shipping-config` - Configuración de envíos
+
+**Admin Only (requiresAdmin - 2):**
+- `/admin/users` - Gestión de usuarios y roles
+- `/admin/site-config` - Configuración general del sitio
+
+**Navigation Guards:**
+- `requiresAuth` → redirecciona a /login si no autenticado
+- `requiresManager` → valida role=manager o admin
+- `requiresAdmin` → valida role=admin exclusivamente
+- `guest` → redirecciona a /account si ya autenticado
+- Scroll to top en cada navegación
 
 ---
 
 ## 🔧 Backend - Stack y Arquitectura
 
-**Framework:** Laravel 12
+**Framework:** Laravel 12.0
 **PHP:** 8.2+
-**Auth:** Laravel Sanctum (SPA authentication)
-**ORM:** Eloquent
-**Queue:** Database driver
+**Auth:** Laravel Sanctum 4.2 (SPA authentication)
+**ORM:** Eloquent con scopes y accessors
+**Queue:** Database driver (jobs table)
+**Cache:** Database driver (cache table)
 **Mail:** Mailtrap (dev) / configurar SMTP (prod)
+**PDF:** barryvdh/laravel-dompdf 3.1
+**Excel:** maatwebsite/excel 3.1
+**Database:** MySQL 8.0.43 (31 tablas)
 
-### Controladores API (24)
+### Controladores API (22)
 Todos en `backend/app/Http/Controllers/Api/`:
 
-**Públicos:**
-- ProductController, CategoryController, CartController
-- CouponController (validate), ShipmentController (track)
-- ContactController, UnsubscribeController
+**Públicos (8):**
+- `ProductController` - index, show, featured, search, autocomplete, brands
+- `CategoryController` - index, show (categorías jerárquicas)
+- `CartController` - index, add, update, remove, clear (stateless)
+- `CouponController` - validate (validación de cupones)
+- `ShipmentController` - trackByNumber (tracking público)
+- `ContactController` - send (formulario de contacto)
+- `UnsubscribeController` - unsubscribe, resubscribe (emails)
+- `AuthController` - register, login, forgotPassword, resetPassword
 
-**Autenticados:**
-- AuthController, OrderController, AddressController
-- WishlistController, ReviewController
-- NotificationController, ProductQuestionController
-- LoyaltyController
+**Autenticados (8):**
+- `AuthController` - logout, user, updateProfile, changePassword, updateNotificationPreferences
+- `OrderController` - index, show, store, cancel (historial de pedidos)
+- `AddressController` - CRUD completo, setDefault (direcciones usuario)
+- `WishlistController` - index, store, destroy, clear, check, getProductIds
+- `ReviewController` - store, update, destroy (reseñas de clientes)
+- `ProductQuestionController` - store (preguntas de clientes)
+- `LoyaltyController` - myRewards, myRedemptions, redeem (fidelidad cliente)
+- `NotificationController` - index, unreadCount, markAsRead, markAllAsRead, destroy, deleteRead
 
-**Manager/Admin:**
-- AdminController (dashboard, stats)
-- FileUploadController (imágenes)
-- ExportController (reportes)
-- ShippingConfigController, SiteConfigController
+**Manager/Admin (6):**
+- `AdminController` - dashboard, salesStats, lowStockProducts, outOfStockProducts, users, updateUserRole, toggleUserStatus
+- `FileUploadController` - uploadImage, uploadMultiple, deleteImage, deleteImageByUrl
+- `ProductController` - store, update, destroy (gestión de productos)
+- `CategoryController` - store, update, destroy (gestión de categorías)
+- `OrderController` - adminIndex, updateStatus, pendingShipment, shipped, shippingStats, exportExcel, exportPdf
+- `ReviewController` - adminIndex, toggleApproval (moderación)
+- `ProductQuestionController` - index, stats, answer, destroy (responder preguntas)
+- `CouponController` - index, store, show, update, destroy, toggleStatus, stats
+- `ShipmentController` - index, store, show, update, destroy, stats
+- `ShippingConfigController` - index, update (configuración de envíos)
+- `SiteConfigController` - index, update (configuración del sitio, solo admin)
+- `ExportController` - salesReport (reportes avanzados)
 
-**Admin Loyalty:**
-- LoyaltyProgramController, LoyaltyRewardController, LoyaltyRedemptionController
+**Admin Loyalty (3):**
+- `LoyaltyProgramController` - index, store, activate, statistics
+- `LoyaltyRewardController` - apiResource (CRUD), toggle
+- `LoyaltyRedemptionController` - index, show, process
 
 ### Middleware Custom
 - `AdminMiddleware` - Solo role=admin
 - `ManagerMiddleware` - role=manager o admin
 
-### Rate Limiting
-- Auth endpoints: 5 req/min
-- Cupones validate: 10 req/min
-- Contacto: 5 req/hora
-- Checkout: 3 req/min
-- Exportes: 10 req/hora
+### Endpoints API Destacados
+**Prefijo:** `/api/v1/`
+
+**Autenticación (throttle 5/min):**
+- POST `/register`, `/login`, `/forgot-password`, `/reset-password`
+- POST `/logout`, GET `/user` (requiere auth)
+
+**Productos:**
+- GET `/products` - Listado con filtros (category, brand, price_min/max, search, featured)
+- GET `/products/featured` - Productos destacados
+- GET `/products/search` - Búsqueda avanzada
+- GET `/products/autocomplete` - Sugerencias de búsqueda
+- GET `/products/brands` - Listado de marcas
+- GET `/products/{slug}` - Detalle de producto
+
+**Órdenes:**
+- POST `/orders` (público, throttle 3/min) - Crear orden (guest checkout)
+- GET `/orders` (auth) - Historial de órdenes del usuario
+- GET `/orders/{orderNumber}` (auth) - Detalle de orden
+- PUT `/orders/{id}/cancel` (auth) - Cancelar orden
+- GET `/admin/orders` (manager) - Todas las órdenes
+- PUT `/orders/{id}/status` (manager) - Actualizar estado
+- GET `/admin/orders/pending-shipment` (manager) - Pendientes de despacho
+- GET `/admin/export/orders/excel` (manager, throttle 10/hora) - Exportar Excel
+- GET `/admin/export/orders/pdf` (manager, throttle 10/hora) - Exportar PDF
+
+**Cupones:**
+- POST `/coupons/validate` (público, throttle 10/min) - Validar cupón
+- GET/POST/PUT/DELETE `/coupons/*` (manager) - CRUD completo
+- GET `/admin/coupons/stats` (manager) - Estadísticas de uso
+
+**Tracking:**
+- GET `/shipments/track/{trackingNumber}` (público) - Rastreo de envíos
+
+**Fidelidad:**
+- GET `/loyalty/my-rewards` (auth) - Recompensas disponibles
+- GET `/loyalty/my-redemptions` (auth) - Historial de canjes
+- POST `/loyalty/redeem` (auth) - Canjear recompensa
+- `/admin/loyalty/*` (manager) - Gestión completa
+
+**Notificaciones:**
+- GET `/notifications` (auth) - Listar notificaciones
+- GET `/notifications/unread-count` (auth) - Contador de no leídas
+- PUT `/notifications/{id}/read` (auth) - Marcar como leída
+- PUT `/notifications/mark-all-read` (auth) - Marcar todas como leídas
+
+### Rate Limiting por Grupo
+- **Auth:** 5 req/min (prevenir brute force)
+- **Cupones validate:** 10 req/min (prevenir abuso)
+- **Contacto:** 5 req/hora (prevenir spam)
+- **Checkout:** 3 req/min (prevenir órdenes duplicadas)
+- **Exportes:** 10 req/hora (prevenir sobrecarga del servidor)
 
 ### Emails (4 Mailables)
-- `OrderConfirmation` - Al crear orden
-- `ShipmentNotification` - Al actualizar envío
-- `PasswordResetMail` - Recuperar contraseña
-- `ContactMail` - Formulario de contacto
+Todos en `backend/app/Mail/`:
+- `OrderConfirmation` - Confirmación al crear orden (con detalles de productos)
+- `ShipmentNotification` - Notificación al actualizar estado de envío
+- `PasswordResetMail` - Token para recuperar contraseña
+- `ContactMail` - Envío de formulario de contacto al admin
+
+### Seeders (7)
+Todos en `backend/database/seeders/`:
+- `DatabaseSeeder` - Seeder principal (orquesta todos)
+- `UserSeeder` - Admin, manager, 20 clientes
+- `CategorySeeder` - Categorías de productos para mascotas
+- `ProductSeeder` - ~50 productos con imágenes
+- `CouponSeeder` - Cupones de ejemplo
+- `LoyaltySeeder` - Programa de fidelidad con recompensas
+- `BlogCategorySeeder` - Categorías de blog (no usado en frontend)
 
 ---
 
@@ -328,21 +460,26 @@ Todos en `backend/app/Http/Controllers/Api/`:
 
 ## 📈 Optimizaciones Recientes
 
-**Commit 1061b2c - Optimizaciones generales:**
-- Índices de performance en tablas principales
-- Ajuste de iconografía
-- Modo oscuro optimizado
-- Ajuste del seeder de fidelidad
-- Mejoras en rutas y estilos visuales
+**Últimos commits (git log):**
+- `cb09b20` - Se crea PROJECT_CONTEXT.md para mantener contexto completo del proyecto
+- `1061b2c` - Se implementan optimizaciones a nivel general del sistema
+  - Índices de performance en tablas principales (migration 2025_10_29_172013)
+  - Ajuste de iconografía y logos
+  - Modo oscuro optimizado
+  - Ajuste del seeder de fidelidad
+- `a4a813f` - Se ajusta iconografía
+- `4189c8c` - Modo oscuro ajustado
+- `ec3fa0e` - Se ajusta el seeder de fidelidad clientes
 
 **Funcionalidades añadidas últimamente:**
-- WhatsApp button flotante parametrizable
-- Horarios de envío gratis configurables
-- Lógica de envío gratis ajustada (fuera de Bogotá siempre paga)
-- Sistema de preguntas y respuestas
-- Notificaciones de preguntas desactivables
-- Mejoras en diálogos de confirmación
-- Reposicionamiento de toasts
+- Sistema de cupones con límite por cliente (max_usage_per_customer)
+- Tabla `coupon_redemptions` para tracking de usos
+- WhatsApp button flotante parametrizable desde SiteConfig
+- Horarios de envío gratis configurables desde ShippingConfig
+- Sistema de preguntas y respuestas de productos
+- Notificaciones de preguntas desactivables por usuario
+- Envío nocturno opcional (night_delivery flag)
+- Índices de performance para optimización de queries
 
 ---
 
@@ -430,20 +567,32 @@ cream: #F8F4EC (fondo claro)
 
 ## 🚀 Comandos Útiles
 
-### Backend
+### Comandos Slash de Claude (Proyecto)
+- `/apc` - Actualiza exhaustivamente PROJECT_CONTEXT.md analizando todo el proyecto
+- `/cm` - Genera mensaje inteligente de commit analizando cambios (git)
+
+### Backend (Laravel)
 ```bash
 cd backend
-php artisan migrate:fresh --seed  # Reset DB
+php artisan migrate:fresh --seed  # Reset DB completo con datos de prueba
 php artisan storage:link          # Link storage público
 php artisan serve                 # Servidor dev (puerto 8000)
+php artisan queue:work            # Procesar trabajos en cola
+php artisan db:show               # Ver información de la BD
 ```
 
-### Frontend
+### Frontend (Vue.js)
 ```bash
 cd frontend
-npm install                       # Instalar deps
+npm install                       # Instalar dependencias
 npm run dev                       # Servidor dev (puerto 5173)
 npm run build                     # Build producción
+```
+
+### Desarrollo Full Stack
+```bash
+# En backend/ ejecutar (requiere concurrently):
+composer dev  # Inicia servidor + queue + logs + vite simultáneamente
 ```
 
 ---
