@@ -1,7 +1,7 @@
 # 🐾 PetuniaPlay - Contexto del Proyecto
 
 > **Última actualización:** 2025-10-30
-> **Versión:** 1.0 - Sistema completo funcional en desarrollo
+> **Versión:** 1.1 - Documentación optimizada con comandos slash
 
 ---
 
@@ -461,15 +461,16 @@ Todos en `backend/database/seeders/`:
 ## 📈 Optimizaciones Recientes
 
 **Últimos commits (git log):**
+- `8e76c27` - Se optimiza documentación con PROJECT_CONTEXT.md unificado
+  - Consolidados 4 archivos MD en PROJECT_CONTEXT.md único
+  - Agregados comandos slash /apc y /cm para automatización
+  - Actualizado PROJECT_CONTEXT con estadísticas completas
+  - Eliminados archivos redundantes de documentación técnica
 - `cb09b20` - Se crea PROJECT_CONTEXT.md para mantener contexto completo del proyecto
 - `1061b2c` - Se implementan optimizaciones a nivel general del sistema
-  - Índices de performance en tablas principales (migration 2025_10_29_172013)
+  - Índices de performance en tablas principales
   - Ajuste de iconografía y logos
   - Modo oscuro optimizado
-  - Ajuste del seeder de fidelidad
-- `a4a813f` - Se ajusta iconografía
-- `4189c8c` - Modo oscuro ajustado
-- `ec3fa0e` - Se ajusta el seeder de fidelidad clientes
 
 **Funcionalidades añadidas últimamente:**
 - Sistema de cupones con límite por cliente (max_usage_per_customer)

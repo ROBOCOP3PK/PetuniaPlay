@@ -49,6 +49,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/products/autocomplete', [ProductController::class, 'autocomplete']);
     Route::get('/products/brands', [ProductController::class, 'brands']);
     Route::get('/products/{slug}', [ProductController::class, 'show']);
+    Route::get('/products/{slug}/related', [ProductController::class, 'related']);
 
     // Categories
     Route::get('/categories', [CategoryController::class, 'index']);
