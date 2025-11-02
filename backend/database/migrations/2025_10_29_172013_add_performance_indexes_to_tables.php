@@ -38,7 +38,14 @@ return new class extends Migration
             $table->dropIndex(['brand']);
             $table->dropIndex(['is_active']);
             $table->dropIndex(['is_featured']);
-            $table->dropIndex(['category_id', 'is_active']);
+            // Skip composite index if used by foreign key
+            if (Schema::hasColumn('products', 'category_id')) {
+                try {
+                    $table->dropIndex(['category_id', 'is_active']);
+                } catch (\Exception $e) {
+                    // Ignore if index is used by foreign key constraint
+                }
+            }
         });
 
         // Eliminar índices de la tabla orders

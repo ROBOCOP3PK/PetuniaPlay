@@ -161,6 +161,21 @@ class ProductController extends Controller
     }
 
     /**
+     * Get related products by slug.
+     */
+    public function related(string $slug)
+    {
+        try {
+            $product = $this->productService->getProductBySlug($slug);
+            $relatedProducts = $this->productService->getRelatedProducts($product, 4);
+
+            return ProductResource::collection($relatedProducts);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener productos relacionados'], 500);
+        }
+    }
+
+    /**
      * Export products to Excel (admin only)
      */
     public function exportExcel(Request $request)

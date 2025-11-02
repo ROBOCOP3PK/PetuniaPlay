@@ -403,11 +403,27 @@
 
       <!-- Related Products -->
       <section v-if="product" class="mt-16">
-        <h2 class="text-3xl font-bold mb-8">Productos Relacionados</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- TODO: Implementar productos relacionados -->
-          <p class="text-gray-600 col-span-full text-center py-8">
-            Próximamente verás productos relacionados aquí
+        <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Productos Relacionados</h2>
+
+        <!-- Loading State -->
+        <div v-if="loadingRelated" class="text-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p class="mt-2 text-gray-600 dark:text-gray-400 text-sm">Cargando productos...</p>
+        </div>
+
+        <!-- Related Products Grid -->
+        <div v-else-if="relatedProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <ProductCard
+            v-for="relatedProduct in relatedProducts"
+            :key="relatedProduct.id"
+            :product="relatedProduct"
+          />
+        </div>
+
+        <!-- No Related Products -->
+        <div v-else class="text-center py-8">
+          <p class="text-gray-600 dark:text-gray-400">
+            No hay productos relacionados disponibles en este momento
           </p>
         </div>
       </section>
@@ -437,6 +453,8 @@ import ReviewsList from '../components/ReviewsList.vue'
 import ReviewForm from '../components/ReviewForm.vue'
 import reviewService from '../services/reviewService'
 import productQuestionService from '../services/productQuestionService'
+import productService from '../services/productService'
+import ProductCard from '../components/product/ProductCard.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -474,6 +492,10 @@ const questions = ref([])
 const loadingQuestions = ref(false)
 const showQuestionForm = ref(false)
 const newQuestion = ref('')
+
+// Related products state
+const relatedProducts = ref([])
+const loadingRelated = ref(false)
 
 const product = computed(() => productStore.currentProduct)
 const isInWishlist = computed(() => {
@@ -535,6 +557,22 @@ const loadProduct = async () => {
     loadReviews()
     loadReviewStats()
     loadQuestions()
+    loadRelatedProducts()
+  }
+}
+
+// Load related products
+const loadRelatedProducts = async () => {
+  if (!product.value) return
+
+  loadingRelated.value = true
+  try {
+    const response = await productService.getRelated(product.value.slug)
+    relatedProducts.value = response.data.data
+  } catch (error) {
+    console.error('Error loading related products:', error)
+  } finally {
+    loadingRelated.value = false
   }
 }
 

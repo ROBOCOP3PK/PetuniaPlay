@@ -35,6 +35,11 @@ export const productService = {
     return api.get('/products/brands')
   },
 
+  // Obtener productos relacionados por slug
+  getRelated(slug) {
+    return api.get(`/products/${slug}/related`)
+  },
+
   // Crear producto (solo admin)
   create(data) {
     return api.post('/products', data)
