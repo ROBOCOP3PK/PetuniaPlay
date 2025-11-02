@@ -471,21 +471,13 @@ import AdminLayout from '../../layouts/AdminLayout.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import { shipmentService } from '../../services/shipmentService'
 import api from '../../services/api'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useFormat } from '@/composables/useFormat'
+import { useConfirm } from '@/composables/useConfirm'
 
-const toast = useToast()
-
-// Confirm Dialog State
-const confirmDialog = ref({
-  isOpen: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  confirmText: 'Confirmar',
-  cancelText: 'Cancelar',
-  onConfirm: () => {},
-  onCancel: () => {}
-})
+const { notifySuccess, notifyError } = useNotification()
+const { formatPrice } = useFormat()
+const { confirmDialog, showConfirm } = useConfirm()
 
 // Tab management
 const activeTab = ref('pending') // 'pending', 'shipped', 'all'
@@ -576,7 +568,7 @@ const loadShipments = async (page = 1) => {
     }
   } catch (error) {
     console.error('Error loading shipments:', error)
-    toast.error('Error al cargar los envíos')
+    notifyError('Error al cargar los envíos')
   } finally {
     loading.value = false
   }
@@ -618,7 +610,7 @@ const saveShipment = async () => {
         order_id: selectedOrder.value.id,
         ...shipmentForm.value
       })
-      toast.success('Envío creado exitosamente')
+      notifySuccess('Envío creado exitosamente')
       closeModal()
       loadPendingOrders()
       loadShippedOrders()
@@ -626,7 +618,7 @@ const saveShipment = async () => {
     } else {
       // Update existing shipment
       await shipmentService.update(selectedShipment.value.id, shipmentForm.value)
-      toast.success('Envío actualizado exitosamente')
+      notifySuccess('Envío actualizado exitosamente')
       closeModal()
       loadShipments(pagination.value.current_page)
       loadShippedOrders()
@@ -635,32 +627,31 @@ const saveShipment = async () => {
     }
   } catch (error) {
     console.error('Error saving shipment:', error)
-    toast.error(error.response?.data?.message || 'Error al guardar el envío')
+    notifyError(error.response?.data?.message || 'Error al guardar el envío')
   } finally {
     saving.value = false
   }
 }
 
 const confirmDelete = async (shipment) => {
-  confirmDialog.value = {
-    isOpen: true,
+  const confirmed = await showConfirm({
     title: '¿Eliminar envío?',
     message: `¿Estás seguro de eliminar el envío ${shipment.tracking_number}?`,
     type: 'danger',
     confirmText: 'Sí, eliminar',
-    cancelText: 'Cancelar',
-    onConfirm: async () => {
-      try {
-        await shipmentService.delete(shipment.id)
-        toast.success('Envío eliminado exitosamente')
-        loadShipments(pagination.value.current_page)
-        loadStats()
-      } catch (error) {
-        console.error('Error deleting shipment:', error)
-        toast.error(error.response?.data?.message || 'Error al eliminar el envío')
-      }
-    },
-    onCancel: () => {}
+    cancelText: 'Cancelar'
+  })
+
+  if (confirmed) {
+    try {
+      await shipmentService.delete(shipment.id)
+      notifySuccess('Envío eliminado exitosamente')
+      loadShipments(pagination.value.current_page)
+      loadStats()
+    } catch (error) {
+      console.error('Error deleting shipment:', error)
+      notifyError(error.response?.data?.message || 'Error al eliminar el envío')
+    }
   }
 }
 
@@ -702,10 +693,6 @@ const formatDate = (dateString) => {
   })
 }
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
-
 const calculateDaysWaiting = (createdAt) => {
   const created = new Date(createdAt)
   const now = new Date()
@@ -733,7 +720,7 @@ const loadPendingOrders = async () => {
     pendingOrders.value = response.data.data
   } catch (error) {
     console.error('Error loading pending orders:', error)
-    toast.error('Error al cargar órdenes pendientes')
+    notifyError('Error al cargar órdenes pendientes')
   } finally {
     loadingPending.value = false
   }
@@ -747,7 +734,7 @@ const loadShippedOrders = async () => {
     shippedOrders.value = response.data.data
   } catch (error) {
     console.error('Error loading shipped orders:', error)
-    toast.error('Error al cargar órdenes despachadas')
+    notifyError('Error al cargar órdenes despachadas')
   } finally {
     loadingShipped.value = false
   }
@@ -783,7 +770,7 @@ const createShipmentForOrder = (order) => {
   if (fullOrder) {
     openCreateShipmentModal(fullOrder)
   } else {
-    toast.error('No se pudo encontrar la orden')
+    notifyError('No se pudo encontrar la orden')
   }
 }
 

@@ -5,10 +5,11 @@ import { createPinia } from 'pinia'
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 
-// PrimeVue
+// PrimeVue - Optimización #3: Solo importamos configuración y tema
+// NO se importan componentes porque solo se usan PrimeIcons en el proyecto
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
-import 'primeicons/primeicons.css'
+import 'primeicons/primeicons.css' // Solo iconos (pi-*)
 
 import App from './App.vue'
 import router from './router'

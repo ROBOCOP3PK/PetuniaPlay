@@ -117,7 +117,8 @@ import { useRouter } from 'vue-router'
 import { useCartStore } from '../../stores/cartStore'
 import { useWishlistStore } from '../../stores/wishlistStore'
 import { useAuthStore } from '../../stores/authStore'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useFormat } from '@/composables/useFormat'
 
 const props = defineProps({
   product: {
@@ -130,13 +131,10 @@ const router = useRouter()
 const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
 const authStore = useAuthStore()
-const toast = useToast()
+const { notifyAddedToCart, notifySuccess, notifyError, notifyInfo } = useNotification()
+const { formatPrice, formatDate } = useFormat()
 
 const isInWishlist = computed(() => wishlistStore.isInWishlist(props.product.id))
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
 
 const goToProduct = () => {
   router.push(`/product/${props.product.slug}`)
@@ -146,12 +144,10 @@ const addToCart = () => {
   try {
     cartStore.addItem(props.product, 1)
     // Mostrar notificación de éxito
-    toast.success(`${props.product.name} agregado al carrito`, {
-      timeout: 2500
-    })
+    notifyAddedToCart(props.product.name, 1)
   } catch (error) {
     // Mostrar error (ej. sin stock)
-    toast.error(error.message)
+    notifyError(error.message)
   }
 }
 
@@ -159,12 +155,12 @@ const toggleWishlist = async () => {
   const result = await wishlistStore.toggleWishlist(props.product)
   if (result.success) {
     if (isInWishlist.value) {
-      toast.success('Agregado a favoritos')
+      notifySuccess('Agregado a favoritos')
     } else {
-      toast.info('Eliminado de favoritos')
+      notifyInfo('Eliminado de favoritos')
     }
   } else {
-    toast.error(result.message)
+    notifyError(result.message)
   }
 }
 </script>

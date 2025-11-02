@@ -389,12 +389,14 @@ import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cartStore'
 import { useToast } from 'vue-toastification'
+import { useFormat } from '@/composables/useFormat'
 import orderService from '../services/orderService'
 import AddressMapPicker from '../components/AddressMapPicker.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
 const toast = useToast()
+const { formatPrice, formatDate } = useFormat()
 
 // Computed para calcular el costo de envío dinámicamente basado en la ciudad y opciones
 const shippingCost = computed(() => {
@@ -488,10 +490,6 @@ const form = reactive({
   // Terms
   acceptTerms: false
 })
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
 
 const formatCardNumber = (event) => {
   let value = event.target.value.replace(/\s/g, '')

@@ -199,29 +199,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useCartStore } from '../stores/cartStore'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useConfirm } from '@/composables/useConfirm'
+import { useFormat } from '@/composables/useFormat'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 
 const cartStore = useCartStore()
-const toast = useToast()
-
-// Confirm Dialog State
-const confirmDialog = ref({
-  isOpen: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  confirmText: 'Confirmar',
-  cancelText: 'Cancelar',
-  onConfirm: () => {},
-  onCancel: () => {}
-})
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
+const { notifySuccess, notifyError } = useNotification()
+const { confirmDialog, showConfirm } = useConfirm()
+const { formatPrice, formatDate } = useFormat()
 
 const increaseQuantity = (productId) => {
   const item = cartStore.items.find(i => i.product.id === productId)
@@ -229,7 +216,7 @@ const increaseQuantity = (productId) => {
     try {
       cartStore.updateQuantity(productId, item.quantity + 1)
     } catch (error) {
-      toast.error(error.message)
+      notifyError(error.message)
     }
   }
 }
@@ -250,39 +237,37 @@ const updateQuantity = (productId, value) => {
   try {
     cartStore.updateQuantity(productId, quantity)
   } catch (error) {
-    toast.error(error.message)
+    notifyError(error.message)
   }
 }
 
-const removeItem = (productId) => {
-  confirmDialog.value = {
-    isOpen: true,
+const removeItem = async (productId) => {
+  const confirmed = await showConfirm({
     title: '¿Eliminar producto?',
     message: '¿Estás seguro de eliminar este producto del carrito?',
     type: 'warning',
     confirmText: 'Sí, eliminar',
-    cancelText: 'Cancelar',
-    onConfirm: () => {
-      cartStore.removeItem(productId)
-      toast.success('Producto eliminado del carrito')
-    },
-    onCancel: () => {}
+    cancelText: 'Cancelar'
+  })
+
+  if (confirmed) {
+    cartStore.removeItem(productId)
+    notifySuccess('Producto eliminado del carrito')
   }
 }
 
-const clearCart = () => {
-  confirmDialog.value = {
-    isOpen: true,
+const clearCart = async () => {
+  const confirmed = await showConfirm({
     title: '¿Vaciar carrito?',
     message: '¿Estás seguro de vaciar todo el carrito? Esta acción eliminará todos los productos.',
     type: 'danger',
     confirmText: 'Sí, vaciar todo',
-    cancelText: 'Cancelar',
-    onConfirm: () => {
-      cartStore.clearCart()
-      toast.success('Carrito vaciado exitosamente')
-    },
-    onCancel: () => {}
+    cancelText: 'Cancelar'
+  })
+
+  if (confirmed) {
+    cartStore.clearCart()
+    notifySuccess('Carrito vaciado exitosamente')
   }
 }
 </script>

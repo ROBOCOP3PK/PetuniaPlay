@@ -317,9 +317,11 @@ import { ref, computed, onMounted, watch } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import { adminService } from '../../services/adminService'
 import { shipmentService } from '../../services/shipmentService'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useFormat } from '@/composables/useFormat'
 
-const toast = useToast()
+const { notifySuccess, notifyError } = useNotification()
+const { formatPrice } = useFormat()
 
 const loading = ref(false)
 const orders = ref([])
@@ -368,10 +370,6 @@ const filteredOrders = computed(() => {
   return filtered
 })
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
-
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('es-CO', {
     year: 'numeric',
@@ -396,9 +394,9 @@ const getStatusClass = (status) => {
 const updateStatus = async (order) => {
   try {
     await adminService.updateOrderStatus(order.id, order.status)
-    toast.success('Estado del pedido actualizado')
+    notifySuccess('Estado del pedido actualizado')
   } catch (error) {
-    toast.error('Error al actualizar estado')
+    notifyError('Error al actualizar estado')
     loadOrders() // Recargar para restaurar el estado anterior
   }
 }
@@ -425,7 +423,7 @@ const loadOrderShipment = async (orderId) => {
 
 const createShipment = async () => {
   if (!shipmentForm.value.tracking_number || !shipmentForm.value.carrier) {
-    toast.error('Por favor completa los campos requeridos')
+    notifyError('Por favor completa los campos requeridos')
     return
   }
 
@@ -446,13 +444,13 @@ const createShipment = async () => {
       notes: ''
     }
 
-    toast.success('Envío creado exitosamente')
+    notifySuccess('Envío creado exitosamente')
 
     // Recargar pedidos para reflejar el cambio de estado
     loadOrders()
   } catch (error) {
     console.error('Error creating shipment:', error)
-    toast.error(error.response?.data?.message || 'Error al crear el envío')
+    notifyError(error.response?.data?.message || 'Error al crear el envío')
   } finally {
     creatingShipment.value = false
   }
@@ -484,7 +482,7 @@ const loadOrders = async () => {
     const response = await adminService.getAllOrders()
     orders.value = response.data
   } catch (error) {
-    toast.error('Error al cargar pedidos')
+    notifyError('Error al cargar pedidos')
     console.error(error)
   } finally {
     loading.value = false
@@ -524,10 +522,10 @@ const exportToExcel = async () => {
     link.remove()
     window.URL.revokeObjectURL(downloadUrl)
 
-    toast.success('Órdenes exportadas exitosamente')
+    notifySuccess('Órdenes exportadas exitosamente')
   } catch (error) {
     console.error('Error exporting:', error)
-    toast.error('Error al exportar órdenes')
+    notifyError('Error al exportar órdenes')
   } finally {
     exportingExcel.value = false
   }
@@ -566,10 +564,10 @@ const exportToPdf = async () => {
     link.remove()
     window.URL.revokeObjectURL(downloadUrl)
 
-    toast.success('Órdenes exportadas exitosamente')
+    notifySuccess('Órdenes exportadas exitosamente')
   } catch (error) {
     console.error('Error exporting:', error)
-    toast.error('Error al exportar órdenes')
+    notifyError('Error al exportar órdenes')
   } finally {
     exportingPdf.value = false
   }

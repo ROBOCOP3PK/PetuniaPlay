@@ -186,14 +186,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import AdminLoyaltyRewardsTab from '../../components/admin/AdminLoyaltyRewardsTab.vue'
 import AdminLoyaltyRedemptionsTab from '../../components/admin/AdminLoyaltyRedemptionsTab.vue'
 import AdminLoyaltySettingsTab from '../../components/admin/AdminLoyaltySettingsTab.vue'
 import loyaltyService from '../../services/loyaltyService'
 
-const toast = useToast()
+const { notifySuccess, notifyError } = useNotification()
 
 // State
 const loading = ref(true)
@@ -214,7 +214,7 @@ const loadStatistics = async () => {
     statistics.value = response.data
   } catch (error) {
     console.error('Error loading statistics:', error)
-    toast.error('Error al cargar las estadísticas')
+    notifyError('Error al cargar las estadísticas')
   } finally {
     loading.value = false
   }
@@ -223,13 +223,13 @@ const loadStatistics = async () => {
 const toggleProgram = async () => {
   try {
     await loyaltyService.toggleProgram(statistics.value.is_active)
-    toast.success(
+    notifySuccess(
       `Programa ${statistics.value.is_active ? 'activado' : 'desactivado'} exitosamente`
     )
   } catch (error) {
     console.error('Error toggling program:', error)
     statistics.value.is_active = !statistics.value.is_active // Revert
-    toast.error('Error al cambiar el estado del programa')
+    notifyError('Error al cambiar el estado del programa')
   }
 }
 

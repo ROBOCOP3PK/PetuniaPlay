@@ -292,11 +292,13 @@ import AdminLayout from '../../layouts/AdminLayout.vue'
 import ImageUpload from '../../components/admin/ImageUpload.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import { useCategoryStore } from '../../stores/categoryStore'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useConfirm } from '@/composables/useConfirm'
 import { adminService } from '../../services/adminService'
 
 const categoryStore = useCategoryStore()
-const toast = useToast()
+const { notifySuccess, notifyError, notifyWarning } = useNotification()
+const { confirmDialog, showConfirm } = useConfirm()
 
 const loading = ref(false)
 const search = ref('')
@@ -306,18 +308,6 @@ const filterStatus = ref('')
 const showModal = ref(false)
 const editingCategoryData = ref(null)
 const savingCategory = ref(false)
-
-// Confirm Dialog State
-const confirmDialog = ref({
-  isOpen: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  confirmText: 'Confirmar',
-  cancelText: 'Cancelar',
-  onConfirm: () => {},
-  onCancel: () => {}
-})
 
 // Category form
 const emptyForm = {
@@ -419,11 +409,11 @@ const saveCategoryForm = async () => {
     if (editingCategoryData.value) {
       // Update existing category
       await adminService.updateCategory(editingCategoryData.value.id, categoryData)
-      toast.success('Categoría actualizada exitosamente')
+      notifySuccess('Categoría actualizada exitosamente')
     } else {
       // Create new category
       await adminService.createCategory(categoryData)
-      toast.success('Categoría creada exitosamente')
+      notifySuccess('Categoría creada exitosamente')
     }
 
     closeModal()
@@ -432,9 +422,9 @@ const saveCategoryForm = async () => {
     const errorMsg = error.response?.data?.message || error.response?.data?.errors
     if (typeof errorMsg === 'object') {
       const firstError = Object.values(errorMsg)[0]
-      toast.error(Array.isArray(firstError) ? firstError[0] : firstError)
+      notifyError(Array.isArray(firstError) ? firstError[0] : firstError)
     } else {
-      toast.error(errorMsg || 'Error al guardar categoría')
+      notifyError(errorMsg || 'Error al guardar categoría')
     }
   } finally {
     savingCategory.value = false
@@ -446,35 +436,34 @@ const toggleStatus = async (category) => {
     const updatedData = { is_active: !category.is_active }
     await adminService.updateCategory(category.id, updatedData)
     category.is_active = !category.is_active
-    toast.success(`Categoría ${category.is_active ? 'activada' : 'desactivada'}`)
+    notifySuccess(`Categoría ${category.is_active ? 'activada' : 'desactivada'}`)
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Error al cambiar estado')
+    notifyError(error.response?.data?.message || 'Error al cambiar estado')
   }
 }
 
 const deleteCategory = async (category) => {
   if (category.children_count > 0) {
-    toast.warning('No puedes eliminar una categoría con subcategorías')
+    notifyWarning('No puedes eliminar una categoría con subcategorías')
     return
   }
 
-  confirmDialog.value = {
-    isOpen: true,
+  const confirmed = await showConfirm({
     title: '¿Eliminar categoría?',
-    message: `¿Estás seguro de eliminar la categoría "${category.name}"? Esta acción no se puede deshacer.`,
+    message: `¿Estás seguro de que deseas eliminar la categoría "${category.name}"?`,
     type: 'danger',
     confirmText: 'Sí, eliminar',
-    cancelText: 'Cancelar',
-    onConfirm: async () => {
-      try {
-        await adminService.deleteCategory(category.id)
-        toast.success('Categoría eliminada exitosamente')
-        await categoryStore.fetchCategories()
-      } catch (error) {
-        toast.error(error.response?.data?.message || 'Error al eliminar categoría')
-      }
-    },
-    onCancel: () => {}
+    cancelText: 'Cancelar'
+  })
+
+  if (confirmed) {
+    try {
+      await adminService.deleteCategory(category.id)
+      await categoryStore.fetchCategories(true)
+      notifySuccess('Categoría eliminada exitosamente')
+    } catch (error) {
+      notifyError(error.response?.data?.message || 'Error al eliminar categoría')
+    }
   }
 }
 
@@ -483,7 +472,7 @@ const loadCategories = async () => {
   try {
     await categoryStore.fetchCategories()
   } catch (error) {
-    toast.error('Error al cargar categorías')
+    notifyError('Error al cargar categorías')
   } finally {
     loading.value = false
   }

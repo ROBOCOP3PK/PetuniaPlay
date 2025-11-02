@@ -149,11 +149,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import shippingConfigService from '../../services/shippingConfigService'
 
-const toast = useToast()
+const { notifySuccess, notifyError } = useNotification()
 
 const loading = ref(true)
 const saving = ref(false)
@@ -186,7 +186,7 @@ const loadConfig = async () => {
     }
   } catch (error) {
     console.error('Error loading config:', error)
-    toast.error('Error al cargar la configuración')
+    notifyError('Error al cargar la configuración')
   } finally {
     loading.value = false
   }
@@ -200,15 +200,15 @@ const saveConfig = async () => {
     const response = await shippingConfigService.updateConfig(config.value)
 
     if (response.data.success) {
-      toast.success('Configuración actualizada correctamente')
+      notifySuccess('Configuración actualizada correctamente')
       await loadConfig()
     } else {
-      toast.error(response.data.message || 'Error al actualizar la configuración')
+      notifyError(response.data.message || 'Error al actualizar la configuración')
     }
   } catch (error) {
     console.error('Error saving config:', error)
     const errorMessage = error.response?.data?.message || 'Error al guardar la configuración'
-    toast.error(errorMessage)
+    notifyError(errorMessage)
   } finally {
     saving.value = false
   }

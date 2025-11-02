@@ -187,10 +187,10 @@ import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import { adminService } from '../../services/adminService'
 import { useAuthStore } from '../../stores/authStore'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
 
 const authStore = useAuthStore()
-const toast = useToast()
+const { notifySuccess, notifyError } = useNotification()
 
 const loading = ref(false)
 const users = ref([])
@@ -248,9 +248,9 @@ const getRoleClass = (role) => {
 const updateRole = async (user) => {
   try {
     await adminService.updateUserRole(user.id, user.role)
-    toast.success('Rol actualizado exitosamente')
+    notifySuccess('Rol actualizado exitosamente')
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Error al actualizar rol')
+    notifyError(error.response?.data?.message || 'Error al actualizar rol')
     loadUsers() // Recargar para restaurar el rol anterior
   }
 }
@@ -259,9 +259,9 @@ const toggleStatus = async (user) => {
   try {
     const response = await adminService.toggleUserStatus(user.id)
     user.is_active = response.data.data.is_active
-    toast.success(response.data.message)
+    notifySuccess(response.data.message)
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Error al cambiar estado')
+    notifyError(error.response?.data?.message || 'Error al cambiar estado')
   }
 }
 
@@ -275,7 +275,7 @@ const loadUsers = async () => {
     const response = await adminService.getUsers()
     users.value = response.data.data
   } catch (error) {
-    toast.error('Error al cargar usuarios')
+    notifyError('Error al cargar usuarios')
     console.error(error)
   } finally {
     loading.value = false

@@ -60,7 +60,16 @@
       "Bash(/dev/null)",
       "Bash(sudo apt-get update:*)",
       "Bash(dir /s C:UsersdavidDocuments.DESARROLLOPetuniaPlay)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(timeout 15 npm run dev:*)",
+      "Bash(mkdir:*)",
+      "Bash(tree:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npx vue-tsc:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

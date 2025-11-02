@@ -256,24 +256,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useConfirm } from '@/composables/useConfirm'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import productQuestionService from '../../services/productQuestionService'
 
-const toast = useToast()
-
-// Confirm Dialog State
-const confirmDialog = ref({
-  isOpen: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  confirmText: 'Confirmar',
-  cancelText: 'Cancelar',
-  onConfirm: () => {},
-  onCancel: () => {}
-})
+const { notifySuccess, notifyError } = useNotification()
+const { confirmDialog, showConfirm } = useConfirm()
 
 // State
 const questions = ref([])
@@ -302,7 +292,7 @@ const loadQuestions = async (page = 1) => {
     pagination.value = response.data.meta
   } catch (error) {
     console.error('Error loading questions:', error)
-    toast.error('Error al cargar las preguntas')
+    notifyError('Error al cargar las preguntas')
   } finally {
     loading.value = false
   }
@@ -333,13 +323,13 @@ const submitAnswer = async (question) => {
   const answer = answerText.value[question.id]
 
   if (!answer || answer.trim().length < 10) {
-    toast.error('La respuesta debe tener al menos 10 caracteres')
+    notifyError('La respuesta debe tener al menos 10 caracteres')
     return
   }
 
   try {
     await productQuestionService.answer(question.id, { answer })
-    toast.success('Pregunta respondida exitosamente')
+    notifySuccess('Pregunta respondida exitosamente')
 
     // Reload questions and stats
     await loadQuestions(pagination.value?.current_page || 1)
@@ -349,32 +339,31 @@ const submitAnswer = async (question) => {
     delete answerText.value[question.id]
   } catch (error) {
     const errorMessage = error.response?.data?.message || 'Error al responder la pregunta'
-    toast.error(errorMessage)
+    notifyError(errorMessage)
   }
 }
 
 // Confirm delete
-const confirmDelete = (question) => {
-  confirmDialog.value = {
-    isOpen: true,
+const confirmDelete = async (question) => {
+  const confirmed = await showConfirm({
     title: '¿Eliminar pregunta?',
     message: '¿Estás seguro de que deseas eliminar esta pregunta? Esta acción no se puede deshacer.',
     type: 'danger',
     confirmText: 'Sí, eliminar',
-    cancelText: 'Cancelar',
-    onConfirm: async () => {
-      try {
-        await productQuestionService.delete(question.id)
-        toast.success('Pregunta eliminada exitosamente')
+    cancelText: 'Cancelar'
+  })
 
-        // Reload questions and stats
-        await loadQuestions(pagination.value?.current_page || 1)
-        await loadStats()
-      } catch (error) {
-        toast.error('Error al eliminar la pregunta')
-      }
-    },
-    onCancel: () => {}
+  if (confirmed) {
+    try {
+      await productQuestionService.delete(question.id)
+      notifySuccess('Pregunta eliminada exitosamente')
+
+      // Reload questions and stats
+      await loadQuestions(pagination.value?.current_page || 1)
+      await loadStats()
+    } catch (error) {
+      notifyError('Error al eliminar la pregunta')
+    }
   }
 }
 

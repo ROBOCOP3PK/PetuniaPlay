@@ -387,24 +387,16 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useFormat } from '@/composables/useFormat'
+import { useConfirm } from '@/composables/useConfirm'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import couponService from '../../services/couponService'
 
-const toast = useToast()
-
-// Confirm Dialog State
-const confirmDialog = ref({
-  isOpen: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  confirmText: 'Confirmar',
-  cancelText: 'Cancelar',
-  onConfirm: () => {},
-  onCancel: () => {}
-})
+const { notifySuccess, notifyError } = useNotification()
+const { formatPrice } = useFormat()
+const { confirmDialog, showConfirm } = useConfirm()
 
 // State
 const coupons = ref([])
@@ -432,10 +424,6 @@ const emptyForm = {
 const couponForm = reactive({ ...emptyForm })
 
 // Methods
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
-
 const formatDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
@@ -461,7 +449,7 @@ const loadCoupons = async (page = 1) => {
       total: response.data.total
     }
   } catch (error) {
-    toast.error('Error al cargar cupones')
+    notifyError('Error al cargar cupones')
   } finally {
     loading.value = false
   }
@@ -505,12 +493,12 @@ const closeModal = () => {
 const saveCoupon = async () => {
   // Validate
   if (!couponForm.code || !couponForm.type || couponForm.value <= 0) {
-    toast.warning('Por favor completa todos los campos obligatorios')
+    notifyError('Por favor completa todos los campos obligatorios')
     return
   }
 
   if (couponForm.type === 'percentage' && couponForm.value > 100) {
-    toast.warning('El porcentaje no puede ser mayor a 100')
+    notifyError('El porcentaje no puede ser mayor a 100')
     return
   }
 
@@ -530,10 +518,10 @@ const saveCoupon = async () => {
 
     if (editingCoupon.value) {
       await couponService.update(editingCoupon.value.id, data)
-      toast.success('Cupón actualizado exitosamente')
+      notifySuccess('Cupón actualizado exitosamente')
     } else {
       await couponService.create(data)
-      toast.success('Cupón creado exitosamente')
+      notifySuccess('Cupón creado exitosamente')
     }
 
     closeModal()
@@ -541,7 +529,7 @@ const saveCoupon = async () => {
     loadStats()
   } catch (error) {
     const message = error.response?.data?.message || 'Error al guardar cupón'
-    toast.error(message)
+    notifyError(message)
   } finally {
     saving.value = false
   }
@@ -550,34 +538,33 @@ const saveCoupon = async () => {
 const toggleStatus = async (coupon) => {
   try {
     await couponService.toggleStatus(coupon.id)
-    toast.success(coupon.is_active ? 'Cupón desactivado' : 'Cupón activado')
+    notifySuccess(coupon.is_active ? 'Cupón desactivado' : 'Cupón activado')
     loadCoupons()
     loadStats()
   } catch (error) {
-    toast.error('Error al cambiar estado del cupón')
+    notifyError('Error al cambiar estado del cupón')
   }
 }
 
 const confirmDelete = async (coupon) => {
-  confirmDialog.value = {
-    isOpen: true,
+  const confirmed = await showConfirm({
     title: '¿Eliminar cupón?',
-    message: `¿Estás seguro de eliminar el cupón "${coupon.code}"?`,
+    message: `¿Estás seguro de que deseas eliminar el cupón "${coupon.code}"?`,
     type: 'danger',
     confirmText: 'Sí, eliminar',
-    cancelText: 'Cancelar',
-    onConfirm: async () => {
-      try {
-        await couponService.delete(coupon.id)
-        toast.success('Cupón eliminado exitosamente')
-        loadCoupons()
-        loadStats()
-      } catch (error) {
-        const message = error.response?.data?.message || 'Error al eliminar cupón'
-        toast.error(message)
-      }
-    },
-    onCancel: () => {}
+    cancelText: 'Cancelar'
+  })
+
+  if (confirmed) {
+    try {
+      await couponService.delete(coupon.id)
+      notifySuccess('Cupón eliminado exitosamente')
+      loadCoupons()
+      loadStats()
+    } catch (error) {
+      const message = error.response?.data?.message || 'Error al eliminar cupón'
+      notifyError(message)
+    }
   }
 }
 

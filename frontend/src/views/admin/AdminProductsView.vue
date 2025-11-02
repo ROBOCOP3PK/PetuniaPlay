@@ -435,12 +435,16 @@ import ImageUpload from '../../components/admin/ImageUpload.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import { useProductStore } from '../../stores/productStore'
 import { useCategoryStore } from '../../stores/categoryStore'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useFormat } from '@/composables/useFormat'
+import { useConfirm } from '@/composables/useConfirm'
 import { adminService } from '../../services/adminService'
 
 const productStore = useProductStore()
 const categoryStore = useCategoryStore()
-const toast = useToast()
+const { notifySuccess, notifyError } = useNotification()
+const { formatPrice } = useFormat()
+const { confirmDialog, showConfirm } = useConfirm()
 
 const loading = ref(false)
 const search = ref('')
@@ -454,18 +458,6 @@ const exportingProducts = ref(false)
 const showModal = ref(false)
 const editingProductData = ref(null)
 const savingProduct = ref(false)
-
-// Confirm Dialog State
-const confirmDialog = ref({
-  isOpen: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  confirmText: 'Confirmar',
-  cancelText: 'Cancelar',
-  onConfirm: () => {},
-  onCancel: () => {}
-})
 
 // Product form
 const emptyForm = {
@@ -518,10 +510,6 @@ const filteredProducts = computed(() => {
   return filtered
 })
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
-
 const truncate = (text, length) => {
   if (!text) return ''
   return text.length > length ? text.substring(0, length) + '...' : text
@@ -535,10 +523,10 @@ const saveProduct = async (product) => {
       sale_price: product.sale_price
     })
     editingProduct.value = null
-    toast.success('Precio actualizado')
+    notifySuccess('Precio actualizado')
     await productStore.fetchProducts()
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Error al actualizar precio')
+    notifyError(error.response?.data?.message || 'Error al actualizar precio')
     await productStore.fetchProducts() // Recargar para restaurar valores
   }
 }
@@ -550,10 +538,10 @@ const saveStock = async (product) => {
       stock: product.stock
     })
     editingStock.value = null
-    toast.success('Stock actualizado')
+    notifySuccess('Stock actualizado')
     await productStore.fetchProducts()
   } catch (error) {
-    toast.error(error.response?.data?.message || 'Error al actualizar stock')
+    notifyError(error.response?.data?.message || 'Error al actualizar stock')
     await productStore.fetchProducts() // Recargar para restaurar valores
   }
 }
@@ -613,11 +601,11 @@ const saveProductForm = async () => {
     if (editingProductData.value) {
       // Update existing product
       await adminService.updateProduct(editingProductData.value.id, productData)
-      toast.success('Producto actualizado exitosamente')
+      notifySuccess('Producto actualizado exitosamente')
     } else {
       // Create new product
       await adminService.createProduct(productData)
-      toast.success('Producto creado exitosamente')
+      notifySuccess('Producto creado exitosamente')
     }
 
     closeModal()
@@ -627,9 +615,9 @@ const saveProductForm = async () => {
     if (typeof errorMsg === 'object') {
       // Mostrar el primer error de validación
       const firstError = Object.values(errorMsg)[0]
-      toast.error(Array.isArray(firstError) ? firstError[0] : firstError)
+      notifyError(Array.isArray(firstError) ? firstError[0] : firstError)
     } else {
-      toast.error(errorMsg || 'Error al guardar producto')
+      notifyError(errorMsg || 'Error al guardar producto')
     }
   } finally {
     savingProduct.value = false
@@ -637,23 +625,22 @@ const saveProductForm = async () => {
 }
 
 const deleteProduct = async (product) => {
-  confirmDialog.value = {
-    isOpen: true,
+  const confirmed = await showConfirm({
     title: '¿Eliminar producto?',
-    message: `¿Estás seguro de eliminar "${product.name}"? Esta acción no se puede deshacer.`,
+    message: `¿Estás seguro de que deseas eliminar "${product.name}"?`,
     type: 'danger',
     confirmText: 'Sí, eliminar',
-    cancelText: 'Cancelar',
-    onConfirm: async () => {
-      try {
-        await adminService.deleteProduct(product.id)
-        toast.success('Producto eliminado exitosamente')
-        await productStore.fetchProducts()
-      } catch (error) {
-        toast.error(error.response?.data?.message || 'Error al eliminar producto')
-      }
-    },
-    onCancel: () => {}
+    cancelText: 'Cancelar'
+  })
+
+  if (confirmed) {
+    try {
+      await adminService.deleteProduct(product.id)
+      await productStore.fetchProducts()
+      notifySuccess('Producto eliminado correctamente')
+    } catch (error) {
+      notifyError('Error al eliminar el producto')
+    }
   }
 }
 
@@ -687,10 +674,10 @@ const exportProducts = async () => {
     link.remove()
     window.URL.revokeObjectURL(downloadUrl)
 
-    toast.success('Productos exportados exitosamente')
+    notifySuccess('Productos exportados exitosamente')
   } catch (error) {
     console.error('Error exporting:', error)
-    toast.error('Error al exportar productos')
+    notifyError('Error al exportar productos')
   } finally {
     exportingProducts.value = false
   }
@@ -704,7 +691,7 @@ const loadData = async () => {
       categoryStore.fetchCategories()
     ])
   } catch (error) {
-    toast.error('Error al cargar productos')
+    notifyError('Error al cargar productos')
   } finally {
     loading.value = false
   }

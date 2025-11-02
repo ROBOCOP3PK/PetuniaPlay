@@ -289,9 +289,11 @@
 import { ref, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import { adminService } from '../../services/adminService'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useFormat } from '@/composables/useFormat'
 
-const toast = useToast()
+const { notifyError } = useNotification()
+const { formatPrice } = useFormat()
 
 const loading = ref(false)
 const stats = ref({})
@@ -304,10 +306,6 @@ const reportStartDate = ref('')
 const reportEndDate = ref('')
 const reportGroupBy = ref('day')
 const exportingReport = ref(false)
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
 
 const getStatusClass = (status) => {
   const classes = {
@@ -340,7 +338,7 @@ const loadDashboard = async () => {
     lowStockProducts.value = response.data.low_stock_products
     topProducts.value = response.data.top_products
   } catch (error) {
-    toast.error('Error al cargar estadísticas')
+    notifyError('Error al cargar estadísticas')
     console.error(error)
   } finally {
     loading.value = false
@@ -377,11 +375,9 @@ const exportSalesReport = async () => {
     link.click()
     link.remove()
     window.URL.revokeObjectURL(downloadUrl)
-
-    toast.success('Reporte exportado exitosamente')
   } catch (error) {
     console.error('Error exporting:', error)
-    toast.error('Error al exportar reporte')
+    notifyError('Error al exportar reporte')
   } finally {
     exportingReport.value = false
   }

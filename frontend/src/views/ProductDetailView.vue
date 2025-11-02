@@ -451,7 +451,9 @@ import { useProductStore } from '../stores/productStore'
 import { useCartStore } from '../stores/cartStore'
 import { useWishlistStore } from '../stores/wishlistStore'
 import { useAuthStore } from '../stores/authStore'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
+import { useConfirm } from '@/composables/useConfirm'
+import { useFormat } from '@/composables/useFormat'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import StarRating from '../components/StarRating.vue'
 import ReviewsList from '../components/ReviewsList.vue'
@@ -467,19 +469,9 @@ const productStore = useProductStore()
 const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
 const authStore = useAuthStore()
-const toast = useToast()
-
-// Confirm Dialog State
-const confirmDialog = ref({
-  isOpen: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  confirmText: 'Confirmar',
-  cancelText: 'Cancelar',
-  onConfirm: () => {},
-  onCancel: () => {}
-})
+const { notifyAddedToCart, notifySuccess, notifyError, notifyWarning, notifyInfo } = useNotification()
+const { confirmDialog, showConfirm } = useConfirm()
+const { formatPrice, formatDate } = useFormat()
 
 const quantity = ref(1)
 const selectedImage = ref(null)
@@ -514,24 +506,17 @@ const canWriteReview = computed(() => {
   return !userReview
 })
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
-
 const addToCart = () => {
   try {
     cartStore.addItem(product.value, quantity.value)
 
-    // Mostrar toast de éxito con opción de ir al carrito
-    toast.success(`${quantity.value} x ${product.value.name} agregado al carrito`, {
-      timeout: 3000,
-      onClick: () => router.push('/cart')
-    })
+    // Mostrar notificación de éxito con opción de ir al carrito
+    notifyAddedToCart(product.value.name, quantity.value)
 
     // Reset quantity
     quantity.value = 1
   } catch (error) {
-    toast.error(error.message)
+    notifyError(error.message)
   }
 }
 
@@ -539,12 +524,12 @@ const toggleWishlist = async () => {
   const result = await wishlistStore.toggleWishlist(product.value)
   if (result.success) {
     if (isInWishlist.value) {
-      toast.success('Agregado a favoritos')
+      notifySuccess('Agregado a favoritos')
     } else {
-      toast.info('Eliminado de favoritos')
+      notifyInfo('Eliminado de favoritos')
     }
   } else {
-    toast.error(result.message)
+    notifyError(result.message)
   }
 }
 
@@ -600,8 +585,8 @@ const loadReviews = async (page = 1) => {
     }
   } catch (error) {
     console.error('Error loading reviews:', error)
-    toast.error('Error al cargar las reseñas')
-  } finally {
+    notifyError('Error al cargar las reseñas')
+  } finally{
     loadingReviews.value = false
   }
 }
@@ -619,7 +604,7 @@ const loadReviewStats = async () => {
 
 const openReviewForm = (review = null) => {
   if (!authStore.isAuthenticated) {
-    toast.warning('Debes iniciar sesión para escribir una reseña')
+    notifyWarning('Debes iniciar sesión para escribir una reseña')
     router.push({ name: 'login', query: { redirect: route.fullPath } })
     return
   }
@@ -633,14 +618,14 @@ const handleReviewSubmit = async (reviewData) => {
     if (editingReview.value) {
       // Update existing review
       await reviewService.update(editingReview.value.id, reviewData)
-      toast.success('Reseña actualizada exitosamente')
+      notifySuccess('Reseña actualizada exitosamente')
     } else {
       // Create new review
       await reviewService.create({
         product_id: product.value.id,
         ...reviewData
       })
-      toast.success('Reseña publicada exitosamente')
+      notifySuccess('Reseña publicada exitosamente')
     }
 
     // Reload reviews and stats
@@ -652,32 +637,31 @@ const handleReviewSubmit = async (reviewData) => {
     editingReview.value = null
   } catch (error) {
     const errorMessage = error.response?.data?.message || 'Error al enviar la reseña'
-    toast.error(errorMessage)
+    notifyError(errorMessage)
     throw new Error(errorMessage)
   }
 }
 
 const confirmDeleteReview = async (review) => {
-  confirmDialog.value = {
-    isOpen: true,
+  const confirmed = await showConfirm({
     title: '¿Eliminar reseña?',
     message: '¿Estás seguro de que deseas eliminar esta reseña?',
     type: 'danger',
     confirmText: 'Sí, eliminar',
-    cancelText: 'Cancelar',
-    onConfirm: async () => {
-      try {
-        await reviewService.delete(review.id)
-        toast.success('Reseña eliminada exitosamente')
+    cancelText: 'Cancelar'
+  })
 
-        // Reload reviews and stats
-        await loadReviews()
-        await loadReviewStats()
-      } catch (error) {
-        toast.error('Error al eliminar la reseña')
-      }
-    },
-    onCancel: () => {}
+  if (confirmed) {
+    try {
+      await reviewService.delete(review.id)
+      notifySuccess('Reseña eliminada exitosamente')
+
+      // Reload reviews and stats
+      await loadReviews()
+      await loadReviewStats()
+    } catch (error) {
+      notifyError('Error al eliminar la reseña')
+    }
   }
 }
 
@@ -691,7 +675,7 @@ const loadQuestions = async () => {
     questions.value = response.data.data
   } catch (error) {
     console.error('Error loading questions:', error)
-    toast.error('Error al cargar las preguntas')
+    notifyError('Error al cargar las preguntas')
   } finally {
     loadingQuestions.value = false
   }
@@ -699,7 +683,7 @@ const loadQuestions = async () => {
 
 const openQuestionForm = () => {
   if (!authStore.isAuthenticated) {
-    toast.warning('Debes iniciar sesión para hacer una pregunta')
+    notifyWarning('Debes iniciar sesión para hacer una pregunta')
     router.push({ name: 'login', query: { redirect: route.fullPath } })
     return
   }
@@ -708,7 +692,7 @@ const openQuestionForm = () => {
 
 const submitQuestion = async () => {
   if (!newQuestion.value || newQuestion.value.trim().length < 10) {
-    toast.error('La pregunta debe tener al menos 10 caracteres')
+    notifyError('La pregunta debe tener al menos 10 caracteres')
     return
   }
 
@@ -717,12 +701,12 @@ const submitQuestion = async () => {
       product_id: product.value.id,
       question: newQuestion.value
     })
-    toast.success('Pregunta enviada. Será publicada cuando reciba respuesta.')
+    notifySuccess('Pregunta enviada. Será publicada cuando reciba respuesta.')
     newQuestion.value = ''
     showQuestionForm.value = false
   } catch (error) {
     const errorMessage = error.response?.data?.message || 'Error al enviar la pregunta'
-    toast.error(errorMessage)
+    notifyError(errorMessage)
   }
 }
 

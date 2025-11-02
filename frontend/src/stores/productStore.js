@@ -10,6 +10,8 @@ export const useProductStore = defineStore('product', () => {
   const brands = ref([])
   const loading = ref(false)
   const error = ref(null)
+  const lastBrandsFetch = ref(null)
+  const BRANDS_CACHE_DURATION = 5 * 60 * 1000 // 5 minutos
   const pagination = ref({
     currentPage: 1,
     lastPage: 1,
@@ -88,13 +90,31 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
-  async function fetchBrands() {
+  async function fetchBrands(force = false) {
+    // Cache hit: datos frescos disponibles
+    const now = Date.now()
+    if (
+      !force &&
+      brands.value.length > 0 &&
+      lastBrandsFetch.value &&
+      (now - lastBrandsFetch.value) < BRANDS_CACHE_DURATION
+    ) {
+      return // Usar caché
+    }
+
+    // Cache miss: fetch desde API
     try {
       const response = await productService.getBrands()
       brands.value = response.data.brands || []
+      lastBrandsFetch.value = now
     } catch (err) {
       console.error('Error fetching brands:', err)
+      throw err
     }
+  }
+
+  async function refreshBrands() {
+    return fetchBrands(true)
   }
 
   function clearProducts() {
@@ -120,6 +140,7 @@ export const useProductStore = defineStore('product', () => {
     fetchProductBySlug,
     searchProducts,
     fetchBrands,
+    refreshBrands,
     clearProducts
   }
 })

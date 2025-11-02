@@ -133,75 +133,51 @@
 import { ref, onMounted } from 'vue'
 import { useWishlistStore } from '../stores/wishlistStore'
 import { useCartStore } from '../stores/cartStore'
-import { useToast } from 'vue-toastification'
+import { useNotification } from '@/composables/useNotification'
 import { useRouter } from 'vue-router'
+import { useConfirm } from '@/composables/useConfirm'
+import { useFormat } from '@/composables/useFormat'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 
 const wishlistStore = useWishlistStore()
 const cartStore = useCartStore()
-const toast = useToast()
+const { notifyAddedToCart, notifySuccess, notifyError } = useNotification()
 const router = useRouter()
+const { confirmDialog, showConfirm } = useConfirm()
+const { formatPrice, formatDate } = useFormat()
 
 const loading = ref(false)
-
-// Confirm Dialog State
-const confirmDialog = ref({
-  isOpen: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  confirmText: 'Confirmar',
-  cancelText: 'Cancelar',
-  onConfirm: () => {},
-  onCancel: () => {}
-})
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
-
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('es-CO', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
 
 const handleRemove = async (productId) => {
   const result = await wishlistStore.removeFromWishlist(productId)
   if (result.success) {
-    toast.success(result.message)
+    notifySuccess(result.message)
   } else {
-    toast.error(result.message)
+    notifyError(result.message)
   }
 }
 
 const handleAddToCart = (product) => {
   cartStore.addItem(product, 1)
-  toast.success(`${product.name} agregado al carrito`, {
-    timeout: 3000,
-    onClick: () => router.push('/cart')
-  })
+  notifyAddedToCart(product.name, 1)
 }
 
 const handleClearWishlist = async () => {
-  confirmDialog.value = {
-    isOpen: true,
+  const confirmed = await showConfirm({
     title: '¿Limpiar lista de deseos?',
     message: '¿Estás seguro de que deseas eliminar todos los productos de tu lista de deseos?',
     type: 'warning',
     confirmText: 'Sí, limpiar todo',
-    cancelText: 'Cancelar',
-    onConfirm: async () => {
-      const result = await wishlistStore.clearWishlist()
-      if (result.success) {
-        toast.success(result.message)
-      } else {
-        toast.error(result.message)
-      }
-    },
-    onCancel: () => {}
+    cancelText: 'Cancelar'
+  })
+
+  if (confirmed) {
+    const result = await wishlistStore.clearWishlist()
+    if (result.success) {
+      notifySuccess(result.message)
+    } else {
+      notifyError(result.message)
+    }
   }
 }
 
