@@ -51,7 +51,10 @@
       "Bash(composer show:*)",
       "Bash(chromedriver:*)",
       "Bash(sudo apt-get install:*)",
-      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT name, category, price FROM products LIMIT 20;\")"
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT name, category, price FROM products LIMIT 20;\")",
+      "Bash(composer:*)",
+      "Bash(node --version)",
+      "Bash(npm --version:*)"
     ],
     "deny": [],
     "ask": []
