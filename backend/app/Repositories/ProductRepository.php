@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Product;
 use App\Events\ProductStockUpdated;
+use Illuminate\Support\Facades\Cache;
 
 class ProductRepository extends BaseRepository
 {
@@ -16,16 +17,23 @@ class ProductRepository extends BaseRepository
     {
         return $this->model->active()
             ->with(['category', 'primaryImage', 'images'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->paginate($perPage);
     }
 
     public function getFeatured($limit = 8)
     {
-        return $this->model->active()
-            ->featured()
-            ->with(['category', 'primaryImage'])
-            ->limit($limit)
-            ->get();
+        // Cachear productos destacados por 30 minutos
+        return Cache::remember("products.featured.{$limit}", 1800, function () use ($limit) {
+            return $this->model->active()
+                ->featured()
+                ->with(['category', 'primaryImage'])
+                ->withAvg('reviews', 'rating')
+                ->withCount('reviews')
+                ->limit($limit)
+                ->get();
+        });
     }
 
     public function getByCategory($categoryId, $perPage = 15)
@@ -33,6 +41,8 @@ class ProductRepository extends BaseRepository
         return $this->model->active()
             ->where('category_id', $categoryId)
             ->with(['category', 'primaryImage'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->paginate($perPage);
     }
 
@@ -55,6 +65,8 @@ class ProductRepository extends BaseRepository
                     ->orWhere('brand', 'like', "%{$term}%");
             })
             ->with(['category', 'primaryImage'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->paginate($perPage);
     }
 
@@ -121,6 +133,8 @@ class ProductRepository extends BaseRepository
             ->where('category_id', $categoryId)
             ->where('id', '!=', $productId)
             ->with(['primaryImage'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->limit($limit)
             ->get();
     }
@@ -209,10 +223,49 @@ class ProductRepository extends BaseRepository
      */
     public function getAllBrands()
     {
-        return $this->model
-            ->whereNotNull('brand')
-            ->distinct()
-            ->orderBy('brand')
-            ->pluck('brand');
+        // Cachear marcas por 2 horas
+        return Cache::remember('products.brands.all', 7200, function () {
+            return $this->model
+                ->whereNotNull('brand')
+                ->distinct()
+                ->orderBy('brand')
+                ->pluck('brand');
+        });
+    }
+
+    /**
+     * Invalidar caché cuando se crea/actualiza un producto
+     */
+    public function create(array $data)
+    {
+        $product = parent::create($data);
+        $this->clearFeaturedCache();
+        Cache::forget('products.brands.all');
+        return $product;
+    }
+
+    public function update($id, array $data)
+    {
+        $product = parent::update($id, $data);
+
+        // Invalidar caché de productos destacados si cambió is_featured
+        if (isset($data['is_featured']) || isset($data['is_active'])) {
+            $this->clearFeaturedCache();
+        }
+
+        // Invalidar caché de marcas si cambió la marca
+        if (isset($data['brand'])) {
+            Cache::forget('products.brands.all');
+        }
+
+        return $product;
+    }
+
+    protected function clearFeaturedCache()
+    {
+        // Limpiar múltiples cachés de featured con diferentes límites comunes
+        foreach ([4, 6, 8, 10, 12] as $limit) {
+            Cache::forget("products.featured.{$limit}");
+        }
     }
 }

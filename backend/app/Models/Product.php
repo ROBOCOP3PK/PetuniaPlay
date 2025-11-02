@@ -130,7 +130,12 @@ class Product extends Model
 
     public function getAverageRatingAttribute()
     {
-        return $this->reviews()->avg('rating') ?? 0;
+        // Usar el agregado cargado si existe (withAvg), sino calcular
+        if (array_key_exists('reviews_avg_rating', $this->attributes)) {
+            return round($this->attributes['reviews_avg_rating'] ?? 0, 1);
+        }
+
+        return round($this->reviews()->avg('rating') ?? 0, 1);
     }
 
     public function getInStockAttribute()

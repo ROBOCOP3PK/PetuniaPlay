@@ -5,6 +5,8 @@
       <img
         :src="product.primary_image?.image_url || 'https://via.placeholder.com/400'"
         :alt="product.name"
+        loading="lazy"
+        decoding="async"
         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
       />
 

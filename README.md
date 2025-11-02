@@ -4,42 +4,51 @@
 ![Vue.js](https://img.shields.io/badge/Vue.js-3-green)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-blue)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange)
+![Node](https://img.shields.io/badge/Node-20.19+-brightgreen)
 
-Sistema completo de e-commerce especializado en productos para mascotas, construido con Laravel 12 (backend) y Vue.js 3 (frontend).
+Sistema completo de e-commerce especializado en productos para mascotas, construido con Laravel 12 (backend REST API) y Vue.js 3 (frontend SPA). Incluye sistema de fidelidad, cupones avanzados, control de despachos, integración con Google Maps y cumplimiento legal colombiano.
 
 ---
 
 ## 🌟 Características Principales
 
 ### Para Clientes
-- 🛒 Catálogo de productos con filtros avanzados
+- 🛒 Catálogo de productos con filtros avanzados (categoría, precio, marca)
 - 🔍 Búsqueda en tiempo real con autocompletado
-- 📍 Selección de dirección con Google Maps
-- 🎁 Sistema de cupones de descuento
-- ❤️ Lista de deseos (wishlist)
-- ⭐ Reseñas y calificaciones
-- 📦 Rastreo público de pedidos
-- 👤 Gestión de cuenta y preferencias
+- 📍 Selección de dirección con Google Maps (pin arrastrable, validación de cobertura)
+- 🎁 Sistema de cupones de descuento con validación en tiempo real
+- ❤️ Lista de deseos (wishlist) con persistencia
+- ⭐ Reseñas y calificaciones (solo productos comprados)
+- 📦 Rastreo público de pedidos (número + email)
+- 👤 Gestión de cuenta y preferencias de notificaciones
+- 🏆 Programa de fidelidad con recompensas por compras
+- ❓ Sistema de preguntas y respuestas sobre productos
+- 🌙 Envío nocturno opcional con cargo adicional
 
 ### Para Administradores
-- 📊 Dashboard con estadísticas en tiempo real
-- 📦 Gestión completa de inventario
-- 🚚 Control de despachos y envíos
-- 💰 Gestión de cupones y promociones
-- 👥 Administración de usuarios y roles
-- 📧 Sistema de emails con cumplimiento legal
-- 📈 Reportes exportables (Excel/PDF)
-- ✅ Moderación de reseñas
+- 📊 Dashboard con estadísticas en tiempo real (ventas, órdenes, stock)
+- 📦 Gestión completa de inventario con alertas de stock bajo
+- 🚚 Control de despachos con alertas de órdenes antiguas
+- 💰 Gestión de cupones con límites por cliente
+- 🏆 Gestión de programa de fidelidad (recompensas permanentes y campañas)
+- 👥 Administración de usuarios y roles (solo admin)
+- 📧 Sistema de emails con cumplimiento Ley 1581/2012
+- 📈 Reportes exportables (Excel/PDF) con rate limiting
+- ✅ Moderación de reseñas y respuesta a preguntas
+- ⚙️ Configuraciones parametrizables (envíos, WhatsApp, horarios)
 
 ### Técnicas
-- 🔐 Autenticación con Laravel Sanctum
-- 🎨 UI moderna con Tailwind CSS y Dark Mode
+- 🔐 Autenticación con Laravel Sanctum (SPA authentication)
+- 🎨 UI moderna con PrimeVue + Tailwind CSS y Dark Mode
 - 📱 Diseño 100% responsive
-- 🌍 Integración con Google Maps API
-- 📧 Sistema de notificaciones por email
-- 📋 Cumplimiento Ley 1581/2012 (Colombia)
-- 🔄 Gestión automática de stock
-- 💳 Preparado para integración de pasarelas de pago
+- 🌍 Integración con Google Maps API (Places, Geocoding, validación de cobertura)
+- 📧 Sistema de notificaciones por email con preferencias granulares
+- 📋 Cumplimiento Ley 1581/2012 (Colombia) - Protección de datos
+- 🔄 Gestión automática de stock con alertas
+- 💳 Preparado para integración de pasarelas de pago (Stripe/PayU/MercadoPago)
+- 🛡️ Rate limiting en endpoints críticos
+- 📦 22 modelos Eloquent con relaciones optimizadas
+- 🎯 API REST versionada (/api/v1/)
 
 ---
 
@@ -49,11 +58,15 @@ Este proyecto cuenta con documentación completa y detallada:
 
 | Documento | Descripción | Para Quién |
 |-----------|-------------|------------|
+| **[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)** | Contexto unificado del proyecto: arquitectura, decisiones técnicas, estado actual | Desarrolladores, equipo técnico, onboarding |
 | **[MANUAL_USUARIO.md](MANUAL_USUARIO.md)** | Guía completa de uso del sistema, organizada por módulos y roles | Usuarios finales, clientes, administradores, managers |
-| **[DOCUMENTACION_TECNICA.md](DOCUMENTACION_TECNICA.md)** | Arquitectura, API, base de datos, servicios y deployment | Desarrolladores, DevOps, equipo técnico |
-| **[PROYECTO_STATUS.md](PROYECTO_STATUS.md)** | Estado actual del proyecto, funcionalidades implementadas y pendientes | Product owners, stakeholders |
 | **[TESTING_CHECKLIST.md](TESTING_CHECKLIST.md)** | Checklist exhaustivo de pruebas (500+ puntos) | QA, testers |
 | **[SHIPPING_GUIDE.md](SHIPPING_GUIDE.md)** | Guía específica del sistema de control de despachos | Managers, personal de logística |
+
+**Comandos Slash para Claude:**
+- `/apc` - Actualiza exhaustivamente PROJECT_CONTEXT.md analizando todo el proyecto
+- `/cm` - Genera mensaje inteligente de commit analizando cambios
+- `/console` - Limpia console.log del proyecto automáticamente
 
 ---
 
@@ -125,9 +138,11 @@ npm run dev
 
 | Rol | Email | Contraseña | Permisos |
 |-----|-------|------------|----------|
-| Admin | admin@petuniaplay.com | password | Acceso completo |
-| Manager | manager@petuniaplay.com | password | Panel admin (sin gestión de usuarios) |
-| Cliente | customer@petuniaplay.com | password | Compras y cuenta |
+| Admin | admin@petuniaplay.com | 2025 | Acceso completo al sistema |
+| Manager | manager@petuniaplay.com | 2025 | Panel admin (excepto gestión de usuarios) |
+| Cliente | (generados por seeder) | 2025 | Compras, wishlist, reseñas, fidelidad |
+
+**Nota:** Los clientes de prueba son generados automáticamente por el seeder (20 usuarios).
 
 ---
 
@@ -174,18 +189,31 @@ npm run dev
 
 ### ✅ Completado (100% Funcional en Desarrollo)
 
-- [x] Sistema de autenticación completo
-- [x] Catálogo de productos con filtros avanzados
-- [x] Carrito de compras y checkout
-- [x] Gestión de órdenes y envíos
-- [x] Panel de administración completo
-- [x] Sistema de cupones
-- [x] Reseñas y calificaciones
-- [x] Integración con Google Maps
-- [x] Sistema de emails con cumplimiento legal
-- [x] Reportes y exportación de datos
-- [x] UI responsive con dark mode
-- [x] Control de despachos
+**Core del E-commerce:**
+- [x] Sistema de autenticación completo (Laravel Sanctum)
+- [x] Catálogo de productos con filtros avanzados y búsqueda en tiempo real
+- [x] Carrito de compras y checkout (guest y autenticado)
+- [x] Gestión de órdenes con estados y tracking
+- [x] Sistema de envíos con Google Maps y validación de cobertura
+- [x] Panel de administración con roles (customer, manager, admin)
+
+**Funcionalidades Avanzadas:**
+- [x] Sistema de cupones con límites por cliente
+- [x] Programa de fidelidad (recompensas permanentes y campañas)
+- [x] Reseñas y calificaciones con moderación
+- [x] Preguntas y respuestas sobre productos
+- [x] Lista de deseos con persistencia
+- [x] Control de despachos con alertas
+- [x] Notificaciones in-app y por email
+
+**Integración y Configuración:**
+- [x] Integración con Google Maps (Places, Geocoding)
+- [x] Sistema de emails con cumplimiento Ley 1581/2012
+- [x] Reportes exportables (Excel/PDF) con rate limiting
+- [x] UI responsive con dark mode (paleta Beagle)
+- [x] Configuraciones parametrizables (envíos, WhatsApp, horarios)
+- [x] Envío nocturno opcional
+- [x] WhatsApp button flotante
 
 ### ⚠️ Pendiente para Producción
 
@@ -198,7 +226,17 @@ npm run dev
 - [ ] Sistema de monitoreo (Sentry/Bugsnag)
 - [ ] Backups automatizados
 
-**Ver detalles completos:** [PROYECTO_STATUS.md](PROYECTO_STATUS.md)
+**Ver detalles completos:** [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)
+
+**Estadísticas del Proyecto:**
+- 22 modelos Eloquent
+- 37 migraciones de base de datos
+- 31 tablas en MySQL
+- 22 controladores API
+- 33 vistas Vue.js
+- 28 componentes reutilizables
+- 17 servicios API
+- 7 stores Pinia
 
 ---
 
@@ -212,12 +250,16 @@ npm run dev
 - **ORM:** Eloquent
 
 ### Frontend
-- **Framework:** Vue.js 3 (Composition API)
-- **Build Tool:** Vite 5
-- **Router:** Vue Router 4
-- **State:** Pinia 2
-- **HTTP:** Axios
-- **CSS:** Tailwind CSS 3
+- **Framework:** Vue.js 3.5.22 (Composition API con `<script setup>`)
+- **Build Tool:** Vite 7.1.11
+- **Router:** Vue Router 4.6.3 (guards multinivel)
+- **State:** Pinia 3.0.3 (stores modulares)
+- **UI Components:** PrimeVue 4.4.1
+- **HTTP:** Axios 1.12.2 (interceptors)
+- **CSS:** Tailwind CSS 3.4.18 + PrimeIcons 7.0.0
+- **Maps:** @googlemaps/js-api-loader 2.0.1
+- **Notifications:** vue-toastification 2.0.0-rc.5
+- **Node:** ^20.19.0 || >=22.12.0
 
 ### Servicios Externos
 - **Mapas:** Google Maps API (Places, Geocoding)
@@ -268,51 +310,58 @@ El proyecto incluye un checklist exhaustivo de pruebas:
 ## 📦 Estructura del Proyecto
 
 ```
-petuniaplay/
-├── backend/                 # API Laravel
+PetuniaPlay/
+├── backend/                 # API Laravel 12
 │   ├── app/
 │   │   ├── Http/
-│   │   │   ├── Controllers/
-│   │   │   ├── Middleware/
-│   │   │   └── Resources/
-│   │   ├── Models/
-│   │   ├── Services/
-│   │   ├── Mail/
-│   │   └── Exports/
+│   │   │   ├── Controllers/Api/  # 22 controladores REST
+│   │   │   ├── Middleware/       # AdminMiddleware, ManagerMiddleware
+│   │   │   └── Resources/        # API Resources
+│   │   ├── Models/               # 22 modelos Eloquent
+│   │   ├── Services/             # Lógica de negocio
+│   │   ├── Mail/                 # 4 Mailables (transaccionales)
+│   │   └── Exports/              # Exportación Excel/PDF
 │   ├── database/
-│   │   ├── migrations/
-│   │   ├── seeders/
+│   │   ├── migrations/           # 37 migraciones (31 tablas)
+│   │   ├── seeders/              # 7 seeders
 │   │   └── factories/
 │   └── routes/
-│       └── api.php
+│       └── api.php               # Rutas API versionadas (/api/v1)
 │
-├── frontend/               # App Vue.js
+├── frontend/                     # SPA Vue.js 3
 │   ├── src/
-│   │   ├── components/
-│   │   ├── views/
-│   │   ├── services/
-│   │   ├── stores/
-│   │   └── router/
+│   │   ├── components/           # 28 componentes reutilizables
+│   │   ├── views/                # 33 vistas (públicas, auth, admin)
+│   │   ├── services/             # 17 servicios API (Axios)
+│   │   ├── stores/               # 7 stores Pinia
+│   │   ├── router/               # Vue Router con guards
+│   │   └── composables/          # useTheme, useConfirm
 │   └── public/
 │
-├── MANUAL_USUARIO.md       # Guía de usuario
-├── DOCUMENTACION_TECNICA.md # Documentación técnica
-├── PROYECTO_STATUS.md      # Estado del proyecto
-├── TESTING_CHECKLIST.md    # Checklist de pruebas
-└── README.md              # Este archivo
+├── .claude/                      # Configuración Claude Code
+│   └── commands/                 # Comandos slash personalizados
+│
+├── PROJECT_CONTEXT.md            # Contexto unificado del proyecto
+├── MANUAL_USUARIO.md             # Guía de usuario
+├── TESTING_CHECKLIST.md          # Checklist de pruebas (500+ puntos)
+├── SHIPPING_GUIDE.md             # Guía de despachos
+└── README.md                     # Este archivo
 ```
 
 ---
 
 ## 🔒 Seguridad
 
-- ✅ Laravel Sanctum para autenticación API
-- ✅ Middleware de roles (Customer, Manager, Admin)
-- ✅ Validación de inputs en frontend y backend
-- ✅ Protección CSRF
-- ✅ Encriptación de tokens sensibles
-- ✅ Rate limiting
-- ✅ Passwords hasheados con bcrypt
+- ✅ Laravel Sanctum (SPA authentication con cookies httpOnly)
+- ✅ Middleware de roles (customer, manager, admin)
+- ✅ Validación doble (frontend y backend)
+- ✅ Protección CSRF nativa de Laravel
+- ✅ Encriptación de tokens sensibles (unsubscribe, reset password)
+- ✅ Rate limiting en endpoints críticos (auth, checkout, export)
+- ✅ Passwords hasheados con bcrypt (12 rounds)
+- ✅ Sanitización de inputs y protección XSS
+- ✅ Guards de navegación en Vue Router
+- ✅ Cumplimiento Ley 1581/2012 (protección de datos Colombia)
 
 ---
 
@@ -348,14 +397,14 @@ MAIL_PASSWORD=your_sendgrid_api_key
 
 ---
 
-## 🌍 Internacionalización
+## 🌍 Localización
 
-**Idioma actual:** Español (Colombia)
-
-**Localización:**
-- Formato de moneda: Peso Colombiano (COP)
-- Impuesto: IVA 19%
-- Formatos de fecha: DD/MM/YYYY
+**Idioma:** Español (Colombia)
+**Moneda:** Peso Colombiano (COP)
+**Impuesto:** IVA 19%
+**Formato de fecha:** DD/MM/YYYY
+**Marco Legal:** Ley 1581/2012 (Protección de datos personales)
+**Zona de Cobertura:** Bogotá y 50 km a la redonda (validación con Google Maps)
 
 ---
 
@@ -412,33 +461,57 @@ Proyecto privado. Todos los derechos reservados © 2025 PetuniaPlay
 
 ## 🏆 Funcionalidades Destacadas
 
-### 1. Selección de Dirección con Mapa
+### 1. Selección de Dirección con Google Maps
 Permite a los clientes:
-- Escribir dirección manualmente
-- Seleccionar ubicación en mapa con pin
-- Validación de área de cobertura (50 km de Bogotá)
-- Reverse geocoding (coordenadas → dirección)
-- Guardar ubicación exacta para mejor precisión de entrega
+- Escribir dirección manualmente o buscar
+- Seleccionar ubicación en mapa con pin arrastrable
+- Validación automática de área de cobertura (50 km desde Bogotá)
+- Reverse geocoding (coordenadas → dirección legible)
+- Guardar ubicación exacta (lat/lng) para precisión de entrega
+- Integración completa con Google Places y Geocoding API
 
-### 2. Control de Despachos
+### 2. Control de Despachos Inteligente
 Dashboard especializado para logística:
-- Vista de órdenes pendientes vs despachadas
-- Alertas de órdenes urgentes (4+ días)
-- Creación rápida de envíos con tracking
-- Actualización en tiempo real de estados
-- Estadísticas de envío
+- Vista de órdenes pendientes vs despachadas (métricas en tiempo real)
+- Alertas automáticas de órdenes antiguas (4+ días sin despachar)
+- Creación rápida de envíos con tracking number único
+- Actualización de estados con notificación automática por email
+- Estadísticas de envío (tiempo promedio, tasa de entrega)
+- Historial completo de tracking público
 
 ### 3. Sistema de Cupones Avanzado
-- Descuentos por porcentaje o monto fijo
-- Condiciones: monto mínimo, límite de usos, fechas
-- Estadísticas de uso
-- Activación/desactivación flexible
+- Tipos de descuento: porcentaje o monto fijo
+- Condiciones: monto mínimo de compra, fechas de validez
+- Límites: usos totales y máximo de usos por cliente individual
+- Validación en tiempo real vía API (previene fraude)
+- Estadísticas detalladas de uso y conversión
+- Activación/desactivación sin eliminar datos históricos
+- Tabla `coupon_redemptions` para tracking completo
 
-### 4. Emails con Cumplimiento Legal
-- Cumplimiento total Ley 1581/2012 (Colombia)
-- Información de derechos ARCO
-- Sistema de unsubscribe con token único
-- Preferencias granulares por tipo de email
+### 4. Programa de Fidelidad
+- Recompensas permanentes por hitos: 1ª, 5ª, 10ª, 20ª compra
+- Campañas temporales con fechas de inicio/fin
+- Audiencias segmentadas: solo nuevos clientes o todos
+- Productos gratuitos como premio (integración con inventario)
+- Panel de canje para clientes con recompensas disponibles
+- Historial completo de redenciones
+- Gestión centralizada para managers
+
+### 5. Emails con Cumplimiento Legal
+- Cumplimiento total Ley 1581/2012 (Colombia - Protección de datos)
+- Información clara de derechos ARCO en footer de emails
+- Sistema de unsubscribe con token único encriptado
+- Preferencias granulares por tipo de email (marketing, transaccional)
+- Respeto automático a preferencias del usuario
+- Templates transaccionales: confirmación de orden, actualización de envío
+
+### 6. Preguntas y Respuestas
+- Clientes preguntan sobre productos antes de comprar
+- Managers responden desde panel admin
+- Notificación por email al cliente cuando responden
+- Preferencia desactivable (respeto a preferencias de notificaciones)
+- Preguntas visibles públicamente en detalle de producto
+- Mejora la confianza y reduce dudas pre-compra
 
 ---
 
@@ -447,15 +520,27 @@ Dashboard especializado para logística:
 ### Comandos Útiles
 
 ```bash
-# Backend
-php artisan migrate:fresh --seed  # Reset DB
-php artisan route:list            # Ver todas las rutas
-php artisan tinker                # REPL de Laravel
-php artisan storage:link          # Link storage público
+# Backend (Laravel)
+php artisan migrate:fresh --seed  # Reset DB completo con datos de prueba
+php artisan route:list            # Ver todas las rutas API
+php artisan tinker                # REPL de Laravel (explorar modelos)
+php artisan storage:link          # Link storage público (imágenes)
+php artisan queue:work            # Procesar trabajos en cola
+php artisan db:show               # Información de la base de datos
+php artisan serve                 # Servidor dev (puerto 8000)
 
-# Frontend
+# Frontend (Vue.js)
+npm run dev                       # Servidor desarrollo (puerto 5173)
 npm run build                     # Build para producción
 npm run preview                   # Preview del build
+
+# Desarrollo Full Stack
+composer dev                      # Servidor + queue + logs + vite (requiere concurrently)
+
+# Git Helpers (Comandos Slash de Claude)
+/cm                               # Genera mensaje de commit inteligente
+/apc                              # Actualiza PROJECT_CONTEXT.md
+/console                          # Limpia console.log del proyecto
 ```
 
 ### Debug
@@ -487,10 +572,10 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 ---
 
 **¿Necesitas ayuda?** Consulta la documentación correspondiente:
-- Usuarios → [MANUAL_USUARIO.md](MANUAL_USUARIO.md)
-- Desarrolladores → [DOCUMENTACION_TECNICA.md](DOCUMENTACION_TECNICA.md)
+- Contexto del Proyecto → [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)
+- Manual de Usuario → [MANUAL_USUARIO.md](MANUAL_USUARIO.md)
 - Testing → [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md)
-- Estado → [PROYECTO_STATUS.md](PROYECTO_STATUS.md)
+- Guía de Despachos → [SHIPPING_GUIDE.md](SHIPPING_GUIDE.md)
 
 ---
 

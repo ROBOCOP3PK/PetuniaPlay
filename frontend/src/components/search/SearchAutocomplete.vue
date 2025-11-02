@@ -59,6 +59,8 @@
               v-if="product.primary_image"
               :src="product.primary_image.image_url"
               :alt="product.name"
+              loading="lazy"
+              decoding="async"
               class="w-12 h-12 object-cover rounded"
             />
             <div v-else class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">

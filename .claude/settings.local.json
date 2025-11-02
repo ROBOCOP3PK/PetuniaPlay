@@ -58,7 +58,9 @@
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total_products FROM products; SELECT COUNT(*) as total_categories FROM categories; SELECT COUNT(*) as total_orders FROM orders;\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT payment_method, payment_status, COUNT(*) as total FROM orders GROUP BY payment_method, payment_status;\")",
       "Bash(/dev/null)",
-      "Bash(sudo apt-get update:*)"
+      "Bash(sudo apt-get update:*)",
+      "Bash(dir /s C:UsersdavidDocuments.DESARROLLOPetuniaPlay)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

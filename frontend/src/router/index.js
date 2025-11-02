@@ -4,6 +4,14 @@ import { useAuthStore } from '../stores/authStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  // Configurar comportamiento de scroll optimizado
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0, behavior: 'smooth' }
+    }
+  },
   routes: [
     {
       path: '/',
@@ -191,14 +199,7 @@ const router = createRouter({
       component: () => import('../views/LoyaltyView.vue'),
       meta: { requiresAuth: true }
     },
-  ],
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition
-    } else {
-      return { top: 0 }
-    }
-  }
+  ]
 })
 
 // Navigation guard para rutas protegidas

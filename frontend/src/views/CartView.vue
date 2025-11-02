@@ -44,6 +44,8 @@
               <img
                 :src="item.product.primary_image?.image_url || 'https://via.placeholder.com/150'"
                 :alt="item.product.name"
+                loading="lazy"
+                decoding="async"
                 class="w-32 h-32 object-cover rounded-lg"
               />
             </router-link>

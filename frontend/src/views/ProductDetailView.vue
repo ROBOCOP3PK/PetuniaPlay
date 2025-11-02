@@ -49,6 +49,9 @@
             <img
               :src="selectedImage || product.primary_image?.image_url || 'https://via.placeholder.com/600'"
               :alt="product.name"
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
               class="w-full h-full object-cover"
             />
           </div>
@@ -65,6 +68,8 @@
               <img
                 :src="image.image_url"
                 :alt="product.name"
+                loading="lazy"
+                decoding="async"
                 class="w-full h-full object-cover"
               />
             </div>

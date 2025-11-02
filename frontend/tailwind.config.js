@@ -35,4 +35,12 @@ export default {
     },
   },
   plugins: [],
+  // Optimizaciones de producción
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
+  corePlugins: {
+    // Deshabilitar plugins no utilizados para reducir el tamaño del bundle
+    preflight: true, // Mantener para reset CSS
+  },
 }

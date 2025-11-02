@@ -134,29 +134,34 @@ class ReviewController extends Controller
     {
         $product = Product::findOrFail($productId);
 
-        $reviews = Review::where('product_id', $productId)->approved();
-
-        $totalReviews = $reviews->count();
-        $averageRating = $reviews->avg('rating') ?? 0;
-
-        // Distribución por estrellas
-        $ratingDistribution = [
-            5 => $reviews->clone()->where('rating', 5)->count(),
-            4 => $reviews->clone()->where('rating', 4)->count(),
-            3 => $reviews->clone()->where('rating', 3)->count(),
-            2 => $reviews->clone()->where('rating', 2)->count(),
-            1 => $reviews->clone()->where('rating', 1)->count(),
-        ];
-
-        $verifiedPurchases = $reviews->clone()->where('is_verified_purchase', true)->count();
+        // Obtener todas las estadísticas en una sola query con agregaciones
+        $stats = Review::where('product_id', $productId)
+            ->where('is_approved', true)
+            ->selectRaw('
+                COUNT(*) as total_reviews,
+                AVG(rating) as average_rating,
+                SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) as rating_5,
+                SUM(CASE WHEN rating = 4 THEN 1 ELSE 0 END) as rating_4,
+                SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) as rating_3,
+                SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) as rating_2,
+                SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as rating_1,
+                SUM(CASE WHEN is_verified_purchase = 1 THEN 1 ELSE 0 END) as verified_purchases
+            ')
+            ->first();
 
         return response()->json([
             'product_id' => $productId,
             'product_name' => $product->name,
-            'total_reviews' => $totalReviews,
-            'average_rating' => round($averageRating, 1),
-            'rating_distribution' => $ratingDistribution,
-            'verified_purchases' => $verifiedPurchases,
+            'total_reviews' => (int) ($stats->total_reviews ?? 0),
+            'average_rating' => round($stats->average_rating ?? 0, 1),
+            'rating_distribution' => [
+                5 => (int) ($stats->rating_5 ?? 0),
+                4 => (int) ($stats->rating_4 ?? 0),
+                3 => (int) ($stats->rating_3 ?? 0),
+                2 => (int) ($stats->rating_2 ?? 0),
+                1 => (int) ($stats->rating_1 ?? 0),
+            ],
+            'verified_purchases' => (int) ($stats->verified_purchases ?? 0),
         ]);
     }
 
