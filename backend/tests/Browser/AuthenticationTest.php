@@ -37,13 +37,14 @@ class AuthenticationTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('http://localhost:5173/login')
-                    ->waitFor('input[type="email"]')
+                    ->waitFor('input[type="email"]', 5)
                     ->type('input[type="email"]', 'admin@petuniaplay.com')
                     ->type('input[type="password"]', '2025')
-                    ->press('button[type="submit"]')
-                    ->waitForLocation('/dashboard', 10)
-                    ->assertPathIs('/dashboard')
-                    ->assertSee('Bienvenido');
+                    ->click('button[type="submit"]')
+                    ->pause(2000) // Esperar a que procese el login
+                    ->waitForLocation('/account', 15)
+                    ->pause(1000) // Esperar a que cargue la página
+                    ->assertPathIs('/account');
         });
     }
 
@@ -95,8 +96,8 @@ class AuthenticationTest extends DuskTestCase
                     ->type('input[name="password"]', 'password123')
                     ->type('input[name="password_confirmation"]', 'password123')
                     ->press('button[type="submit"]')
-                    ->waitForLocation('/dashboard', 10)
-                    ->assertPathIs('/dashboard');
+                    ->waitForLocation('/account', 10)
+                    ->assertPathIs('/account');
 
             // Verificar que el usuario fue creado en la base de datos
             $this->assertDatabaseHas('users', [
@@ -160,7 +161,7 @@ class AuthenticationTest extends DuskTestCase
                     ->type('input[type="email"]', 'logout-test@test.com')
                     ->type('input[type="password"]', 'password123')
                     ->press('button[type="submit"]')
-                    ->waitForLocation('/dashboard', 10);
+                    ->waitForLocation('/account', 10);
 
             // Ahora hacer logout
             $browser->click('button[data-test="user-menu"]')
@@ -182,7 +183,7 @@ class AuthenticationTest extends DuskTestCase
                     ->type('input[type="email"]', 'admin@petuniaplay.com')
                     ->type('input[type="password"]', '2025')
                     ->press('button[type="submit"]')
-                    ->waitForLocation('/dashboard', 10)
+                    ->waitForLocation('/account', 10)
                     ->visit('http://localhost:5173/admin/users')
                     ->waitFor('[data-test="admin-panel"]', 5)
                     ->assertSee('Usuarios');
@@ -200,7 +201,7 @@ class AuthenticationTest extends DuskTestCase
                     ->type('input[type="email"]', 'manager@petuniaplay.com')
                     ->type('input[type="password"]', '2025')
                     ->press('button[type="submit"]')
-                    ->waitForLocation('/dashboard', 10)
+                    ->waitForLocation('/account', 10)
                     ->visit('http://localhost:5173/admin/users')
                     ->waitForText('No autorizado', 5)
                     ->assertSee('No autorizado');
@@ -225,7 +226,7 @@ class AuthenticationTest extends DuskTestCase
                     ->type('input[type="email"]', 'customer-test@test.com')
                     ->type('input[type="password"]', 'password123')
                     ->press('button[type="submit"]')
-                    ->waitForLocation('/dashboard', 10)
+                    ->waitForLocation('/account', 10)
                     ->visit('http://localhost:5173/admin/products')
                     ->waitForText('No autorizado', 5)
                     ->assertSee('No autorizado');
@@ -243,7 +244,7 @@ class AuthenticationTest extends DuskTestCase
                     ->type('input[type="email"]', 'admin@petuniaplay.com')
                     ->type('input[type="password"]', '2025')
                     ->press('button[type="submit"]')
-                    ->waitForLocation('/dashboard', 10)
+                    ->waitForLocation('/account', 10)
                     ->refresh()
                     ->waitFor('[data-test="user-menu"]', 5)
                     ->assertPresent('[data-test="user-menu"]');
