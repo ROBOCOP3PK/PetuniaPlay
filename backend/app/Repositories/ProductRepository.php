@@ -111,6 +111,16 @@ class ProductRepository extends BaseRepository
             event(new ProductStockUpdated($product->fresh(), $previousStock));
         }
 
+        // Invalidar caché de productos destacados si cambió is_featured o is_active
+        if (isset($data['is_featured']) || isset($data['is_active'])) {
+            $this->clearFeaturedCache();
+        }
+
+        // Invalidar caché de marcas si cambió la marca
+        if (isset($data['brand'])) {
+            Cache::forget('products.brands.all');
+        }
+
         return $product;
     }
 
@@ -241,23 +251,6 @@ class ProductRepository extends BaseRepository
         $product = parent::create($data);
         $this->clearFeaturedCache();
         Cache::forget('products.brands.all');
-        return $product;
-    }
-
-    public function update($id, array $data)
-    {
-        $product = parent::update($id, $data);
-
-        // Invalidar caché de productos destacados si cambió is_featured
-        if (isset($data['is_featured']) || isset($data['is_active'])) {
-            $this->clearFeaturedCache();
-        }
-
-        // Invalidar caché de marcas si cambió la marca
-        if (isset($data['brand'])) {
-            Cache::forget('products.brands.all');
-        }
-
         return $product;
     }
 

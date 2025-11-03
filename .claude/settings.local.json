@@ -69,7 +69,8 @@
       "Bash(tree:*)",
       "Bash(npm run type-check:*)",
       "Bash(npx vue-tsc:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total FROM product_questions;\")"
     ],
     "deny": [],
     "ask": []

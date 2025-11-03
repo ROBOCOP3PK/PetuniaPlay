@@ -1,7 +1,7 @@
 # 🐾 PetuniaPlay - Contexto del Proyecto
 
-> **Última actualización:** 2025-10-30
-> **Versión:** 1.1 - Documentación optimizada con comandos slash
+> **Última actualización:** 2025-11-02
+> **Versión:** 1.2 - Optimización frontend con composables avanzados
 
 ---
 
@@ -234,7 +234,7 @@ Clientes: (generados por seeder) / 2025
 - 28 componentes reutilizables
 - 7 stores Pinia
 - 17 servicios API
-- 2 composables
+- 6 composables (reutilizables y optimizados)
 
 ### Stores Pinia (7)
 - `authStore` - Usuario, token, roles (persistencia en localStorage)
@@ -265,9 +265,13 @@ Todos en `frontend/src/services/`:
 - `shippingConfigService` - Get/Update configuración de envíos
 - `siteConfigService` - Get/Update configuración del sitio
 
-### Composables (2)
-- `useTheme()` - Dark mode (localStorage)
-- `useConfirm()` - Diálogos de confirmación
+### Composables (6)
+- `useTheme()` - Dark mode (localStorage persistente)
+- `useConfirm()` - Diálogos de confirmación reutilizables
+- `useNotification()` - Sistema de notificaciones toast unificado
+- `usePerformance()` - Skeleton loaders y estados de carga optimizados
+- `useFormat()` - Formateo de números, moneda, fechas
+- `useLoading()` - Estados de carga centralizados
 
 ### Rutas Principales (Router)
 **Públicas (14):**
@@ -461,16 +465,18 @@ Todos en `backend/database/seeders/`:
 ## 📈 Optimizaciones Recientes
 
 **Últimos commits (git log):**
+- `d094c12` - Se optimiza frontend con composables reutilizables y componentes skeleton
+  - Agregados 4 composables nuevos: useNotification, usePerformance, useFormat, useLoading
+  - Implementados skeleton loaders para mejorar UX durante cargas
+  - Refactorización de lógica común en composables reutilizables
+  - Reducción de código duplicado en componentes
+- `e50de32` - Optimización del sistema general
 - `8e76c27` - Se optimiza documentación con PROJECT_CONTEXT.md unificado
   - Consolidados 4 archivos MD en PROJECT_CONTEXT.md único
   - Agregados comandos slash /apc y /cm para automatización
   - Actualizado PROJECT_CONTEXT con estadísticas completas
   - Eliminados archivos redundantes de documentación técnica
 - `cb09b20` - Se crea PROJECT_CONTEXT.md para mantener contexto completo del proyecto
-- `1061b2c` - Se implementan optimizaciones a nivel general del sistema
-  - Índices de performance en tablas principales
-  - Ajuste de iconografía y logos
-  - Modo oscuro optimizado
 
 **Funcionalidades añadidas últimamente:**
 - Sistema de cupones con límite por cliente (max_usage_per_customer)
@@ -610,9 +616,16 @@ composer dev  # Inicia servidor + queue + logs + vite simultáneamente
 
 ## 📍 Estado Actual
 
-**Versión:** 1.0 Development
-**Última actualización:** 2025-10-30
+**Versión:** 1.2 Development
+**Última actualización:** 2025-11-02
 **Estado:** ✅ Funcional al 100% en desarrollo
+
+**Base de datos (estado real):**
+- 27 tablas activas (de 31 disponibles)
+- 27 usuarios registrados
+- 13 productos en catálogo
+- 12 categorías activas
+- 0 órdenes (sistema nuevo)
 
 **Próximos pasos para producción:**
 1. Integrar pasarela de pagos real

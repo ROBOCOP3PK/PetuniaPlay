@@ -43,13 +43,6 @@ return new class extends Migration
             $table->index('type');
         });
 
-        // Índices para notifications - mejorar queries de notificaciones no leídas
-        Schema::table('notifications', function (Blueprint $table) {
-            $table->index(['user_id', 'is_read']);
-            $table->index('is_read');
-            $table->index('created_at');
-        });
-
         // Índices compuestos adicionales para products - búsquedas con stock
         Schema::table('products', function (Blueprint $table) {
             $table->index(['is_active', 'is_featured', 'stock']);
@@ -99,13 +92,6 @@ return new class extends Migration
         Schema::table('addresses', function (Blueprint $table) {
             $table->dropIndex(['user_id', 'is_default']);
             $table->dropIndex(['type']);
-        });
-
-        // Eliminar índices de notifications
-        Schema::table('notifications', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'is_read']);
-            $table->dropIndex(['is_read']);
-            $table->dropIndex(['created_at']);
         });
 
         // Eliminar índices adicionales de products
