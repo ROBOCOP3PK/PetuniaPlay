@@ -126,7 +126,8 @@ class ProductRepository extends BaseRepository
 
         // Disparar evento si el stock cambió
         if ($stockChanged) {
-            event(new ProductStockUpdated($product->fresh(), $previousStock));
+            $product->refresh();
+            event(new ProductStockUpdated($product, $previousStock));
         }
 
         // Invalidar caché de productos destacados si cambió is_featured o is_active
@@ -150,7 +151,8 @@ class ProductRepository extends BaseRepository
         $product->decrement('stock', $quantity);
 
         // Disparar evento de actualización de stock
-        event(new ProductStockUpdated($product->fresh(), $previousStock));
+        $product->refresh();
+        event(new ProductStockUpdated($product, $previousStock));
 
         return $product;
     }
