@@ -72,20 +72,9 @@
                 class="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <td class="px-6 py-4">
-                  <div class="flex items-center space-x-3">
-                    <img
-                      v-if="category.image"
-                      :src="category.image"
-                      :alt="category.name"
-                      class="w-12 h-12 object-cover rounded"
-                    />
-                    <div class="w-12 h-12 bg-primary bg-opacity-10 rounded flex items-center justify-center" v-else>
-                      <span class="text-primary font-bold text-lg">{{ category.name.charAt(0) }}</span>
-                    </div>
-                    <div>
-                      <p class="font-semibold text-dark dark:text-white">{{ category.name }}</p>
-                      <p class="text-sm text-gray-600 dark:text-gray-400">{{ truncate(category.description, 40) || 'Sin descripción' }}</p>
-                    </div>
+                  <div>
+                    <p class="font-semibold text-dark dark:text-white">{{ category.name }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ truncate(category.description, 40) || 'Sin descripción' }}</p>
                   </div>
                 </td>
                 <td class="px-6 py-4">

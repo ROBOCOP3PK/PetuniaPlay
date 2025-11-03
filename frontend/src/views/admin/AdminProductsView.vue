@@ -252,7 +252,7 @@
                 <div>
                   <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Categoría *</label>
                   <select
-                    v-model="productForm.category_id"
+                    v-model.number="productForm.category_id"
                     required
                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   >
@@ -554,23 +554,36 @@ const openCreateModal = () => {
 }
 
 const editProduct = (product) => {
+  console.log('Editing product:', product)
+  console.log('Product category_id raw:', product.category_id)
+  console.log('Product category:', product.category)
+  console.log('Product full object:', JSON.parse(JSON.stringify(product)))
+
   editingProductData.value = product
+
+  // Si el producto tiene category como objeto, usar category.id
+  const categoryId = product.category_id || product.category?.id || ''
+
   productForm.value = {
-    name: product.name,
-    category_id: product.category_id,
+    name: product.name || '',
+    brand: product.brand || '',
+    category_id: categoryId ? parseInt(categoryId) : '',
     sku: product.sku || '',
-    description: product.description,
+    description: product.description || '',
     long_description: product.long_description || '',
-    price: product.price,
+    price: product.price || 0,
     sale_price: product.sale_price || null,
-    stock: product.stock,
+    stock: product.stock || 0,
+    low_stock_threshold: product.low_stock_threshold || 10,
     weight: product.weight || null,
-    is_active: product.is_active,
+    is_active: product.is_active !== undefined ? product.is_active : true,
     is_featured: product.is_featured || false,
     images: product.images?.length > 0
       ? product.images.map(img => img.image_url)
       : []
   }
+  console.log('Product form after loading:', productForm.value)
+  console.log('Category ID final:', productForm.value.category_id)
   showModal.value = true
 }
 
@@ -586,12 +599,14 @@ const saveProductForm = async () => {
     const productData = {
       category_id: productForm.value.category_id,
       name: productForm.value.name,
+      brand: productForm.value.brand || null,
       sku: productForm.value.sku || null,
       description: productForm.value.description,
       long_description: productForm.value.long_description || null,
       price: productForm.value.price,
       sale_price: productForm.value.sale_price || null,
       stock: productForm.value.stock,
+      low_stock_threshold: productForm.value.low_stock_threshold || 10,
       weight: productForm.value.weight || null,
       is_active: productForm.value.is_active,
       is_featured: productForm.value.is_featured,
@@ -651,18 +666,23 @@ const exportProducts = async () => {
     if (filterCategory.value) params.append('category', filterCategory.value)
     if (filterStock.value === 'low_stock') params.append('low_stock', 'true')
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1'
     const token = localStorage.getItem('auth_token')
 
-    const url = `${API_URL}/api/v1/admin/export/products/excel?${params.toString()}`
+    const url = `${API_BASE}/admin/export/products/excel?${params.toString()}`
 
     const response = await fetch(url, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       }
     })
 
-    if (!response.ok) throw new Error('Error al exportar')
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Export error response:', errorText)
+      throw new Error('Error al exportar')
+    }
 
     const blob = await response.blob()
     const downloadUrl = window.URL.createObjectURL(blob)
@@ -677,7 +697,7 @@ const exportProducts = async () => {
     notifySuccess('Productos exportados exitosamente')
   } catch (error) {
     console.error('Error exporting:', error)
-    notifyError('Error al exportar productos')
+    notifyError('Error al exportar productos: ' + error.message)
   } finally {
     exportingProducts.value = false
   }
