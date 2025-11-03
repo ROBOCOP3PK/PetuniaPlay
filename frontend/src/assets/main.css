@@ -141,3 +141,53 @@
     min-width: unset;
   }
 }
+
+/* PrimeVue Dropdown Dark Mode Customization */
+.dark .p-dropdown {
+  @apply bg-gray-700 border-gray-600;
+}
+
+.dark .p-dropdown:not(.p-disabled):hover {
+  @apply border-gray-500;
+}
+
+.dark .p-dropdown:not(.p-disabled).p-focus {
+  @apply border-primary shadow-none;
+  box-shadow: 0 0 0 0.2rem rgba(169, 116, 71, 0.25);
+}
+
+.dark .p-dropdown .p-dropdown-label {
+  @apply text-gray-100;
+}
+
+.dark .p-dropdown .p-dropdown-label.p-placeholder {
+  @apply text-gray-400;
+}
+
+.dark .p-dropdown .p-dropdown-trigger {
+  @apply text-gray-300;
+}
+
+.dark .p-dropdown-panel {
+  @apply bg-gray-700 border-gray-600;
+}
+
+.dark .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  @apply text-gray-100;
+}
+
+.dark .p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-disabled):hover {
+  @apply bg-gray-600;
+}
+
+.dark .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-focus {
+  @apply bg-gray-600;
+}
+
+.dark .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-selected {
+  @apply bg-primary text-white;
+}
+
+.dark .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-selected.p-focus {
+  @apply bg-primary;
+}
