@@ -16,49 +16,49 @@
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Preguntas de Productos</h1>
-          <p class="text-gray-600 mt-1">Gestiona las preguntas de los clientes sobre productos</p>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Preguntas de Productos</h1>
+          <p class="text-gray-600 dark:text-gray-400 mt-1">Gestiona las preguntas de los clientes sobre productos</p>
         </div>
       </div>
 
       <!-- Stats Cards -->
       <div v-if="stats" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-gray-600 mb-1">Total Preguntas</p>
-              <p class="text-3xl font-bold text-gray-900">{{ stats.total }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Preguntas</p>
+              <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.total }}</p>
             </div>
-            <div class="bg-blue-100 p-3 rounded-lg">
-              <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-blue-100 dark:bg-blue-900 dark:bg-opacity-30 p-3 rounded-lg">
+              <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-gray-600 mb-1">Pendientes</p>
-              <p class="text-3xl font-bold text-orange-600">{{ stats.pending }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Pendientes</p>
+              <p class="text-3xl font-bold text-orange-600 dark:text-orange-400">{{ stats.pending }}</p>
             </div>
-            <div class="bg-orange-100 p-3 rounded-lg">
-              <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-orange-100 dark:bg-orange-900 dark:bg-opacity-30 p-3 rounded-lg">
+              <svg class="w-8 h-8 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-sm text-gray-600 mb-1">Respondidas</p>
-              <p class="text-3xl font-bold text-green-600">{{ stats.answered }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Respondidas</p>
+              <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ stats.answered }}</p>
             </div>
-            <div class="bg-green-100 p-3 rounded-lg">
-              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-green-100 dark:bg-green-900 dark:bg-opacity-30 p-3 rounded-lg">
+              <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -67,12 +67,12 @@
       </div>
 
       <!-- Filters -->
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <select
             v-model="filterStatus"
             @change="loadQuestions"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            class="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           >
             <option value="">Todas las preguntas</option>
             <option value="pending">Pendientes</option>
@@ -80,7 +80,7 @@
           </select>
           <button
             @click="loadQuestions"
-            class="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            class="bg-gray-800 dark:bg-gray-700 text-white px-6 py-2 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
           >
             Actualizar
           </button>
@@ -88,36 +88,36 @@
       </div>
 
       <!-- Questions List -->
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         <div v-if="loading" class="flex justify-center items-center py-12">
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
 
         <div v-else-if="questions.length === 0" class="text-center py-12">
-          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p class="mt-2 text-gray-600">No se encontraron preguntas</p>
+          <p class="mt-2 text-gray-600 dark:text-gray-400">No se encontraron preguntas</p>
         </div>
 
-        <div v-else class="divide-y divide-gray-200">
+        <div v-else class="divide-y divide-gray-200 dark:divide-gray-700">
           <div
             v-for="question in questions"
             :key="question.id"
-            class="hover:bg-gray-50 transition-colors"
+            class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <!-- Question Header -->
             <div class="p-6 cursor-pointer" @click="toggleExpand(question.id)">
               <div class="flex items-start gap-4">
                 <!-- Product Image -->
-                <div class="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                <div class="flex-shrink-0 w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
                   <img
                     v-if="question.product?.images?.[0]"
                     :src="question.product.images[0].image_url"
                     :alt="question.product.name"
                     class="w-full h-full object-cover"
                   />
-                  <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+                  <div v-else class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -128,11 +128,11 @@
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-4">
                     <div class="flex-1">
-                      <h3 class="font-semibold text-gray-900 mb-1">
+                      <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
                         {{ question.product?.name }}
                       </h3>
-                      <p class="text-gray-700 line-clamp-2">{{ question.question }}</p>
-                      <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                      <p class="text-gray-700 dark:text-gray-300 line-clamp-2">{{ question.question }}</p>
+                      <div class="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
                         <span>Por {{ question.user?.name }}</span>
                         <span>•</span>
                         <span>{{ formatDate(question.created_at) }}</span>
@@ -143,13 +143,13 @@
                     <div class="flex-shrink-0">
                       <span
                         v-if="question.is_public"
-                        class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
+                        class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900 dark:bg-opacity-30 text-green-800 dark:text-green-300"
                       >
                         Respondida
                       </span>
                       <span
                         v-else
-                        class="px-3 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800"
+                        class="px-3 py-1 text-xs font-semibold rounded-full bg-orange-100 dark:bg-orange-900 dark:bg-opacity-30 text-orange-800 dark:text-orange-300"
                       >
                         Pendiente
                       </span>
@@ -160,7 +160,7 @@
                 <!-- Expand Icon -->
                 <div class="flex-shrink-0">
                   <svg
-                    class="w-6 h-6 text-gray-400 transition-transform"
+                    class="w-6 h-6 text-gray-400 dark:text-gray-500 transition-transform"
                     :class="{ 'transform rotate-180': expandedQuestions.includes(question.id) }"
                     fill="none"
                     stroke="currentColor"
@@ -175,33 +175,33 @@
             <!-- Expanded Details -->
             <div
               v-if="expandedQuestions.includes(question.id)"
-              class="px-6 pb-6 bg-gray-50 border-t"
+              class="px-6 pb-6 bg-gray-50 dark:bg-gray-900 border-t dark:border-gray-700"
             >
               <!-- Full Question -->
-              <div class="mb-4">
-                <h4 class="font-semibold text-gray-900 mb-2">Pregunta completa:</h4>
-                <p class="text-gray-700">{{ question.question }}</p>
+              <div class="mb-4 pt-4">
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Pregunta completa:</h4>
+                <p class="text-gray-700 dark:text-gray-300">{{ question.question }}</p>
               </div>
 
               <!-- Answer Section -->
-              <div v-if="question.answer" class="mb-4 bg-white p-4 rounded-lg">
-                <h4 class="font-semibold text-gray-900 mb-2">Respuesta:</h4>
-                <p class="text-gray-700 mb-2">{{ question.answer }}</p>
-                <p class="text-sm text-gray-500">
+              <div v-if="question.answer" class="mb-4 bg-white dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-700">
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Respuesta:</h4>
+                <p class="text-gray-700 dark:text-gray-300 mb-2">{{ question.answer }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
                   Respondido por {{ question.answered_by?.name }} el {{ formatDate(question.answered_at) }}
                 </p>
               </div>
 
               <!-- Answer Form -->
               <div v-else class="mb-4">
-                <h4 class="font-semibold text-gray-900 mb-2">Responder:</h4>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Responder:</h4>
                 <textarea
                   v-model="answerText[question.id]"
                   rows="3"
-                  class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                  class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Escribe tu respuesta aquí (mínimo 10 caracteres)"
                 ></textarea>
-                <p class="text-sm text-gray-500 mt-1">
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {{ (answerText[question.id] || '').length }} / 1000 caracteres
                 </p>
               </div>
@@ -218,7 +218,7 @@
                 </button>
                 <button
                   @click="confirmDelete(question)"
-                  class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                  class="bg-red-600 dark:bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-700 dark:hover:bg-red-800 transition-colors"
                 >
                   Eliminar Pregunta
                 </button>
@@ -228,22 +228,22 @@
         </div>
 
         <!-- Pagination -->
-        <div v-if="pagination && pagination.last_page > 1" class="bg-gray-50 px-6 py-4 border-t flex items-center justify-between">
-          <div class="text-sm text-gray-700">
+        <div v-if="pagination && pagination.last_page > 1" class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t dark:border-gray-600 flex items-center justify-between">
+          <div class="text-sm text-gray-700 dark:text-gray-300">
             Mostrando {{ pagination.from }} - {{ pagination.to }} de {{ pagination.total }} preguntas
           </div>
           <div class="flex gap-2">
             <button
               @click="changePage(pagination.current_page - 1)"
               :disabled="pagination.current_page === 1"
-              class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Anterior
             </button>
             <button
               @click="changePage(pagination.current_page + 1)"
               :disabled="pagination.current_page === pagination.last_page"
-              class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Siguiente
             </button>
