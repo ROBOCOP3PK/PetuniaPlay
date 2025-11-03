@@ -145,7 +145,7 @@
           <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             <tr v-for="coupon in coupons" :key="coupon.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
               <td class="px-6 py-4 whitespace-nowrap">
-                <span class="font-mono font-bold text-primary">{{ coupon.code }}</span>
+                <span class="px-3 py-1 font-mono font-bold text-sm bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 dark:bg-opacity-30 text-purple-800 dark:text-purple-200 rounded-md border border-purple-200 dark:border-purple-700">{{ coupon.code }}</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="px-2 py-1 text-xs font-semibold rounded-full"

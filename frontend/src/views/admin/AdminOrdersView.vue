@@ -35,16 +35,18 @@
           <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 mr-2 flex items-center">Exportar:</label>
           <button
             @click="exportToExcel"
-            :disabled="exportingExcel"
-            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 text-sm font-semibold flex items-center space-x-2"
+            :disabled="exportingExcel || filteredOrders.length === 0"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold flex items-center space-x-2"
+            :title="filteredOrders.length === 0 ? 'No hay pedidos para exportar' : 'Exportar a Excel'"
           >
             <span>📊</span>
             <span>{{ exportingExcel ? 'Exportando...' : 'Excel' }}</span>
           </button>
           <button
             @click="exportToPdf"
-            :disabled="exportingPdf"
-            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 text-sm font-semibold flex items-center space-x-2"
+            :disabled="exportingPdf || filteredOrders.length === 0"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold flex items-center space-x-2"
+            :title="filteredOrders.length === 0 ? 'No hay pedidos para exportar' : 'Exportar a PDF'"
           >
             <span>📄</span>
             <span>{{ exportingPdf ? 'Exportando...' : 'PDF' }}</span>
@@ -313,7 +315,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import { adminService } from '../../services/adminService'
 import { shipmentService } from '../../services/shipmentService'
@@ -490,6 +492,12 @@ const loadOrders = async () => {
 }
 
 const exportToExcel = async () => {
+  // Validar que haya pedidos para exportar
+  if (filteredOrders.value.length === 0) {
+    notifyError('No hay pedidos para exportar con los filtros actuales')
+    return
+  }
+
   exportingExcel.value = true
   try {
     const params = new URLSearchParams()
@@ -499,10 +507,12 @@ const exportToExcel = async () => {
       params.append('end_date', filterDate.value)
     }
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
     const token = localStorage.getItem('auth_token')
 
-    const url = `${API_URL}/api/v1/admin/export/orders/excel?${params.toString()}`
+    const url = `${API_URL}/admin/export/orders/excel?${params.toString()}`
+
+    console.log('Exportando desde:', url)
 
     const response = await fetch(url, {
       headers: {
@@ -510,9 +520,39 @@ const exportToExcel = async () => {
       }
     })
 
-    if (!response.ok) throw new Error('Error al exportar')
+    console.log('Response status:', response.status)
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()))
+
+    if (!response.ok) {
+      // Intentar leer como JSON primero
+      const contentType = response.headers.get('content-type')
+      let errorMessage = `Error al exportar (${response.status})`
+
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          const errorData = await response.json()
+          console.error('Error del servidor:', errorData)
+          errorMessage = errorData.message || errorMessage
+        } catch (e) {
+          console.error('No se pudo parsear el error como JSON:', e)
+        }
+      } else {
+        const textError = await response.text()
+        console.error('Error del servidor (texto):', textError)
+        errorMessage = textError || errorMessage
+      }
+
+      throw new Error(errorMessage)
+    }
 
     const blob = await response.blob()
+    console.log('Blob recibido, tamaño:', blob.size, 'tipo:', blob.type)
+
+    // Validar que el blob no esté vacío
+    if (blob.size === 0) {
+      throw new Error('El archivo generado está vacío')
+    }
+
     const downloadUrl = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = downloadUrl
@@ -524,14 +564,20 @@ const exportToExcel = async () => {
 
     notifySuccess('Órdenes exportadas exitosamente')
   } catch (error) {
-    console.error('Error exporting:', error)
-    notifyError('Error al exportar órdenes')
+    console.error('Error completo:', error)
+    notifyError(error.message || 'Error al exportar órdenes')
   } finally {
     exportingExcel.value = false
   }
 }
 
 const exportToPdf = async () => {
+  // Validar que haya pedidos para exportar
+  if (filteredOrders.value.length === 0) {
+    notifyError('No hay pedidos para exportar con los filtros actuales')
+    return
+  }
+
   exportingPdf.value = true
   try {
     const params = new URLSearchParams()
@@ -541,10 +587,10 @@ const exportToPdf = async () => {
       params.append('end_date', filterDate.value)
     }
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
     const token = localStorage.getItem('auth_token')
 
-    const url = `${API_URL}/api/v1/admin/export/orders/pdf?${params.toString()}`
+    const url = `${API_URL}/admin/export/orders/pdf?${params.toString()}`
 
     const response = await fetch(url, {
       headers: {
@@ -552,9 +598,18 @@ const exportToPdf = async () => {
       }
     })
 
-    if (!response.ok) throw new Error('Error al exportar')
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.message || 'Error al exportar')
+    }
 
     const blob = await response.blob()
+
+    // Validar que el blob no esté vacío
+    if (blob.size === 0) {
+      throw new Error('El archivo generado está vacío')
+    }
+
     const downloadUrl = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = downloadUrl
@@ -567,7 +622,7 @@ const exportToPdf = async () => {
     notifySuccess('Órdenes exportadas exitosamente')
   } catch (error) {
     console.error('Error exporting:', error)
-    notifyError('Error al exportar órdenes')
+    notifyError(error.message || 'Error al exportar órdenes')
   } finally {
     exportingPdf.value = false
   }
