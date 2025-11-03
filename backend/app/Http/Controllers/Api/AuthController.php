@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use App\Mail\PasswordResetMail;
 
@@ -179,7 +180,7 @@ class AuthController extends Controller
         try {
             Mail::to($user->email)->send(new PasswordResetMail($token, $user->email));
         } catch (\Exception $e) {
-            \Log::error('Error enviando email de recuperación: ' . $e->getMessage());
+            Log::error('Error enviando email de recuperación: ' . $e->getMessage());
         }
 
         return response()->json([

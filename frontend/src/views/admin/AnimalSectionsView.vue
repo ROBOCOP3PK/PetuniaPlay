@@ -74,8 +74,20 @@
                   <span class="text-sm font-mono text-gray-600 dark:text-gray-400">{{ section.id }}</span>
                 </td>
                 <td class="px-6 py-4">
-                  <div class="flex items-center justify-center w-12 h-12 bg-cream dark:bg-gray-700 rounded-lg">
-                    <span class="text-3xl">{{ section.icon || '📦' }}</span>
+                  <div class="flex items-center gap-3">
+                    <!-- Icono pequeño (emoji) -->
+                    <div class="flex items-center justify-center w-12 h-12 bg-cream dark:bg-gray-700 rounded-lg">
+                      <span class="text-3xl">{{ section.icon || '📦' }}</span>
+                    </div>
+                    <!-- Imagen grande (si existe) -->
+                    <div v-if="section.image_url" class="relative group">
+                      <img :src="section.image_url" alt="Imagen de sección" class="w-12 h-12 object-cover rounded-lg border border-gray-300 dark:border-gray-600" />
+                      <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-lg transition flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td class="px-6 py-4">
@@ -213,6 +225,60 @@
                 </div>
 
                 <div>
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Imagen de Sección</label>
+
+                  <!-- Vista previa de imagen actual -->
+                  <div v-if="currentImageUrl" class="mb-3">
+                    <div class="relative inline-block">
+                      <img :src="currentImageUrl" alt="Imagen actual" class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300 dark:border-gray-600" />
+                      <button
+                        type="button"
+                        @click="removeCurrentImage"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                        title="Quitar imagen"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Imagen actual de la sección</p>
+                  </div>
+
+                  <!-- Input para nueva imagen -->
+                  <div class="flex items-center gap-3">
+                    <input
+                      ref="imageInput"
+                      type="file"
+                      accept="image/jpeg,image/png,image/jpg,image/gif,image/webp,image/svg+xml"
+                      @change="handleImageChange"
+                      class="hidden"
+                    />
+                    <button
+                      type="button"
+                      @click="$refs.imageInput.click()"
+                      class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-semibold text-gray-700 dark:text-gray-300"
+                    >
+                      <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {{ selectedImageFile ? 'Cambiar imagen' : 'Seleccionar imagen' }}
+                    </button>
+                    <span v-if="selectedImageFile" class="text-sm text-gray-600 dark:text-gray-400">
+                      {{ selectedImageFile.name }}
+                    </span>
+                  </div>
+
+                  <!-- Vista previa de nueva imagen -->
+                  <div v-if="imagePreview" class="mt-3">
+                    <img :src="imagePreview" alt="Vista previa" class="w-32 h-32 object-cover rounded-lg border-2 border-primary" />
+                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">Nueva imagen seleccionada</p>
+                  </div>
+
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Imagen grande para los cuadros de secciones (máx. 5MB)</p>
+                </div>
+
+                <div>
                   <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Descripción</label>
                   <textarea
                     v-model="sectionForm.description"
@@ -313,6 +379,12 @@ const emptyForm = {
 
 const sectionForm = ref({ ...emptyForm })
 
+// Image handling
+const selectedImageFile = ref(null)
+const imagePreview = ref(null)
+const currentImageUrl = ref(null)
+const imageInput = ref(null)
+
 const filteredSections = computed(() => {
   let filtered = sections.value
 
@@ -359,10 +431,39 @@ const autoGenerateSlug = () => {
   }
 }
 
+// Image handling functions
+const handleImageChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      notifyError('La imagen no debe superar los 5MB')
+      return
+    }
+
+    selectedImageFile.value = file
+
+    // Create preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+const removeCurrentImage = () => {
+  currentImageUrl.value = null
+  // If we're editing, we should mark for deletion (you might want to implement this)
+}
+
 // Modal functions
 const openCreateModal = () => {
   editingSectionData.value = null
   sectionForm.value = { ...emptyForm }
+  selectedImageFile.value = null
+  imagePreview.value = null
+  currentImageUrl.value = null
   showModal.value = true
 }
 
@@ -376,6 +477,12 @@ const editSection = (section) => {
     order: section.order || 0,
     is_active: section.is_active
   }
+
+  // Load current image if exists
+  currentImageUrl.value = section.image_url || null
+  selectedImageFile.value = null
+  imagePreview.value = null
+
   showModal.value = true
 }
 
@@ -383,6 +490,9 @@ const closeModal = () => {
   showModal.value = false
   editingSectionData.value = null
   sectionForm.value = { ...emptyForm }
+  selectedImageFile.value = null
+  imagePreview.value = null
+  currentImageUrl.value = null
 }
 
 const saveSectionForm = async () => {
@@ -397,14 +507,28 @@ const saveSectionForm = async () => {
       is_active: sectionForm.value.is_active
     }
 
+    let savedSection = null
+
     if (editingSectionData.value) {
       // Update existing section
-      await animalSectionService.update(editingSectionData.value.id, sectionData)
+      const response = await animalSectionService.update(editingSectionData.value.id, sectionData)
+      savedSection = response.data.data || response.data
       notifySuccess('Sección actualizada exitosamente')
     } else {
       // Create new section
-      await animalSectionService.create(sectionData)
+      const response = await animalSectionService.create(sectionData)
+      savedSection = response.data.data || response.data
       notifySuccess('Sección creada exitosamente')
+    }
+
+    // Upload image if selected
+    if (selectedImageFile.value && savedSection) {
+      try {
+        await animalSectionService.uploadImage(savedSection.id, selectedImageFile.value)
+        notifySuccess('Imagen subida exitosamente')
+      } catch (imageError) {
+        notifyError('Error al subir imagen: ' + (imageError.response?.data?.message || imageError.message))
+      }
     }
 
     closeModal()

@@ -51,7 +51,7 @@ class CouponController extends Controller
         if ($coupon->min_purchase_amount && $request->subtotal < $coupon->min_purchase_amount) {
             return response()->json([
                 'valid' => false,
-                'message' => "El monto mínimo de compra es $" . number_format($coupon->min_purchase_amount, 2)
+                'message' => "El monto mínimo de compra es $" . number_format((float) $coupon->min_purchase_amount, 2)
             ], 400);
         }
 

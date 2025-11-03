@@ -10,7 +10,7 @@
       <div class="flex flex-col lg:flex-row gap-6">
         <!-- Sidebar Filters -->
         <aside class="lg:w-64 flex-shrink-0">
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-4 border border-gray-200 dark:border-gray-700">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-4 border border-gray-200 dark:border-gray-700 max-h-[calc(100vh-2rem)] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
               <h2 class="font-bold text-lg text-gray-900 dark:text-white">Filtros</h2>
               <button

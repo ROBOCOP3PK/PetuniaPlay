@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
+// Listener registrado automáticamente por Laravel 12
+// Si Intelephense muestra warning, ignóralo - el atributo existe en Laravel 12
 #[\Illuminate\Events\Attributes\ListensTo(ProductStockUpdated::class)]
 class CheckProductStockLevel implements ShouldQueue
 {

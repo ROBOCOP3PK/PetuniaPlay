@@ -176,6 +176,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::put('/animal-sections/{id}', [AnimalSectionController::class, 'update']);
         Route::delete('/animal-sections/{id}', [AnimalSectionController::class, 'destroy']);
         Route::put('/animal-sections/{id}/toggle-status', [AnimalSectionController::class, 'toggleStatus']);
+        Route::post('/animal-sections/{id}/image', [AnimalSectionController::class, 'updateImage']);
         Route::get('/admin/animal-sections/stats', [AnimalSectionController::class, 'stats']);
         Route::post('/admin/animal-sections/reorder', [AnimalSectionController::class, 'reorder']);
 

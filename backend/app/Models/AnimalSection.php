@@ -13,6 +13,7 @@ class AnimalSection extends Model
         'name',
         'slug',
         'icon',
+        'image',
         'description',
         'order',
         'is_active',

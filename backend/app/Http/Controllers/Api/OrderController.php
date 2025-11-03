@@ -8,6 +8,7 @@ use App\Http\Requests\CreateOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Exports\OrdersExport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -25,7 +26,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $userId = $request->user()->id;
+        $userId = Auth::id();
         $orders = $this->orderService->getUserOrders($userId);
 
         return OrderResource::collection($orders);
@@ -37,7 +38,7 @@ class OrderController extends Controller
     public function store(CreateOrderRequest $request)
     {
         try {
-            $userId = $request->user() ? $request->user()->id : null;
+            $userId = Auth::check() ? Auth::id() : null;
 
             // Permitir pedidos sin autenticación (guest checkout)
             // Los datos del cliente vienen en el request
@@ -60,8 +61,13 @@ class OrderController extends Controller
             $order = $this->orderService->getOrderByNumber($orderNumber);
 
             // Verificar que el usuario tenga acceso a este pedido
-            if ($order->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
-                return response()->json(['message' => 'No autorizado'], 403);
+            // Permitir acceso si: es el dueño de la orden O es admin autenticado
+            if ($order->user_id !== Auth::id()) {
+                /** @var \App\Models\User|null $user */
+                $user = Auth::user();
+                if (!$user || !$user->isAdmin()) {
+                    return response()->json(['message' => 'No autorizado'], 403);
+                }
             }
 
             return new OrderResource($order);
@@ -76,7 +82,9 @@ class OrderController extends Controller
     public function updateStatus(Request $request, string $id)
     {
         // Verificar que el usuario tenga permisos de manager o admin
-        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        if (!$user || !$user->hasManagerAccess()) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -120,7 +128,9 @@ class OrderController extends Controller
     public function adminIndex(Request $request)
     {
         // Verificar que el usuario tenga permisos de manager o admin
-        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        if (!$user || !$user->hasManagerAccess()) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -136,7 +146,9 @@ class OrderController extends Controller
     public function exportExcel(Request $request)
     {
         // Verificar que el usuario tenga permisos de manager o admin
-        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        if (!$user || !$user->hasManagerAccess()) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -158,7 +170,9 @@ class OrderController extends Controller
     public function exportPdf(Request $request)
     {
         // Verificar que el usuario tenga permisos de manager o admin
-        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        if (!$user || !$user->hasManagerAccess()) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -188,7 +202,9 @@ class OrderController extends Controller
     public function pendingShipment(Request $request)
     {
         // Verificar que el usuario tenga permisos de manager o admin
-        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        if (!$user || !$user->hasManagerAccess()) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -209,7 +225,9 @@ class OrderController extends Controller
     public function shipped(Request $request)
     {
         // Verificar que el usuario tenga permisos de manager o admin
-        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        if (!$user || !$user->hasManagerAccess()) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
@@ -228,7 +246,9 @@ class OrderController extends Controller
     public function shippingStats(Request $request)
     {
         // Verificar que el usuario tenga permisos de manager o admin
-        if (!$request->user() || !$request->user()->hasManagerAccess()) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        if (!$user || !$user->hasManagerAccess()) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 

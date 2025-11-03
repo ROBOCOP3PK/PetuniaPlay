@@ -119,11 +119,6 @@
           <div class="absolute bottom-0 left-0 w-24 h-24 bg-primary/10 rounded-full -ml-12 -mb-12"></div>
 
           <div class="relative z-10">
-            <!-- Icon/Emoji -->
-            <div class="mb-4 flex justify-center gap-3">
-              <i class="pi pi-desktop text-5xl"></i>
-              <i class="pi pi-sparkles text-5xl"></i>
-            </div>
 
             <!-- Main Message -->
             <h3 class="text-2xl md:text-3xl font-bold text-white mb-3">

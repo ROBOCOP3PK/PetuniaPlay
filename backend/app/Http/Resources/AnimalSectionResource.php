@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\CategoryResource;
 
 class AnimalSectionResource extends JsonResource
@@ -19,7 +20,9 @@ class AnimalSectionResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'icon' => $this->icon,
+            'icon' => $this->icon, // Emoji o ícono pequeño para menús
+            'image' => $this->image, // Ruta de la imagen
+            'image_url' => $this->image ? Storage::url($this->image) : null, // URL completa de la imagen
             'description' => $this->description,
             'order' => $this->order,
             'is_active' => $this->is_active,

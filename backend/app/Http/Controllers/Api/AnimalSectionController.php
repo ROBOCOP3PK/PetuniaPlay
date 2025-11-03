@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AnimalSection;
 use App\Http\Resources\AnimalSectionResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AnimalSectionController extends Controller
@@ -49,6 +50,7 @@ class AnimalSectionController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|unique:animal_sections,slug',
             'icon' => 'nullable|string|max:10',
+            'image' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'order' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
@@ -92,6 +94,7 @@ class AnimalSectionController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'slug' => 'nullable|string|unique:animal_sections,slug,' . $id,
             'icon' => 'nullable|string|max:10',
+            'image' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'order' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
@@ -196,5 +199,48 @@ class AnimalSectionController extends Controller
         return response()->json([
             'message' => 'Orden de secciones actualizado exitosamente'
         ]);
+    }
+
+    /**
+     * Admin: Actualizar imagen de sección (upload de imagen grande)
+     */
+    public function updateImage(Request $request, $id)
+    {
+        $section = AnimalSection::findOrFail($id);
+
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:5120', // Max 5MB
+        ]);
+
+        try {
+            $file = $request->file('image');
+
+            // Generar nombre único
+            $filename = 'seccion_' . $section->slug . '.' . $file->getClientOriginalExtension();
+
+            // Eliminar imagen anterior si existe
+            if ($section->image && Storage::disk('public')->exists($section->image)) {
+                Storage::disk('public')->delete($section->image);
+            }
+
+            // Guardar nueva imagen en storage/app/public/sections/{filename}
+            $path = $file->storeAs('sections', $filename, 'public');
+
+            // Actualizar el campo image en la base de datos
+            $section->image = $path;
+            $section->save();
+
+            return response()->json([
+                'success' => true,
+                'data' => new AnimalSectionResource($section),
+                'message' => 'Imagen actualizada exitosamente',
+                'image_url' => Storage::url($path),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar imagen: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

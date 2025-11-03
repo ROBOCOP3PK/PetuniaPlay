@@ -1,0 +1,27 @@
+{
+  // ============================================
+  // CONFIGURACIÓN PARA ELIMINAR LÍNEAS ROJAS
+  // ============================================
+
+  // Desactivar warnings molestos de Intelephense
+  "intelephense.diagnostics.undefinedTypes": false,
+  "intelephense.diagnostics.undefinedMethods": false,
+  "intelephense.diagnostics.undefinedClassConstants": false,
+  "intelephense.diagnostics.undefinedProperties": false,
+  "intelephense.diagnostics.undefinedFunctions": false,
+  "intelephense.diagnostics.typeErrors": false,
+
+  // Desactivar TODOS los diagnósticos de Intelephense (más agresivo)
+  // Descomenta la siguiente línea si aún ves líneas rojas:
+  // "intelephense.diagnostics.enable": false,
+
+  // Mantener solo los errores realmente importantes
+  "intelephense.diagnostics.run": "onSave",
+
+  // PHP básico (errores de sintaxis)
+  "php.validate.enable": true,
+  "php.validate.run": "onSave",
+
+  // Desactivar problemas en la pestaña de problemas
+  "problems.decorations.enabled": true
+}

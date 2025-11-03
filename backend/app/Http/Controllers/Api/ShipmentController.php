@@ -8,6 +8,8 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Resources\ShipmentResource;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Mail\ShipmentNotification;
 
 class ShipmentController extends Controller
@@ -89,7 +91,7 @@ class ShipmentController extends Controller
                     ->send(new ShipmentNotification($shipment));
             }
         } catch (\Exception $e) {
-            \Log::error('Error enviando email de envío: ' . $e->getMessage());
+            Log::error('Error enviando email de envío: ' . $e->getMessage());
         }
 
         return response()->json([
@@ -149,7 +151,7 @@ class ShipmentController extends Controller
                         ->send(new ShipmentNotification($shipment));
                 }
             } catch (\Exception $e) {
-                \Log::error('Error enviando email de actualización de envío: ' . $e->getMessage());
+                Log::error('Error enviando email de actualización de envío: ' . $e->getMessage());
             }
         }
 
@@ -204,7 +206,8 @@ class ShipmentController extends Controller
         $failedShipments = Shipment::whereIn('status', ['failed', 'returned'])->count();
 
         // Transportadoras más usadas
-        $topCarriers = Shipment::select('carrier', \DB::raw('count(*) as total'))
+        // NOTA: Se usa selectRaw() para agregaciones (COUNT). Es más limpio que select() + DB::raw()
+        $topCarriers = Shipment::selectRaw('carrier, count(*) as total')
             ->groupBy('carrier')
             ->orderBy('total', 'desc')
             ->limit(5)

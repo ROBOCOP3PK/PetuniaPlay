@@ -39,6 +39,17 @@ export const animalSectionService = {
   // Reordenar secciones (solo admin/manager)
   reorder(sections) {
     return api.post('/admin/animal-sections/reorder', { sections })
+  },
+
+  // Subir/actualizar imagen de sección (solo admin/manager)
+  uploadImage(id, imageFile) {
+    const formData = new FormData()
+    formData.append('image', imageFile)
+    return api.post(`/admin/animal-sections/${id}/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   }
 }
 
