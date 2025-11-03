@@ -190,6 +190,12 @@ const router = createRouter({
       meta: { requiresAuth: true, requiresManager: true }
     },
     {
+      path: '/admin/contact-messages',
+      name: 'admin-contact-messages',
+      component: () => import('../views/admin/AdminContactMessagesView.vue'),
+      meta: { requiresAuth: true, requiresManager: true }
+    },
+    {
       path: '/admin/shipping-config',
       name: 'admin-shipping-config',
       component: () => import('../views/admin/AdminShippingConfigView.vue'),

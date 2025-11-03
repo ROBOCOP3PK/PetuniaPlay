@@ -167,7 +167,7 @@ class ProductQuestionController extends Controller
                     'product_id' => $question->product->id,
                     'product_name' => $question->product->name,
                     'user_name' => $question->user->name,
-                    'action_url' => config('app.frontend_url') . '/admin/questions',
+                    'action_url' => '/admin/questions',
                     'action_text' => 'Ver pregunta'
                 ]
             );

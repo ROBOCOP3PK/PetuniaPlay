@@ -129,9 +129,11 @@
 
 <script setup>
 import { computed, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useNotificationStore } from '../../stores/notificationStore'
 import { useAuthStore } from '../../stores/authStore'
 
+const router = useRouter()
 const notificationStore = useNotificationStore()
 const authStore = useAuthStore()
 
@@ -162,10 +164,13 @@ const handleNotificationClick = async (notification) => {
     await notificationStore.markAsRead(notification.id)
   }
 
-  // Aquí puedes agregar navegación si la notificación tiene un link
-  // if (notification.data?.link) {
-  //   router.push(notification.data.link)
-  // }
+  // Cerrar el panel
+  closePanel()
+
+  // Redirigir según el tipo de notificación
+  if (notification.data?.action_url) {
+    router.push(notification.data.action_url)
+  }
 }
 
 const handleMarkAllAsRead = async () => {

@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\ShipmentController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\ContactMessageController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\UnsubscribeController;
 use App\Http\Controllers\NotificationController;
@@ -203,6 +204,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/admin/product-questions/stats', [ProductQuestionController::class, 'stats']);
         Route::put('/admin/product-questions/{id}/answer', [ProductQuestionController::class, 'answer']);
         Route::delete('/admin/product-questions/{id}', [ProductQuestionController::class, 'destroy']);
+
+        // Contact Messages Management
+        Route::get('/admin/contact-messages', [ContactMessageController::class, 'index']);
+        Route::get('/admin/contact-messages/stats', [ContactMessageController::class, 'stats']);
+        Route::get('/admin/contact-messages/{id}', [ContactMessageController::class, 'show']);
+        Route::put('/admin/contact-messages/{id}/status', [ContactMessageController::class, 'updateStatus']);
+        Route::delete('/admin/contact-messages/{id}', [ContactMessageController::class, 'destroy']);
 
         // Coupons Management
         Route::get('/coupons', [CouponController::class, 'index']);

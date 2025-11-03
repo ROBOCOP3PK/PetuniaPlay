@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\ContactMail;
 use App\Services\NotificationService;
+use App\Models\ContactMessage;
 
 class ContactController extends Controller
 {
@@ -34,6 +35,16 @@ class ContactController extends Controller
         $data = $validator->validated();
 
         try {
+            // Guardar mensaje en la base de datos
+            $contactMessage = ContactMessage::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'] ?? null,
+                'subject' => $data['subject'],
+                'message' => $data['message'],
+                'status' => 'pending'
+            ]);
+
             // Send email to admin
             $adminEmail = env('MAIL_ADMIN_ADDRESS', 'admin@petuniaplay.com');
             Mail::to($adminEmail)->send(new ContactMail($data, 'admin'));
@@ -57,11 +68,13 @@ class ContactController extends Controller
                 'Nuevo mensaje de contacto',
                 "{$data['name']} envió un mensaje sobre: {$subjectLabel}",
                 [
+                    'contact_message_id' => $contactMessage->id,
                     'name' => $data['name'],
                     'email' => $data['email'],
                     'phone' => $data['phone'] ?? 'No proporcionado',
                     'subject' => $subjectLabel,
                     'message' => $data['message'],
+                    'action_url' => '/admin/contact-messages',
                     'action_text' => 'Ver mensaje'
                 ]
             );
