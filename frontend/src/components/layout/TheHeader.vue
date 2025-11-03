@@ -84,7 +84,7 @@
             alt="Petunia Play Logo"
             class="h-12 w-auto object-contain"
           />
-          <span class="text-2xl font-bold text-primary dark:text-primary-light">Petunia Play</span>
+          <span class="text-2xl font-bold text-primary dark:text-white">Petunia Play</span>
         </router-link>
 
         <!-- Search bar -->
@@ -135,14 +135,14 @@
       <div class="container mx-auto px-4">
         <ul class="flex items-center space-x-8 py-3">
           <li>
-            <router-link to="/" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition">
+            <a @click.prevent="navigateTo('/')" href="/" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition cursor-pointer">
               Inicio
-            </router-link>
+            </a>
           </li>
           <li>
-            <router-link to="/products" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition">
+            <a @click.prevent="navigateTo('/products')" href="/products" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition cursor-pointer">
               Productos
-            </router-link>
+            </a>
           </li>
 
           <!-- Animal Sections with Categories Dropdown -->
@@ -178,9 +178,9 @@
           </li>
 
           <li>
-            <router-link to="/contact" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition">
+            <a @click.prevent="navigateTo('/contact')" href="/contact" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition cursor-pointer">
               Contacto
-            </router-link>
+            </a>
           </li>
         </ul>
       </div>
@@ -237,6 +237,21 @@ const handleLogout = async () => {
   showUserMenu.value = false
   toast.info('Sesión cerrada exitosamente')
   router.push('/')
+}
+
+// Función de navegación mejorada
+const navigateTo = async (path) => {
+  const currentPath = router.currentRoute.value.path
+
+  // Si ya estás en la ruta exacta
+  if (currentPath === path) {
+    // Navegar a la misma ruta sin query params (limpia filtros) y scroll al inicio
+    await router.push({ path, query: {} })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  } else {
+    // Navegar a la nueva ruta
+    await router.push(path)
+  }
 }
 
 onMounted(async () => {
