@@ -72,7 +72,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithMapping, WithSty
             $order->order_number,
             $order->user ? $order->user->name : 'Invitado',
             $order->user ? $order->user->email : 'N/A',
-            '$' . number_format($order->total, 0, ',', '.'),
+            '$' . number_format((float) $order->total, 0, ',', '.'),
             $this->getStatusLabel($order->status),
             $this->getPaymentMethodLabel($order->payment_method),
             $order->items->count(),
