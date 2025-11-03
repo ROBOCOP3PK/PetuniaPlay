@@ -13,6 +13,16 @@
           placeholder="Calle 123 #45-67"
         />
       </div>
+      <div>
+        <label class="block text-sm font-semibold mb-2">Complemento (Opcional)</label>
+        <input
+          v-model="manualAddress.addressLine2"
+          @input="emitManualAddress"
+          type="text"
+          class="input-field"
+          placeholder="Apartamento, oficina, piso, etc."
+        />
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label class="block text-sm font-semibold mb-2">Ciudad *</label>
@@ -52,17 +62,45 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+
+const props = defineProps({
+  initialAddress: {
+    type: Object,
+    default: () => ({
+      address: '',
+      addressLine2: '',
+      city: '',
+      state: '',
+      zipCode: ''
+    })
+  }
+})
 
 const emit = defineEmits(['update:address'])
 
 // Address data
 const manualAddress = ref({
-  address: '',
-  city: '',
-  state: '',
-  zipCode: ''
+  address: props.initialAddress.address || '',
+  addressLine2: props.initialAddress.addressLine2 || '',
+  city: props.initialAddress.city || '',
+  state: props.initialAddress.state || '',
+  zipCode: props.initialAddress.zipCode || ''
 })
+
+// Watch for changes in initialAddress prop
+watch(() => props.initialAddress, (newAddress) => {
+  if (newAddress) {
+    manualAddress.value = {
+      address: newAddress.address || '',
+      addressLine2: newAddress.addressLine2 || '',
+      city: newAddress.city || '',
+      state: newAddress.state || '',
+      zipCode: newAddress.zipCode || ''
+    }
+    emitManualAddress()
+  }
+}, { deep: true })
 
 // Emit manual address
 const emitManualAddress = () => {

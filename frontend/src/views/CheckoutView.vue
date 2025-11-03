@@ -72,7 +72,10 @@
               <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Dirección de Envío</h2>
 
               <!-- Address Map Picker Component -->
-              <AddressMapPicker @update:address="handleAddressUpdate" />
+              <AddressMapPicker
+                :initial-address="initialAddressData"
+                @update:address="handleAddressUpdate"
+              />
 
               <!-- Notes Field -->
               <div class="mt-4">
@@ -386,18 +389,30 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '../stores/cartStore'
+import { useAuthStore } from '../stores/authStore'
 import { useToast } from 'vue-toastification'
 import { useFormat } from '@/composables/useFormat'
 import orderService from '../services/orderService'
+import addressService from '../services/addressService'
 import AddressMapPicker from '../components/AddressMapPicker.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
+const authStore = useAuthStore()
 const toast = useToast()
 const { formatPrice, formatDate } = useFormat()
+
+// Estado para la dirección inicial
+const initialAddressData = ref({
+  address: '',
+  addressLine2: '',
+  city: '',
+  state: '',
+  zipCode: ''
+})
 
 // Computed para calcular el costo de envío dinámicamente basado en la ciudad y opciones
 const shippingCost = computed(() => {
@@ -473,6 +488,7 @@ const form = reactive({
 
   // Shipping
   address: '',
+  addressLine2: '',
   city: '',
   state: '',
   zipCode: '',
@@ -509,6 +525,7 @@ const formatExpiry = (event) => {
 // Handle address update from map picker
 const handleAddressUpdate = (addressData) => {
   form.address = addressData.address
+  form.addressLine2 = addressData.addressLine2 || ''
   form.city = addressData.city
   form.state = addressData.state
   form.zipCode = addressData.zipCode || ''
@@ -591,6 +608,7 @@ const placeOrder = async () => {
       },
       shipping: {
         address: form.address,
+        addressLine2: form.addressLine2,
         city: form.city,
         state: form.state,
         zipCode: form.zipCode,
@@ -643,4 +661,43 @@ const placeOrder = async () => {
     processing.value = false
   }
 }
+
+// Precargar datos del usuario al montar el componente
+onMounted(async () => {
+  if (authStore.isAuthenticated && authStore.user) {
+    // Precargar datos personales del usuario
+    form.name = authStore.user.name || ''
+    form.email = authStore.user.email || ''
+    form.phone = authStore.user.phone || ''
+    form.document = authStore.user.document || ''
+
+    // Cargar dirección predeterminada del usuario
+    try {
+      const response = await addressService.getAll()
+      const addresses = response.data.data || response.data
+      const defaultAddress = addresses.find(addr => addr.is_default)
+
+      if (defaultAddress) {
+        // Mapear los campos de la dirección al formato esperado
+        initialAddressData.value = {
+          address: defaultAddress.address_line_1 || '',
+          addressLine2: defaultAddress.address_line_2 || '',
+          city: defaultAddress.city || '',
+          state: defaultAddress.state || '',
+          zipCode: defaultAddress.postal_code || ''
+        }
+
+        // También prellenar el formulario con estos datos
+        form.address = defaultAddress.address_line_1 || ''
+        form.addressLine2 = defaultAddress.address_line_2 || ''
+        form.city = defaultAddress.city || ''
+        form.state = defaultAddress.state || ''
+        form.zipCode = defaultAddress.postal_code || ''
+      }
+    } catch (error) {
+      console.error('Error al cargar direcciones:', error)
+      // No mostramos error al usuario, simplemente no precargamos la dirección
+    }
+  }
+})
 </script>
