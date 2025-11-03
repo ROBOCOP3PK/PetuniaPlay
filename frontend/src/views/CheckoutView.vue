@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen py-8 bg-gray-50">
+  <div class="min-h-screen py-8 bg-gray-50 dark:bg-gray-900">
     <div class="container mx-auto px-4">
       <!-- Redirect if cart is empty -->
-      <div v-if="!cartStore.hasItems" class="bg-white rounded-lg shadow-md p-12 text-center">
+      <div v-if="!cartStore.hasItems" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center">
         <div class="text-6xl mb-4">🛒</div>
-        <h2 class="text-2xl font-bold mb-2">Tu carrito está vacío</h2>
-        <p class="text-gray-600 mb-6">
+        <h2 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Tu carrito está vacío</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
           Debes agregar productos antes de proceder al pago
         </p>
         <router-link to="/products" class="btn-primary inline-block">
@@ -15,17 +15,17 @@
 
       <!-- Checkout Form -->
       <div v-else>
-        <h1 class="text-4xl font-bold mb-8">Finalizar Compra</h1>
+        <h1 class="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Finalizar Compra</h1>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Forms -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Customer Information -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-              <h2 class="text-2xl font-bold mb-6">1. Información Personal</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Información Personal</h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-semibold mb-2">Nombre Completo *</label>
+                  <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Nombre Completo *</label>
                   <input
                     v-model="form.name"
                     type="text"
@@ -35,7 +35,7 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold mb-2">Email *</label>
+                  <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Email *</label>
                   <input
                     v-model="form.email"
                     type="email"
@@ -45,7 +45,7 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold mb-2">Teléfono *</label>
+                  <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Teléfono *</label>
                   <input
                     v-model="form.phone"
                     type="tel"
@@ -55,7 +55,7 @@
                   />
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold mb-2">Documento de Identidad *</label>
+                  <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Documento de Identidad *</label>
                   <input
                     v-model="form.document"
                     type="text"
@@ -68,15 +68,15 @@
             </div>
 
             <!-- Shipping Address -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-              <h2 class="text-2xl font-bold mb-6">2. Dirección de Envío</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Dirección de Envío</h2>
 
               <!-- Address Map Picker Component -->
               <AddressMapPicker @update:address="handleAddressUpdate" />
 
               <!-- Notes Field -->
               <div class="mt-4">
-                <label class="block text-sm font-semibold mb-2">Notas de Entrega (Opcional)</label>
+                <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Notas de Entrega (Opcional)</label>
                 <textarea
                   v-model="form.notes"
                   rows="3"
@@ -86,22 +86,22 @@
               </div>
 
               <!-- Night Delivery Option (Only for Bogotá and if enabled) -->
-              <div v-if="isBogota && nightDeliveryEnabled" class="mt-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-lg">
+              <div v-if="isBogota && nightDeliveryEnabled" class="mt-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900 dark:to-indigo-900 dark:bg-opacity-20 border-2 border-purple-200 dark:border-purple-700 rounded-lg">
                 <div class="flex items-start space-x-3">
                   <input
                     id="nightDelivery"
                     v-model="form.nightDelivery"
                     type="checkbox"
-                    class="mt-1 w-5 h-5 text-purple-600 bg-white border-purple-300 rounded focus:ring-purple-500 focus:ring-2 cursor-pointer"
+                    class="mt-1 w-5 h-5 text-purple-600 dark:text-purple-400 bg-white dark:bg-gray-700 border-purple-300 dark:border-purple-600 rounded focus:ring-purple-500 focus:ring-2 cursor-pointer"
                   />
                   <label for="nightDelivery" class="cursor-pointer flex-1">
                     <div class="flex items-center gap-2 mb-1">
                       <span class="text-lg">🌙</span>
-                      <span class="font-bold text-gray-900">Entrega Nocturna - ¡ENVÍO GRATIS!</span>
+                      <span class="font-bold text-gray-900 dark:text-white">Entrega Nocturna - ¡ENVÍO GRATIS!</span>
                     </div>
-                    <p class="text-sm text-gray-700 leading-relaxed">
+                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                       Recibe tu pedido en horario nocturno <strong>({{ nightDeliveryTime.start }} - {{ nightDeliveryTime.end }})</strong> sin costo adicional.
-                      <span class="block mt-1 text-purple-700 font-semibold">
+                      <span class="block mt-1 text-purple-700 dark:text-purple-300 font-semibold">
                         ✨ Exclusivo para Bogotá - Ahorra ${{ formatPrice(cartStore.shippingConfig?.standard_shipping_cost || 10000) }} en envío
                       </span>
                     </p>
@@ -111,14 +111,14 @@
             </div>
 
             <!-- Payment Method -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-              <h2 class="text-2xl font-bold mb-6">3. Método de Pago</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. Método de Pago</h2>
 
               <div class="space-y-4">
                 <!-- Payment Options -->
                 <div class="space-y-3">
                   <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
-                    :class="form.paymentMethod === 'card' ? 'border-primary bg-primary bg-opacity-5' : 'border-gray-300 hover:border-primary'">
+                    :class="form.paymentMethod === 'card' ? 'border-primary bg-primary bg-opacity-5 dark:bg-opacity-20' : 'border-gray-300 dark:border-gray-600 hover:border-primary'">
                     <input
                       v-model="form.paymentMethod"
                       type="radio"
@@ -126,13 +126,13 @@
                       class="mr-3"
                     />
                     <div class="flex-1">
-                      <div class="font-semibold">💳 Tarjeta de Crédito/Débito</div>
-                      <div class="text-sm text-gray-600">Visa, Mastercard, American Express</div>
+                      <div class="font-semibold text-gray-900 dark:text-white">💳 Tarjeta de Crédito/Débito</div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">Visa, Mastercard, American Express</div>
                     </div>
                   </label>
 
                   <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
-                    :class="form.paymentMethod === 'pse' ? 'border-primary bg-primary bg-opacity-5' : 'border-gray-300 hover:border-primary'">
+                    :class="form.paymentMethod === 'pse' ? 'border-primary bg-primary bg-opacity-5 dark:bg-opacity-20' : 'border-gray-300 dark:border-gray-600 hover:border-primary'">
                     <input
                       v-model="form.paymentMethod"
                       type="radio"
@@ -140,13 +140,13 @@
                       class="mr-3"
                     />
                     <div class="flex-1">
-                      <div class="font-semibold">🏦 PSE</div>
-                      <div class="text-sm text-gray-600">Pago seguro en línea</div>
+                      <div class="font-semibold text-gray-900 dark:text-white">🏦 PSE</div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">Pago seguro en línea</div>
                     </div>
                   </label>
 
                   <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
-                    :class="form.paymentMethod === 'cash' ? 'border-primary bg-primary bg-opacity-5' : 'border-gray-300 hover:border-primary'">
+                    :class="form.paymentMethod === 'cash' ? 'border-primary bg-primary bg-opacity-5 dark:bg-opacity-20' : 'border-gray-300 dark:border-gray-600 hover:border-primary'">
                     <input
                       v-model="form.paymentMethod"
                       type="radio"
@@ -154,18 +154,18 @@
                       class="mr-3"
                     />
                     <div class="flex-1">
-                      <div class="font-semibold">💵 Contra Entrega</div>
-                      <div class="text-sm text-gray-600">Paga al recibir tu pedido</div>
+                      <div class="font-semibold text-gray-900 dark:text-white">💵 Contra Entrega</div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">Paga al recibir tu pedido</div>
                     </div>
                   </label>
                 </div>
 
                 <!-- Card Details (only if card selected) -->
-                <div v-if="form.paymentMethod === 'card'" class="mt-6 p-4 bg-gray-50 rounded-lg">
-                  <h3 class="font-bold mb-4">Datos de la Tarjeta</h3>
+                <div v-if="form.paymentMethod === 'card'" class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <h3 class="font-bold mb-4 text-gray-900 dark:text-white">Datos de la Tarjeta</h3>
                   <div class="space-y-4">
                     <div>
-                      <label class="block text-sm font-semibold mb-2">Número de Tarjeta *</label>
+                      <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Número de Tarjeta *</label>
                       <input
                         v-model="form.cardNumber"
                         type="text"
@@ -177,7 +177,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                       <div>
-                        <label class="block text-sm font-semibold mb-2">Vencimiento (MM/AA) *</label>
+                        <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Vencimiento (MM/AA) *</label>
                         <input
                           v-model="form.cardExpiry"
                           type="text"
@@ -188,7 +188,7 @@
                         />
                       </div>
                       <div>
-                        <label class="block text-sm font-semibold mb-2">CVV *</label>
+                        <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">CVV *</label>
                         <input
                           v-model="form.cardCvv"
                           type="text"
@@ -199,7 +199,7 @@
                       </div>
                     </div>
                     <div>
-                      <label class="block text-sm font-semibold mb-2">Nombre en la Tarjeta *</label>
+                      <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Nombre en la Tarjeta *</label>
                       <input
                         v-model="form.cardName"
                         type="text"
@@ -213,14 +213,14 @@
             </div>
 
             <!-- Terms & Conditions -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <label class="flex items-start">
                 <input
                   v-model="form.acceptTerms"
                   type="checkbox"
                   class="mt-1 mr-3"
                 />
-                <span class="text-sm">
+                <span class="text-sm text-gray-900 dark:text-gray-300">
                   Acepto los <a href="#" class="text-primary hover:underline">términos y condiciones</a>
                   y la <a href="#" class="text-primary hover:underline">política de privacidad</a> de Petunia Play
                 </span>
@@ -230,15 +230,15 @@
 
           <!-- Order Summary (Sticky) -->
           <div class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <h2 class="text-2xl font-bold mb-6">Resumen del Pedido</h2>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky top-24">
+              <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Resumen del Pedido</h2>
 
               <!-- Products -->
               <div class="space-y-3 mb-6 max-h-64 overflow-y-auto">
                 <div
                   v-for="item in cartStore.items"
                   :key="item.product.id"
-                  class="flex gap-3 pb-3 border-b"
+                  class="flex gap-3 pb-3 border-b dark:border-gray-700"
                 >
                   <img
                     :src="item.product.primary_image?.image_url || 'https://via.placeholder.com/60'"
@@ -246,9 +246,9 @@
                     class="w-16 h-16 object-cover rounded"
                   />
                   <div class="flex-1">
-                    <p class="font-semibold text-sm">{{ item.product.name }}</p>
-                    <p class="text-xs text-gray-600">Cantidad: {{ item.quantity }}</p>
-                    <p class="text-primary font-bold">
+                    <p class="font-semibold text-sm text-gray-900 dark:text-white">{{ item.product.name }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Cantidad: {{ item.quantity }}</p>
+                    <p class="text-primary dark:text-white font-bold">
                       ${{ formatPrice(parseFloat(item.product.final_price) * item.quantity) }}
                     </p>
                   </div>
@@ -256,26 +256,26 @@
               </div>
 
               <!-- Coupon Section -->
-              <div class="mb-6 pb-6 border-b">
-                <h3 class="font-bold mb-3 text-sm">¿Tienes un cupón?</h3>
+              <div class="mb-6 pb-6 border-b dark:border-gray-700">
+                <h3 class="font-bold mb-3 text-sm text-gray-900 dark:text-white">¿Tienes un cupón?</h3>
 
                 <!-- Applied Coupon -->
-                <div v-if="cartStore.hasCoupon" class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                <div v-if="cartStore.hasCoupon" class="bg-green-50 dark:bg-green-900 dark:bg-opacity-20 border border-green-200 dark:border-green-700 rounded-lg p-3 mb-3">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                      <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                       </svg>
                       <div>
-                        <p class="font-bold text-green-800 text-sm">{{ cartStore.appliedCoupon.code }}</p>
-                        <p class="text-xs text-green-700">
+                        <p class="font-bold text-green-800 dark:text-green-300 text-sm">{{ cartStore.appliedCoupon.code }}</p>
+                        <p class="text-xs text-green-700 dark:text-green-400">
                           Descuento: ${{ formatPrice(cartStore.discount) }}
                         </p>
                       </div>
                     </div>
                     <button
                       @click="removeCoupon"
-                      class="text-red-600 hover:text-red-700 text-sm font-semibold"
+                      class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm font-semibold"
                     >
                       Quitar
                     </button>
@@ -288,21 +288,21 @@
                     v-model="couponCode"
                     type="text"
                     placeholder="Código de cupón"
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
+                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
                     @keyup.enter="applyCoupon"
                     :disabled="applyingCoupon"
                   />
                   <button
                     @click="applyCoupon"
                     :disabled="applyingCoupon || !couponCode"
-                    class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-semibold"
+                    class="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-semibold"
                   >
                     {{ applyingCoupon ? 'Verificando...' : 'Aplicar' }}
                   </button>
                 </div>
 
                 <!-- Coupon Error -->
-                <p v-if="couponError" class="text-red-600 text-xs mt-2">
+                <p v-if="couponError" class="text-red-600 dark:text-red-400 text-xs mt-2">
                   {{ couponError }}
                 </p>
               </div>
@@ -310,48 +310,48 @@
               <!-- Totals -->
               <div class="space-y-3 mb-6">
                 <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Subtotal</span>
-                  <span class="font-semibold">${{ formatPrice(cartStore.subtotal) }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">Subtotal</span>
+                  <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.subtotal) }}</span>
                 </div>
                 <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">IVA (19%)</span>
-                  <span class="font-semibold">${{ formatPrice(cartStore.tax) }}</span>
+                  <span class="text-gray-600 dark:text-gray-400">IVA (19%)</span>
+                  <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.tax) }}</span>
                 </div>
                 <div class="flex justify-between text-sm">
-                  <span class="text-gray-600">Envío</span>
-                  <span v-if="shippingCost === 0" class="text-green-600 font-semibold">
+                  <span class="text-gray-600 dark:text-gray-400">Envío</span>
+                  <span v-if="shippingCost === 0" class="text-green-600 dark:text-green-400 font-semibold">
                     <span v-if="form.nightDelivery">¡Gratis! 🌙 Entrega nocturna</span>
                     <span v-else>¡Gratis! (+{{ freeShippingMinItems - 1 }} artículos)</span>
                   </span>
-                  <span v-else class="font-semibold">
+                  <span v-else class="font-semibold text-gray-900 dark:text-white">
                     ${{ formatPrice(shippingCost) }}
                   </span>
                 </div>
 
                 <!-- Shipping Info -->
-                <div v-if="shippingCost === 0 && form.nightDelivery" class="text-xs text-purple-700 bg-purple-50 p-2 rounded border border-purple-200">
+                <div v-if="shippingCost === 0 && form.nightDelivery" class="text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900 dark:bg-opacity-20 p-2 rounded border border-purple-200 dark:border-purple-700">
                   🌙 <strong>Entrega nocturna seleccionada</strong> - Tu pedido llegará entre {{ nightDeliveryTime.start }} y {{ nightDeliveryTime.end }}
                 </div>
-                <div v-else-if="shippingCost > 0 && isBogota && cartStore.itemCount < freeShippingMinItems" class="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                <div v-else-if="shippingCost > 0 && isBogota && cartStore.itemCount < freeShippingMinItems" class="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-2 rounded">
                   💡 <strong>Opciones de envío gratis:</strong><br>
                   • Agrega {{ freeShippingMinItems - cartStore.itemCount }} artículo(s) más<br>
                   <span v-if="nightDeliveryEnabled">• O selecciona entrega nocturna ({{ nightDeliveryTime.startShort }}-{{ nightDeliveryTime.endShort }})</span>
                 </div>
-                <div v-else-if="shippingCost > 0 && !isBogota" class="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                <div v-else-if="shippingCost > 0 && !isBogota" class="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-2 rounded">
                   ℹ️ Envío gratis disponible solo en Bogotá
                 </div>
 
-                <div v-if="cartStore.hasCoupon" class="flex justify-between text-sm text-green-600">
+                <div v-if="cartStore.hasCoupon" class="flex justify-between text-sm text-green-600 dark:text-green-400">
                   <span class="font-semibold">Descuento</span>
                   <span class="font-bold">-${{ formatPrice(cartStore.discount) }}</span>
                 </div>
               </div>
 
               <!-- Total -->
-              <div class="border-t pt-4 mb-6">
+              <div class="border-t dark:border-gray-700 pt-4 mb-6">
                 <div class="flex justify-between items-center">
-                  <span class="text-xl font-bold">Total</span>
-                  <span class="text-3xl font-bold text-primary">
+                  <span class="text-xl font-bold text-gray-900 dark:text-white">Total</span>
+                  <span class="text-3xl font-bold text-primary dark:text-white">
                     ${{ formatPrice(orderTotal) }}
                   </span>
                 </div>
@@ -368,9 +368,9 @@
               </button>
 
               <!-- Security Icons -->
-              <div class="mt-6 pt-6 border-t">
-                <p class="text-xs text-gray-600 text-center mb-3">🔒 Pago 100% Seguro</p>
-                <div class="flex justify-center items-center gap-3 text-xs text-gray-600">
+              <div class="mt-6 pt-6 border-t dark:border-gray-700">
+                <p class="text-xs text-gray-600 dark:text-gray-400 text-center mb-3">🔒 Pago 100% Seguro</p>
+                <div class="flex justify-center items-center gap-3 text-xs text-gray-600 dark:text-gray-400">
                   <span>SSL Cifrado</span>
                   <span>•</span>
                   <span>Datos Protegidos</span>

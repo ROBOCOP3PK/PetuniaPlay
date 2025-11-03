@@ -16,7 +16,7 @@ class WishlistController extends Controller
     {
         $wishlistItems = $request->user()
             ->wishlistItems()
-            ->with(['product.images', 'product.category'])
+            ->with(['product.images', 'product.primaryImage', 'product.category'])
             ->get();
 
         // Formatear los datos para el frontend
@@ -63,7 +63,7 @@ class WishlistController extends Controller
         ]);
 
         // Cargar el producto con sus relaciones
-        $wishlistItem->load(['product.images', 'product.category']);
+        $wishlistItem->load(['product.images', 'product.primaryImage', 'product.category']);
 
         return response()->json([
             'data' => [

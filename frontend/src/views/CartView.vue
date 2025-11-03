@@ -67,7 +67,7 @@
                   <span class="text-gray-500 dark:text-gray-400 line-through text-sm">
                     ${{ formatPrice(item.product.price) }}
                   </span>
-                  <span class="text-primary dark:text-pink-400 font-bold text-xl">
+                  <span class="text-primary dark:text-white font-bold text-xl">
                     ${{ formatPrice(item.product.final_price) }}
                   </span>
                   <span class="bg-primary text-white px-2 py-1 rounded text-xs">
@@ -75,7 +75,7 @@
                   </span>
                 </div>
                 <div v-else>
-                  <span class="text-primary dark:text-pink-400 font-bold text-xl">
+                  <span class="text-primary dark:text-white font-bold text-xl">
                     ${{ formatPrice(item.product.price) }}
                   </span>
                 </div>
@@ -118,8 +118,8 @@
             <!-- Item Total -->
             <div class="text-right">
               <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Subtotal</p>
-              <p class="text-2xl font-bold text-primary dark:text-pink-400">
-                ${{ formatPrice(parseFloat(item.product.final_price) * item.quantity) }}
+              <p class="text-2xl font-bold text-primary dark:text-white">
+                ${{ formatPrice((parseFloat(item.product.final_price || item.product.sale_price || item.product.price || 0)) * item.quantity) }}
               </p>
             </div>
           </div>
@@ -158,7 +158,7 @@
             <div class="border-t dark:border-gray-700 pt-4 mb-6">
               <div class="flex justify-between items-center">
                 <span class="text-xl font-bold text-gray-900 dark:text-white">Total</span>
-                <span class="text-3xl font-bold text-primary dark:text-pink-400">
+                <span class="text-3xl font-bold text-primary dark:text-white">
                   ${{ formatPrice(cartStore.total) }}
                 </span>
               </div>

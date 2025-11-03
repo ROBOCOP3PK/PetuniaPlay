@@ -16,7 +16,17 @@ export const useCartStore = defineStore('cart', () => {
     const savedCart = localStorage.getItem('petunia_cart')
     if (savedCart) {
       try {
-        items.value = JSON.parse(savedCart)
+        const cartItems = JSON.parse(savedCart)
+        // Asegurar que todos los items tengan final_price calculado
+        items.value = cartItems.map(item => ({
+          ...item,
+          product: {
+            ...item.product,
+            final_price: item.product.final_price || item.product.sale_price || item.product.price
+          }
+        }))
+        // Guardar los datos actualizados
+        saveCart()
       } catch (error) {
         console.error('Error loading cart from localStorage:', error)
         items.value = []
@@ -36,7 +46,7 @@ export const useCartStore = defineStore('cart', () => {
 
   const subtotal = computed(() => {
     return items.value.reduce((total, item) => {
-      const price = parseFloat(item.product.final_price)
+      const price = parseFloat(item.product.final_price || item.product.sale_price || item.product.price || 0)
       return total + (price * item.quantity)
     }, 0)
   })
@@ -138,7 +148,7 @@ export const useCartStore = defineStore('cart', () => {
           slug: product.slug,
           price: product.price,
           sale_price: product.sale_price,
-          final_price: product.final_price,
+          final_price: product.final_price || product.sale_price || product.price,
           has_discount: product.has_discount,
           discount_percentage: product.discount_percentage,
           stock: product.stock,
