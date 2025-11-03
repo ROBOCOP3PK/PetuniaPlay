@@ -28,13 +28,22 @@
           <div
             v-for="section in animalSections"
             :key="section.id"
-            class="card cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-300"
+            class="card cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-300 overflow-hidden"
             @click="goToAnimalSection(section.id)"
           >
-            <div class="aspect-square bg-gradient-to-br from-beige to-cream dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
-              <span class="text-8xl">
-                {{ section.icon }}
-              </span>
+            <div class="aspect-square bg-gray-200 dark:bg-gray-700 relative overflow-hidden">
+              <img
+                v-if="section.image_url"
+                :src="getImageUrl(section.image_url)"
+                :alt="section.name"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div v-else class="w-full h-full bg-gradient-to-br from-beige to-cream dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
+                <span class="text-8xl">
+                  {{ section.icon }}
+                </span>
+              </div>
             </div>
             <div class="p-6 text-center">
               <h3 class="font-bold text-2xl mb-2 text-gray-900 dark:text-white">{{ section.name }}</h3>
@@ -131,6 +140,19 @@ const productStore = useProductStore()
 
 const animalSections = ref([])
 const loadingSections = ref(false)
+
+// Get backend base URL
+const getBackendBaseUrl = () => {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1'
+  return apiUrl.replace('/api/v1', '')
+}
+
+// Helper to get full image URL
+const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return null
+  if (imageUrl.startsWith('http')) return imageUrl
+  return `${getBackendBaseUrl()}${imageUrl}`
+}
 
 // Cargar secciones de animales activas
 const loadAnimalSections = async () => {
