@@ -218,7 +218,12 @@
                   <!-- Vista previa de imagen actual -->
                   <div v-if="currentImageUrl" class="mb-3">
                     <div class="relative inline-block">
-                      <img :src="currentImageUrl" alt="Imagen actual" class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300 dark:border-gray-600" />
+                      <img
+                        :src="currentImageUrl"
+                        alt="Imagen actual"
+                        class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300 dark:border-gray-600"
+                        @error="handleImageError"
+                      />
                       <button
                         type="button"
                         @click="removeCurrentImage"
@@ -445,6 +450,12 @@ const removeCurrentImage = () => {
   // If we're editing, we should mark for deletion (you might want to implement this)
 }
 
+const handleImageError = (event) => {
+  console.error('Error al cargar la imagen:', currentImageUrl.value)
+  notifyError('No se pudo cargar la imagen actual')
+  currentImageUrl.value = null
+}
+
 // Modal functions
 const openCreateModal = () => {
   editingSectionData.value = null
@@ -467,7 +478,16 @@ const editSection = (section) => {
   }
 
   // Load current image if exists
-  currentImageUrl.value = section.image_url || null
+  if (section.image_url) {
+    // Si la URL no es completa, agregar la base URL del backend
+    const baseURL = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://127.0.0.1:8000'
+    currentImageUrl.value = section.image_url.startsWith('http')
+      ? section.image_url
+      : `${baseURL}${section.image_url}`
+  } else {
+    currentImageUrl.value = null
+  }
+
   selectedImageFile.value = null
   imagePreview.value = null
 

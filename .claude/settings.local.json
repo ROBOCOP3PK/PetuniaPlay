@@ -96,7 +96,8 @@
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; UPDATE animal_sections SET icon = ''reptile'' WHERE slug = ''reptiles'';\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT id, name, slug, icon, image, is_active FROM animal_sections ORDER BY \\`order\\`;\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; UPDATE animal_sections SET is_active = 1;\")",
-      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as usuarios FROM users; SELECT COUNT(*) as productos FROM products; SELECT COUNT(*) as categorias FROM categories;\")"
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as usuarios FROM users; SELECT COUNT(*) as productos FROM products; SELECT COUNT(*) as categorias FROM categories;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT id, name, image FROM animal_sections WHERE image IS NOT NULL LIMIT 3;\")"
     ],
     "deny": [],
     "ask": []
