@@ -3,8 +3,8 @@
     <div class="space-y-6">
       <!-- Header -->
       <div>
-        <h1 class="text-3xl font-bold text-gray-900">Configuración de Envíos</h1>
-        <p class="text-gray-600 mt-1">Administra los horarios y costos de envío</p>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Configuración de Envíos</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-1">Administra los horarios y costos de envío</p>
       </div>
 
       <!-- Loading State -->
@@ -13,11 +13,11 @@
       </div>
 
       <!-- Configuration Form -->
-      <div v-else class="bg-white rounded-lg shadow-md p-6">
+      <div v-else class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <form @submit.prevent="saveConfig" class="space-y-6">
           <!-- Night Delivery Section -->
-          <div class="border-b pb-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Entrega Nocturna</h2>
+          <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Entrega Nocturna</h2>
 
             <!-- Enable/Disable Toggle -->
             <div class="mb-4">
@@ -25,13 +25,13 @@
                 <input
                   v-model="config.night_delivery_enabled"
                   type="checkbox"
-                  class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+                  class="w-5 h-5 text-primary border-gray-300 dark:border-gray-600 rounded focus:ring-primary dark:bg-gray-700"
                 />
-                <span class="ml-3 text-sm font-medium text-gray-900">
+                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-white">
                   Habilitar entrega nocturna con envío gratis
                 </span>
               </label>
-              <p class="text-sm text-gray-600 mt-1 ml-8">
+              <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 ml-8">
                 Los clientes en Bogotá podrán elegir entrega nocturna sin costo adicional
               </p>
             </div>
@@ -39,35 +39,35 @@
             <!-- Time Range -->
             <div v-if="config.night_delivery_enabled" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Hora de Inicio
                 </label>
                 <input
                   v-model="config.night_delivery_start_time"
                   type="time"
                   required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
-                <p class="text-xs text-gray-500 mt-1">Formato 24 horas (ej: 21:00)</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Formato 24 horas (ej: 21:00)</p>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Hora de Fin
                 </label>
                 <input
                   v-model="config.night_delivery_end_time"
                   type="time"
                   required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
-                <p class="text-xs text-gray-500 mt-1">Formato 24 horas (ej: 02:00)</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Formato 24 horas (ej: 02:00)</p>
               </div>
             </div>
 
             <!-- Preview -->
-            <div v-if="config.night_delivery_enabled" class="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-              <p class="text-sm text-purple-800">
+            <div v-if="config.night_delivery_enabled" class="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+              <p class="text-sm text-purple-800 dark:text-purple-300">
                 <strong>Vista previa:</strong> Los clientes verán "Entrega nocturna de
                 <strong>{{ formatTime(config.night_delivery_start_time) }}</strong> a
                 <strong>{{ formatTime(config.night_delivery_end_time) }}</strong> - ¡ENVÍO GRATIS!"
@@ -76,12 +76,12 @@
           </div>
 
           <!-- Standard Shipping Section -->
-          <div class="border-b pb-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Envío Estándar</h2>
+          <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Envío Estándar</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Costo de Envío Estándar (COP)
                 </label>
                 <input
@@ -90,13 +90,13 @@
                   min="0"
                   step="100"
                   required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
-                <p class="text-xs text-gray-500 mt-1">Costo aplicado cuando no califican para envío gratis</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Costo aplicado cuando no califican para envío gratis</p>
               </div>
 
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Mínimo de Artículos para Envío Gratis
                 </label>
                 <input
@@ -104,15 +104,15 @@
                   type="number"
                   min="1"
                   required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
-                <p class="text-xs text-gray-500 mt-1">En Bogotá: envío gratis al comprar este número de artículos</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">En Bogotá: envío gratis al comprar este número de artículos</p>
               </div>
             </div>
 
             <!-- Info Box -->
-            <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p class="text-sm text-blue-800">
+            <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p class="text-sm text-blue-800 dark:text-blue-300">
                 <strong>ℹ️ Nota:</strong> El envío gratis está disponible solo en Bogotá.
                 Para otras ciudades, siempre se aplica el costo de envío estándar.
               </p>
@@ -125,7 +125,7 @@
               type="button"
               @click="loadConfig"
               :disabled="saving"
-              class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
             >
               Cancelar
             </button>

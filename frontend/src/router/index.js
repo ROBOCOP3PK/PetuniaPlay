@@ -11,13 +11,7 @@ const router = createRouter({
       return savedPosition
     }
 
-    // Si ambas rutas son del área de admin, mantener la posición actual
-    const bothAdmin = to.path.startsWith('/admin') && from.path.startsWith('/admin')
-    if (bothAdmin) {
-      return false // No hacer scroll, mantener posición actual
-    }
-
-    // Para otras navegaciones, ir al inicio
+    // Para todas las navegaciones, ir al inicio de la página
     return { top: 0, behavior: 'smooth' }
   },
   routes: [

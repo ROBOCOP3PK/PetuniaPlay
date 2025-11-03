@@ -28,6 +28,12 @@ export default {
           DEFAULT: '#9B8B7E', // Café grisáceo suave
           light: '#B5A99D',   // Café gris claro
         },
+        admin: {
+          price: {
+            light: '#6B5D54',  // Color para precios en modo claro (primary)
+            dark: '#fbbf24',   // Color para precios en modo oscuro (amber-400)
+          },
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

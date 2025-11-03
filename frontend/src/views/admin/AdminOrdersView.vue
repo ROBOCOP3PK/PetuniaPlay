@@ -96,7 +96,7 @@
                   <p class="text-sm text-gray-700 dark:text-gray-300">{{ formatDate(order.created_at) }}</p>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <p class="font-bold text-primary text-lg">${{ formatPrice(order.total) }}</p>
+                  <p class="font-bold text-admin-price-light dark:text-admin-price-dark text-lg">${{ formatPrice(order.total) }}</p>
                 </td>
                 <td class="px-6 py-4 text-center">
                   <select
@@ -285,7 +285,7 @@
                     <p class="font-semibold text-gray-900 dark:text-white">{{ item.product?.name || item.product_name }}</p>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Cantidad: {{ item.quantity }}</p>
                   </div>
-                  <p class="font-bold text-primary">${{ formatPrice(item.price * item.quantity) }}</p>
+                  <p class="font-bold text-admin-price-light dark:text-admin-price-dark">${{ formatPrice(item.price * item.quantity) }}</p>
                 </div>
               </div>
             </div>
@@ -303,7 +303,7 @@
                 </div>
                 <div class="flex justify-between text-lg font-bold border-t dark:border-gray-700 pt-2">
                   <span>Total:</span>
-                  <span class="text-primary">${{ formatPrice(selectedOrder.total) }}</span>
+                  <span class="text-admin-price-light dark:text-admin-price-dark">${{ formatPrice(selectedOrder.total) }}</span>
                 </div>
               </div>
             </div>
