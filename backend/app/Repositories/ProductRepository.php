@@ -185,6 +185,14 @@ class ProductRepository extends BaseRepository
             });
         }
 
+        // Filtro por categoría (slug)
+        if (isset($filters['category']) && $filters['category'] !== null && $filters['category'] !== '') {
+            $query->whereHas('category', function($q) use ($filters) {
+                $q->where('slug', $filters['category'])
+                  ->where('is_active', true);
+            });
+        }
+
         // Filtrar solo por secciones activas si no se especifica una seccion
         $query->whereHas('category.animalSection', function($q) {
             $q->where('is_active', true);

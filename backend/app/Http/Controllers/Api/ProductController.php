@@ -28,9 +28,10 @@ class ProductController extends Controller
         $perPage = $request->get('per_page', 15);
 
         // Si hay filtros, usar el método de filtrado avanzado
-        if ($request->hasAny(['min_price', 'max_price', 'brand', 'in_stock', 'min_rating', 'sort_by', 'animal_section_id'])) {
+        if ($request->hasAny(['min_price', 'max_price', 'brand', 'category', 'in_stock', 'min_rating', 'sort_by', 'animal_section_id'])) {
             $filters = [
                 'animal_section_id' => $request->get('animal_section_id'),
+                'category' => $request->get('category'),
                 'min_price' => $request->get('min_price'),
                 'max_price' => $request->get('max_price'),
                 'brand' => $request->get('brand'),
