@@ -251,6 +251,9 @@ class LoyaltyService
         })->completed()->count();
 
         // Top redeemed rewards
+        // NOTA: Se usa DB::table() aquí porque es un query complejo de reporting con
+        // joins, agregaciones y group by. DB::table() es más eficiente y legible que
+        // Eloquent para queries de estadísticas/analytics.
         $topRewards = DB::table('loyalty_redemptions')
             ->join('loyalty_rewards', 'loyalty_redemptions.loyalty_reward_id', '=', 'loyalty_rewards.id')
             ->where('loyalty_rewards.loyalty_program_id', $program->id)

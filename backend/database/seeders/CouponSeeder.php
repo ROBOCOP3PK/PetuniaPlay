@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Coupon;
 
 class CouponSeeder extends Seeder
 {
@@ -13,7 +13,8 @@ class CouponSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('coupons')->insert([
+        // Crear cupones usando modelo Eloquent
+        $coupons = [
             [
                 'code' => 'BIENVENIDO10',
                 'type' => 'percentage',
@@ -24,8 +25,6 @@ class CouponSeeder extends Seeder
                 'valid_from' => now(),
                 'valid_until' => now()->addMonths(3),
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'code' => 'VERANO2025',
@@ -37,8 +36,6 @@ class CouponSeeder extends Seeder
                 'valid_from' => now(),
                 'valid_until' => now()->addMonths(2),
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'code' => 'PRIMERACOMPRA',
@@ -50,8 +47,6 @@ class CouponSeeder extends Seeder
                 'valid_from' => now(),
                 'valid_until' => now()->addMonths(6),
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'code' => 'BLACKFRIDAY',
@@ -63,8 +58,6 @@ class CouponSeeder extends Seeder
                 'valid_from' => now(),
                 'valid_until' => now()->addDays(30),
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'code' => 'ENVIOGRATIS',
@@ -76,9 +69,13 @@ class CouponSeeder extends Seeder
                 'valid_from' => now(),
                 'valid_until' => null, // Sin expiración
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
-        ]);
+        ];
+
+        foreach ($coupons as $couponData) {
+            Coupon::create($couponData);
+        }
+
+        $this->command->info('✅ Cupones creados exitosamente: ' . count($coupons) . ' cupones');
     }
 }

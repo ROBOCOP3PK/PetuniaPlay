@@ -56,6 +56,9 @@ class AdminController extends Controller
             ->get();
 
         // Productos más vendidos (último mes)
+        // NOTA: Se usa DB::table() aquí porque es un query complejo de reporting con múltiples
+        // joins, agregaciones y group by. DB::table() es más eficiente y legible que Eloquent
+        // para este tipo de queries de estadísticas/analytics.
         $top_products = DB::table('order_items')
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')

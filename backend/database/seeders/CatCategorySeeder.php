@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\AnimalSection;
+use App\Models\Category;
 
 class CatCategorySeeder extends Seeder
 {
@@ -21,7 +21,7 @@ class CatCategorySeeder extends Seeder
         }
 
         // Categorías principales para GATOS
-        $alimentosGatos = DB::table('categories')->insertGetId([
+        $alimentosGatos = Category::create([
             'animal_section_id' => $gatosSection->id,
             'name' => 'Alimentos',
             'slug' => 'alimentos-gatos',
@@ -30,11 +30,9 @@ class CatCategorySeeder extends Seeder
             'parent_id' => null,
             'order' => 1,
             'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        $juguetesGatos = DB::table('categories')->insertGetId([
+        $juguetesGatos = Category::create([
             'animal_section_id' => $gatosSection->id,
             'name' => 'Juguetes',
             'slug' => 'juguetes-gatos',
@@ -43,11 +41,9 @@ class CatCategorySeeder extends Seeder
             'parent_id' => null,
             'order' => 2,
             'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        $accesoriosGatos = DB::table('categories')->insertGetId([
+        $accesoriosGatos = Category::create([
             'animal_section_id' => $gatosSection->id,
             'name' => 'Accesorios',
             'slug' => 'accesorios-gatos',
@@ -56,11 +52,9 @@ class CatCategorySeeder extends Seeder
             'parent_id' => null,
             'order' => 3,
             'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        $saludGatos = DB::table('categories')->insertGetId([
+        $saludGatos = Category::create([
             'animal_section_id' => $gatosSection->id,
             'name' => 'Salud e Higiene',
             'slug' => 'salud-higiene-gatos',
@@ -69,23 +63,18 @@ class CatCategorySeeder extends Seeder
             'parent_id' => null,
             'order' => 4,
             'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
-        // Subcategorías de Alimentos para Gatos
-        DB::table('categories')->insert([
+        // Subcategorías de Alimentos para Gatos - Usando relaciones Eloquent
+        $alimentosGatos->children()->createMany([
             [
                 'animal_section_id' => $gatosSection->id,
                 'name' => 'Alimento Seco',
                 'slug' => 'alimento-seco-gatos',
                 'description' => 'Concentrado y croquetas para gatos',
                 'image' => null,
-                'parent_id' => $alimentosGatos,
                 'order' => 1,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'animal_section_id' => $gatosSection->id,
@@ -93,11 +82,8 @@ class CatCategorySeeder extends Seeder
                 'slug' => 'alimento-humedo-gatos',
                 'description' => 'Comida húmeda en lata y pouch para gatos',
                 'image' => null,
-                'parent_id' => $alimentosGatos,
                 'order' => 2,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'animal_section_id' => $gatosSection->id,
@@ -105,27 +91,21 @@ class CatCategorySeeder extends Seeder
                 'slug' => 'snacks-gatos',
                 'description' => 'Premios, golosinas y treats para gatos',
                 'image' => null,
-                'parent_id' => $alimentosGatos,
                 'order' => 3,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
         ]);
 
-        // Subcategorías de Accesorios para Gatos
-        DB::table('categories')->insert([
+        // Subcategorías de Accesorios para Gatos - Usando relaciones Eloquent
+        $accesoriosGatos->children()->createMany([
             [
                 'animal_section_id' => $gatosSection->id,
                 'name' => 'Rascadores',
                 'slug' => 'rascadores-gatos',
                 'description' => 'Rascadores, postes y torres para gatos',
                 'image' => null,
-                'parent_id' => $accesoriosGatos,
                 'order' => 1,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'animal_section_id' => $gatosSection->id,
@@ -133,11 +113,8 @@ class CatCategorySeeder extends Seeder
                 'slug' => 'camas-gatos',
                 'description' => 'Camas, cuevas y mantas para el descanso',
                 'image' => null,
-                'parent_id' => $accesoriosGatos,
                 'order' => 2,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'animal_section_id' => $gatosSection->id,
@@ -145,11 +122,8 @@ class CatCategorySeeder extends Seeder
                 'slug' => 'comederos-gatos',
                 'description' => 'Platos, comederos automáticos y fuentes',
                 'image' => null,
-                'parent_id' => $accesoriosGatos,
                 'order' => 3,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'animal_section_id' => $gatosSection->id,
@@ -157,27 +131,21 @@ class CatCategorySeeder extends Seeder
                 'slug' => 'transportadoras-gatos',
                 'description' => 'Transportadoras y mochilas para viaje',
                 'image' => null,
-                'parent_id' => $accesoriosGatos,
                 'order' => 4,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
         ]);
 
-        // Subcategorías de Salud para Gatos
-        DB::table('categories')->insert([
+        // Subcategorías de Salud para Gatos - Usando relaciones Eloquent
+        $saludGatos->children()->createMany([
             [
                 'animal_section_id' => $gatosSection->id,
                 'name' => 'Arena Sanitaria',
                 'slug' => 'arena-gatos',
                 'description' => 'Arena sanitaria aglutinante y de sílica',
                 'image' => null,
-                'parent_id' => $saludGatos,
                 'order' => 1,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'animal_section_id' => $gatosSection->id,
@@ -185,11 +153,8 @@ class CatCategorySeeder extends Seeder
                 'slug' => 'areneros-gatos',
                 'description' => 'Areneros cubiertos, abiertos y automáticos',
                 'image' => null,
-                'parent_id' => $saludGatos,
                 'order' => 2,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
         ]);
 

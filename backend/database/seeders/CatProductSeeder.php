@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class CatProductSeeder extends Seeder
 {
@@ -14,15 +14,15 @@ class CatProductSeeder extends Seeder
     public function run(): void
     {
         // Obtener las categorías de gatos
-        $catAlimentoSecoGatos = Category::where('slug', 'alimento-seco-gatos')->first()?->id;
-        $catAlimentoHumedoGatos = Category::where('slug', 'alimento-humedo-gatos')->first()?->id;
-        $catSnacksGatos = Category::where('slug', 'snacks-gatos')->first()?->id;
-        $catJuguetesGatos = Category::where('slug', 'juguetes-gatos')->first()?->id;
-        $catRascadores = Category::where('slug', 'rascadores-gatos')->first()?->id;
-        $catCamasGatos = Category::where('slug', 'camas-gatos')->first()?->id;
-        $catComederosGatos = Category::where('slug', 'comederos-gatos')->first()?->id;
-        $catArena = Category::where('slug', 'arena-gatos')->first()?->id;
-        $catAreneros = Category::where('slug', 'areneros-gatos')->first()?->id;
+        $catAlimentoSecoGatos = Category::where('slug', 'alimento-seco-gatos')->firstOrFail()->id;
+        $catAlimentoHumedoGatos = Category::where('slug', 'alimento-humedo-gatos')->firstOrFail()->id;
+        $catSnacksGatos = Category::where('slug', 'snacks-gatos')->firstOrFail()->id;
+        $catJuguetesGatos = Category::where('slug', 'juguetes-gatos')->firstOrFail()->id;
+        $catRascadores = Category::where('slug', 'rascadores-gatos')->firstOrFail()->id;
+        $catCamasGatos = Category::where('slug', 'camas-gatos')->firstOrFail()->id;
+        $catComederosGatos = Category::where('slug', 'comederos-gatos')->firstOrFail()->id;
+        $catArena = Category::where('slug', 'arena-gatos')->firstOrFail()->id;
+        $catAreneros = Category::where('slug', 'areneros-gatos')->firstOrFail()->id;
 
         // Productos para GATOS
         $productos = [
@@ -441,20 +441,14 @@ class CatProductSeeder extends Seeder
             ],
         ];
 
-        // Insertar productos
-        foreach ($productos as $producto) {
-            $productId = DB::table('products')->insertGetId(array_merge($producto, [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]));
+        // Insertar productos usando modelos Eloquent
+        foreach ($productos as $productoData) {
+            $product = Product::create($productoData);
 
-            // Agregar una imagen placeholder para cada producto
-            DB::table('product_images')->insert([
-                'product_id' => $productId,
-                'image_url' => 'https://via.placeholder.com/500x500.png?text=' . urlencode($producto['name']),
+            // Agregar una imagen placeholder para cada producto usando relación Eloquent
+            $product->images()->create([
+                'image_url' => 'https://via.placeholder.com/500x500.png?text=' . urlencode($productoData['name']),
                 'is_primary' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
 

@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class ProductSeeder extends Seeder
 {
@@ -135,15 +135,15 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         // Obtener IDs de las categorías usando sus slugs
-        $catAlimentoSecoPerros = Category::where('slug', 'alimento-seco-perros')->first()->id;
-        $catAlimentoHumedoPerros = Category::where('slug', 'alimento-humedo-perros')->first()->id;
-        $catSnacksPerros = Category::where('slug', 'snacks-perros')->first()->id;
-        $catJuguetesPerros = Category::where('slug', 'juguetes-perros')->first()->id;
-        $catCollaresCorreasPerros = Category::where('slug', 'collares-correas-perros')->first()->id;
-        $catCamasPerros = Category::where('slug', 'camas-perros')->first()->id;
-        $catComederosPerros = Category::where('slug', 'comederos-perros')->first()->id;
-        $catTransportadorasPerros = Category::where('slug', 'transportadoras-perros')->first()->id;
-        $catSaludHigienePerros = Category::where('slug', 'salud-higiene-perros')->first()->id;
+        $catAlimentoSecoPerros = Category::where('slug', 'alimento-seco-perros')->firstOrFail()->id;
+        $catAlimentoHumedoPerros = Category::where('slug', 'alimento-humedo-perros')->firstOrFail()->id;
+        $catSnacksPerros = Category::where('slug', 'snacks-perros')->firstOrFail()->id;
+        $catJuguetesPerros = Category::where('slug', 'juguetes-perros')->firstOrFail()->id;
+        $catCollaresCorreasPerros = Category::where('slug', 'collares-correas-perros')->firstOrFail()->id;
+        $catCamasPerros = Category::where('slug', 'camas-perros')->firstOrFail()->id;
+        $catComederosPerros = Category::where('slug', 'comederos-perros')->firstOrFail()->id;
+        $catTransportadorasPerros = Category::where('slug', 'transportadoras-perros')->firstOrFail()->id;
+        $catSaludHigienePerros = Category::where('slug', 'salud-higiene-perros')->firstOrFail()->id;
 
         $products = [
             // ALIMENTO SECO PARA PERROS (3 productos)
@@ -541,27 +541,22 @@ class ProductSeeder extends Seeder
 
         $brands = ['Pedigree', 'Royal Canin', 'Pro Plan', 'Hills', 'Eukanuba', 'Chunky', 'Dog Chow', null];
 
-        foreach ($products as $index => $product) {
+        foreach ($products as $index => $productData) {
             // Agregar brand y low_stock_threshold
-            $product['brand'] = $brands[array_rand($brands)];
-            $product['low_stock_threshold'] = rand(5, 15);
+            $productData['brand'] = $brands[array_rand($brands)];
+            $productData['low_stock_threshold'] = rand(5, 15);
 
-            $productId = DB::table('products')->insertGetId(array_merge($product, [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]));
+            // Crear producto usando modelo Eloquent
+            $product = Product::create($productData);
 
-            // Agregar imágenes demo para cada producto
-            $imageUrls = $this->getProductImages($product['sku']);
+            // Agregar imágenes demo para cada producto usando relación Eloquent
+            $imageUrls = $this->getProductImages($productData['sku']);
 
             foreach ($imageUrls as $order => $imageUrl) {
-                DB::table('product_images')->insert([
-                    'product_id' => $productId,
+                $product->images()->create([
                     'image_url' => $imageUrl,
                     'is_primary' => $order === 0,
                     'order' => $order + 1,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ]);
             }
         }

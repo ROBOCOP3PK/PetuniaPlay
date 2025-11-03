@@ -165,6 +165,9 @@ class AuthController extends Controller
         $token = Str::random(60);
 
         // Eliminar tokens antiguos y crear nuevo
+        // NOTA: Se usa DB::table() aquí porque password_reset_tokens es una tabla
+        // del sistema de Laravel sin modelo Eloquent por defecto. Es justificable
+        // mantener DB::table() para tablas temporales/transitorias del sistema.
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
         DB::table('password_reset_tokens')->insert([
             'email' => $request->email,
@@ -195,6 +198,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        // NOTA: Se usa DB::table() para password_reset_tokens (tabla del sistema)
         $resetRecord = DB::table('password_reset_tokens')
             ->where('email', $request->email)
             ->first();
