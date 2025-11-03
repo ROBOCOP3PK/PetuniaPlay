@@ -45,7 +45,7 @@ export const animalSectionService = {
   uploadImage(id, imageFile) {
     const formData = new FormData()
     formData.append('image', imageFile)
-    return api.post(`/admin/animal-sections/${id}/image`, formData, {
+    return api.post(`/animal-sections/${id}/image`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
