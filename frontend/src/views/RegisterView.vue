@@ -164,6 +164,8 @@ const form = reactive({
 })
 
 const handleRegister = async () => {
+  console.log('handleRegister called', form)
+
   // Validar que las contraseñas coincidan
   if (form.password !== form.password_confirmation) {
     toast.warning('Las contraseñas no coinciden')

@@ -4,7 +4,7 @@ import axios from 'axios'
 export const authService = {
   // Obtener el CSRF token (necesario para Sanctum)
   async getCsrfToken() {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1'
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
     const apiBaseUrl = baseUrl.replace('/api/v1', '')
     return axios.get(`${apiBaseUrl}/sanctum/csrf-cookie`, {
       withCredentials: true
@@ -13,8 +13,12 @@ export const authService = {
 
   // Registro de nuevo usuario
   async register(userData) {
+    console.log('authService.register called with:', userData)
     await this.getCsrfToken()
-    return api.post('/register', userData)
+    console.log('CSRF token obtained')
+    const response = await api.post('/register', userData)
+    console.log('Register response:', response)
+    return response
   },
 
   // Login

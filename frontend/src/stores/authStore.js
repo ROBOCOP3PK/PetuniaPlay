@@ -39,17 +39,22 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function register(userData) {
+    console.log('authStore.register called with:', userData)
     loading.value = true
     try {
       const response = await authService.register(userData)
+      console.log('authService.register response:', response)
       const { user: newUser, token: authToken } = response.data
 
       user.value = newUser
       token.value = authToken
       authService.setToken(authToken)
 
+      console.log('Registration successful, user:', newUser)
       return { success: true, user: newUser }
     } catch (error) {
+      console.error('Registration error:', error)
+      console.error('Error response:', error.response)
       const message = error.response?.data?.message || 'Error al registrarse'
       const errors = error.response?.data?.errors || {}
       return { success: false, message, errors }
