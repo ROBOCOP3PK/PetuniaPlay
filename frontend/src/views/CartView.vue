@@ -136,11 +136,11 @@
                 <span class="text-gray-600 dark:text-gray-400">Subtotal ({{ cartStore.itemCount }} items)</span>
                 <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.subtotal) }}</span>
               </div>
-
-              <div class="flex justify-between">
+              <!-- Seccion de cobro de iva -->
+              <!-- <div class="flex justify-between">
                 <span class="text-gray-600 dark:text-gray-400">IVA (19%)</span>
                 <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.tax) }}</span>
-              </div>
+              </div> -->
 
               <div class="flex justify-between">
                 <span class="text-gray-600 dark:text-gray-400">Envío</span>

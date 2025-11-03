@@ -52,8 +52,9 @@ export const useCartStore = defineStore('cart', () => {
   })
 
   const tax = computed(() => {
-    // IVA del 19% en Colombia
-    return subtotal.value * 0.19
+    // Sin IVA (proyecto estudiantil)
+    return 0
+    //return subtotal.value * 0.19  -> para empezar a cobrar el iva descomentar esto
   })
 
   // Load shipping configuration from API
