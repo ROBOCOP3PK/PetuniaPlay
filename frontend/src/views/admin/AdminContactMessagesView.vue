@@ -208,6 +208,87 @@
         </div>
       </div>
 
+      <!-- Resolve Message Modal -->
+      <div
+        v-if="showResolveModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        @click.self="showResolveModal = false"
+      >
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full shadow-2xl">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white">Marcar como Resuelto</h3>
+              <button
+                @click="cancelResolve"
+                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                <i class="pi pi-times text-xl"></i>
+              </button>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Notas adicionales (opcional)
+              </label>
+              <textarea
+                v-model="resolveNotes"
+                rows="4"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Agrega notas sobre la resolución..."
+              ></textarea>
+            </div>
+            <div class="flex gap-3">
+              <button
+                @click="confirmResolve"
+                class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition font-semibold"
+              >
+                Confirmar
+              </button>
+              <button
+                @click="cancelResolve"
+                class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div
+        v-if="showDeleteModal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        @click.self="showDeleteModal = false"
+      >
+        <div class="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full shadow-2xl">
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div class="bg-red-100 dark:bg-red-900 dark:bg-opacity-30 p-3 rounded-full mr-4">
+                <i class="pi pi-exclamation-triangle text-2xl text-red-600 dark:text-red-400"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white">Confirmar Eliminación</h3>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">
+              ¿Estás seguro de que deseas eliminar este mensaje? Esta acción no se puede deshacer.
+            </p>
+            <div class="flex gap-3">
+              <button
+                @click="confirmDelete"
+                class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-semibold"
+              >
+                Eliminar
+              </button>
+              <button
+                @click="cancelDelete"
+                class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Message Detail Modal -->
       <div
         v-if="selectedMessage"
@@ -282,7 +363,7 @@
               <div class="flex gap-2 mt-6">
                 <button
                   v-if="selectedMessage.status !== 'resolved'"
-                  @click="updateMessageStatusWithNotes(selectedMessage.id, 'resolved')"
+                  @click="openResolveModal(selectedMessage.id)"
                   class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
                 >
                   Marcar como Resuelto
@@ -315,6 +396,13 @@ const stats = ref(null)
 const filterStatus = ref('')
 const selectedMessage = ref(null)
 const meta = ref(null)
+
+// Modal states
+const showResolveModal = ref(false)
+const showDeleteModal = ref(false)
+const resolveNotes = ref('')
+const messageIdToResolve = ref(null)
+const messageIdToDelete = ref(null)
 
 // Format helpers
 const formatDate = (dateString) => {
@@ -406,13 +494,31 @@ const updateMessageStatus = async (id, status) => {
   }
 }
 
-// Update message status with notes (from modal)
-const updateMessageStatusWithNotes = async (id, status) => {
-  const notes = prompt('Notas adicionales (opcional):')
+// Resolve Modal Functions
+const openResolveModal = (id) => {
+  messageIdToResolve.value = id
+  resolveNotes.value = ''
+  showResolveModal.value = true
+}
+
+const cancelResolve = () => {
+  showResolveModal.value = false
+  messageIdToResolve.value = null
+  resolveNotes.value = ''
+}
+
+const confirmResolve = async () => {
   try {
-    await contactMessageService.updateStatus(id, status, notes)
+    await contactMessageService.updateStatus(
+      messageIdToResolve.value,
+      'resolved',
+      resolveNotes.value || null
+    )
     toast.success('Mensaje marcado como resuelto')
+    showResolveModal.value = false
     selectedMessage.value = null
+    messageIdToResolve.value = null
+    resolveNotes.value = ''
     await loadMessages()
     await loadStats()
   } catch (error) {
@@ -421,19 +527,34 @@ const updateMessageStatusWithNotes = async (id, status) => {
   }
 }
 
-// Delete message
-const deleteMessage = async (id) => {
-  if (!confirm('¿Estás seguro de eliminar este mensaje?')) return
+// Delete Modal Functions
+const openDeleteModal = (id) => {
+  messageIdToDelete.value = id
+  showDeleteModal.value = true
+}
 
+const cancelDelete = () => {
+  showDeleteModal.value = false
+  messageIdToDelete.value = null
+}
+
+const confirmDelete = async () => {
   try {
-    await contactMessageService.delete(id)
+    await contactMessageService.delete(messageIdToDelete.value)
     toast.success('Mensaje eliminado correctamente')
+    showDeleteModal.value = false
+    messageIdToDelete.value = null
     await loadMessages()
     await loadStats()
   } catch (error) {
     toast.error('Error al eliminar el mensaje')
     console.error('Error deleting message:', error)
   }
+}
+
+// Keep this function for backward compatibility
+const deleteMessage = (id) => {
+  openDeleteModal(id)
 }
 
 // Pagination
