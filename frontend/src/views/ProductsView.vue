@@ -91,9 +91,9 @@
               >
                 <option value="">Todas las categorías</option>
                 <option
-                  v-for="category in categoryStore.categories"
-                  :key="category.id"
-                  :value="category.slug"
+                  v-for="category in groupedCategories"
+                  :key="category.value"
+                  :value="category.value"
                 >
                   {{ category.name }}
                 </option>
@@ -311,8 +311,26 @@ const selectedSection = computed(() => {
 
 const selectedCategoryName = computed(() => {
   if (!filters.value.category) return null
-  const category = categoryStore.categories.find(cat => cat.slug === filters.value.category)
-  return category ? category.name : null
+  return filters.value.category
+})
+
+// Agrupar categorías por nombre para evitar duplicados
+const groupedCategories = computed(() => {
+  const uniqueNames = new Set()
+  const grouped = []
+
+  categoryStore.categories.forEach(category => {
+    if (!uniqueNames.has(category.name)) {
+      uniqueNames.add(category.name)
+      grouped.push({
+        name: category.name,
+        // Guardar el nombre en lugar del slug
+        value: category.name
+      })
+    }
+  })
+
+  return grouped.sort((a, b) => a.name.localeCompare(b.name))
 })
 
 let searchTimeout = null

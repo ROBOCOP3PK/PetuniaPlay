@@ -185,10 +185,12 @@ class ProductRepository extends BaseRepository
             });
         }
 
-        // Filtro por categoría (slug)
+        // Filtro por categoría (nombre)
+        // Si se filtra por categoría, busca por nombre (no por slug)
+        // Esto permite mostrar productos de todas las secciones con esa categoría
         if (isset($filters['category']) && $filters['category'] !== null && $filters['category'] !== '') {
             $query->whereHas('category', function($q) use ($filters) {
-                $q->where('slug', $filters['category'])
+                $q->where('name', $filters['category'])
                   ->where('is_active', true);
             });
         }
