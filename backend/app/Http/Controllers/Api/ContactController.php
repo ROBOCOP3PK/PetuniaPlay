@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\ContactMail;
+use App\Services\NotificationService;
 
 class ContactController extends Controller
 {
@@ -39,6 +40,31 @@ class ContactController extends Controller
 
             // Send confirmation email to customer
             Mail::to($data['email'])->send(new ContactMail($data, 'customer'));
+
+            // Crear notificación para managers/admins
+            $notificationService = new NotificationService();
+            $subjectLabels = [
+                'product' => 'Consulta sobre producto',
+                'order' => 'Estado de pedido',
+                'shipping' => 'Información de envío',
+                'return' => 'Devoluciones y cambios',
+                'other' => 'Otro'
+            ];
+            $subjectLabel = $subjectLabels[$data['subject']] ?? 'Mensaje de contacto';
+
+            $notificationService->notifyManagers(
+                'contact_message',
+                'Nuevo mensaje de contacto',
+                "{$data['name']} envió un mensaje sobre: {$subjectLabel}",
+                [
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'phone' => $data['phone'] ?? 'No proporcionado',
+                    'subject' => $subjectLabel,
+                    'message' => $data['message'],
+                    'action_text' => 'Ver mensaje'
+                ]
+            );
 
             return response()->json([
                 'success' => true,

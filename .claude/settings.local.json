@@ -100,7 +100,8 @@
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT id, name, image FROM animal_sections WHERE image IS NOT NULL LIMIT 3;\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; DESCRIBE categories;\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT id, name, image FROM categories LIMIT 5;\")",
-      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total_pedidos FROM orders;\")"
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total_pedidos FROM orders;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total FROM notifications;\")"
     ],
     "deny": [],
     "ask": []
