@@ -17,8 +17,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
+            AnimalSectionSeeder::class, // DEBE ejecutarse antes de CategorySeeder
             CategorySeeder::class,
             ProductSeeder::class,
+            CatProductSeeder::class, // Productos específicos para gatos
             BlogCategorySeeder::class,
             CouponSeeder::class,
             LoyaltySeeder::class,

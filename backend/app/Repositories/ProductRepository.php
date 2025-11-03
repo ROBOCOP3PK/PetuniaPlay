@@ -16,7 +16,10 @@ class ProductRepository extends BaseRepository
     public function getAllActive($perPage = 15)
     {
         return $this->model->active()
-            ->with(['category', 'primaryImage', 'images'])
+            ->whereHas('category.animalSection', function($query) {
+                $query->where('is_active', true);
+            })
+            ->with(['category.animalSection', 'primaryImage', 'images'])
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->paginate($perPage);
@@ -28,7 +31,10 @@ class ProductRepository extends BaseRepository
         return Cache::remember("products.featured.{$limit}", 1800, function () use ($limit) {
             return $this->model->active()
                 ->featured()
-                ->with(['category', 'primaryImage'])
+                ->whereHas('category.animalSection', function($query) {
+                    $query->where('is_active', true);
+                })
+                ->with(['category.animalSection', 'primaryImage'])
                 ->withAvg('reviews', 'rating')
                 ->withCount('reviews')
                 ->limit($limit)
@@ -40,7 +46,10 @@ class ProductRepository extends BaseRepository
     {
         return $this->model->active()
             ->where('category_id', $categoryId)
-            ->with(['category', 'primaryImage'])
+            ->whereHas('category.animalSection', function($query) {
+                $query->where('is_active', true);
+            })
+            ->with(['category.animalSection', 'primaryImage'])
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->paginate($perPage);
@@ -50,7 +59,10 @@ class ProductRepository extends BaseRepository
     {
         return $this->model->active()
             ->where('slug', $slug)
-            ->with(['category', 'images', 'reviews.user'])
+            ->whereHas('category.animalSection', function($query) {
+                $query->where('is_active', true);
+            })
+            ->with(['category.animalSection', 'images', 'reviews.user'])
             ->firstOrFail();
     }
 
@@ -64,7 +76,10 @@ class ProductRepository extends BaseRepository
                     ->orWhere('sku', 'like', "%{$term}%")
                     ->orWhere('brand', 'like', "%{$term}%");
             })
-            ->with(['category', 'primaryImage'])
+            ->whereHas('category.animalSection', function($query) {
+                $query->where('is_active', true);
+            })
+            ->with(['category.animalSection', 'primaryImage'])
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->paginate($perPage);
@@ -80,6 +95,9 @@ class ProductRepository extends BaseRepository
                 $query->where('name', 'like', "%{$term}%")
                     ->orWhere('sku', 'like', "%{$term}%")
                     ->orWhere('brand', 'like', "%{$term}%");
+            })
+            ->whereHas('category.animalSection', function($query) {
+                $query->where('is_active', true);
             })
             ->select('id', 'name', 'slug', 'sku', 'brand', 'price', 'sale_price')
             ->with(['primaryImage:id,product_id,image_url'])
@@ -155,7 +173,20 @@ class ProductRepository extends BaseRepository
     public function filterProducts(array $filters = [], $perPage = 15)
     {
         $query = $this->model->active()
-            ->with(['category', 'primaryImage', 'reviews']);
+            ->with(['category.animalSection', 'primaryImage', 'reviews']);
+
+        // Filtro por seccion de animal
+        if (isset($filters['animal_section_id']) && $filters['animal_section_id'] !== null && $filters['animal_section_id'] !== '') {
+            $query->whereHas('category', function($q) use ($filters) {
+                $q->where('animal_section_id', $filters['animal_section_id'])
+                  ->where('is_active', true);
+            });
+        }
+
+        // Filtrar solo por secciones activas si no se especifica una seccion
+        $query->whereHas('category.animalSection', function($q) {
+            $q->where('is_active', true);
+        });
 
         // Filtro por rango de precio
         if (isset($filters['min_price']) && $filters['min_price'] !== null && $filters['min_price'] !== '') {

@@ -41,6 +41,33 @@
               </div>
             </div>
 
+            <!-- Animal Section Filter -->
+            <div class="mb-6">
+              <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Tipo de Mascota</h3>
+              <div v-if="loadingSections" class="text-center py-2">
+                <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
+              </div>
+              <div v-else-if="animalSections.length > 0" class="grid grid-cols-2 gap-2">
+                <button
+                  v-for="section in animalSections"
+                  :key="section.id"
+                  @click="filters.animal_section_id = filters.animal_section_id === section.id ? null : section.id; applyFilters()"
+                  :class="[
+                    'flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all duration-200',
+                    filters.animal_section_id === section.id
+                      ? 'border-primary bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary/50 dark:hover:border-primary/50 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                  ]"
+                >
+                  <span class="text-2xl mb-1">{{ section.icon }}</span>
+                  <span class="text-xs font-medium text-center">{{ section.name }}</span>
+                </button>
+              </div>
+              <p v-else class="text-sm text-gray-500 dark:text-gray-400 text-center py-2">
+                No hay secciones disponibles
+              </p>
+            </div>
+
             <!-- Brand Filter -->
             <div class="mb-6">
               <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Marca</h3>
@@ -144,6 +171,15 @@
           <!-- Active Filters Tags -->
           <div v-if="hasActiveFilters" class="mb-4 flex flex-wrap gap-2">
             <span
+              v-if="selectedSection"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+            >
+              {{ selectedSection.icon }} {{ selectedSection.name }}
+              <button @click="filters.animal_section_id = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+                ×
+              </button>
+            </span>
+            <span
               v-if="filters.min_price"
               class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
@@ -235,6 +271,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '../stores/productStore'
 import { useCategoryStore } from '../stores/categoryStore'
 import ProductCard from '../components/product/ProductCard.vue'
+import animalSectionService from '../services/animalSectionService'
 
 const route = useRoute()
 const router = useRouter()
@@ -243,8 +280,11 @@ const categoryStore = useCategoryStore()
 
 const searchQuery = ref(route.query.search || '')
 const selectedCategory = ref('')
+const animalSections = ref([])
+const loadingSections = ref(false)
 
 const filters = ref({
+  animal_section_id: null,
   min_price: null,
   max_price: null,
   brand: '',
@@ -254,12 +294,18 @@ const filters = ref({
 })
 
 const hasActiveFilters = computed(() => {
-  return filters.value.min_price ||
+  return filters.value.animal_section_id ||
+    filters.value.min_price ||
     filters.value.max_price ||
     filters.value.brand ||
     filters.value.in_stock ||
     filters.value.min_rating ||
     searchQuery.value
+})
+
+const selectedSection = computed(() => {
+  if (!filters.value.animal_section_id) return null
+  return animalSections.value.find(section => section.id === filters.value.animal_section_id)
 })
 
 let searchTimeout = null
@@ -286,6 +332,7 @@ const handleCategoryFilter = () => {
 const applyFilters = () => {
   const params = {}
 
+  if (filters.value.animal_section_id) params.animal_section_id = filters.value.animal_section_id
   if (filters.value.min_price) params.min_price = filters.value.min_price
   if (filters.value.max_price) params.max_price = filters.value.max_price
   if (filters.value.brand) params.brand = filters.value.brand
@@ -300,6 +347,7 @@ const clearAllFilters = () => {
   searchQuery.value = ''
   selectedCategory.value = ''
   filters.value = {
+    animal_section_id: null,
     min_price: null,
     max_price: null,
     brand: '',
@@ -310,11 +358,37 @@ const clearAllFilters = () => {
   productStore.fetchProducts()
 }
 
+const loadAnimalSections = async () => {
+  loadingSections.value = true
+  try {
+    const response = await animalSectionService.getAll()
+    animalSections.value = response.data.data || []
+  } catch (error) {
+    console.error('Error al cargar secciones de animales:', error)
+    animalSections.value = []
+  } finally {
+    loadingSections.value = false
+  }
+}
+
 onMounted(async () => {
+  // Cargar secciones de animales
+  await loadAnimalSections()
+
+  // Aplicar filtro de animal_section_id si viene en la query
+  if (route.query.animal_section_id) {
+    filters.value.animal_section_id = parseInt(route.query.animal_section_id)
+  }
+
   if (route.query.search) {
     productStore.searchProducts(route.query.search)
   } else {
-    productStore.fetchProducts()
+    // Si hay filtros, aplicarlos; si no, cargar todos los productos
+    if (filters.value.animal_section_id) {
+      applyFilters()
+    } else {
+      productStore.fetchProducts()
+    }
   }
 
   await categoryStore.fetchCategories()

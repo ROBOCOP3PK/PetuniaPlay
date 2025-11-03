@@ -5,17 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Category extends Model
+class AnimalSection extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'animal_section_id',
         'name',
         'slug',
+        'icon',
         'description',
-        'image',
-        'parent_id',
         'order',
         'is_active',
     ];
@@ -30,24 +28,9 @@ class Category extends Model
 
     // Relaciones
 
-    public function animalSection()
+    public function categories()
     {
-        return $this->belongsTo(AnimalSection::class);
-    }
-
-    public function parent()
-    {
-        return $this->belongsTo(Category::class, 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany(Category::class, 'parent_id');
-    }
-
-    public function products()
-    {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Category::class);
     }
 
     // Scopes
@@ -57,8 +40,8 @@ class Category extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeParent($query)
+    public function scopeOrdered($query)
     {
-        return $query->whereNull('parent_id');
+        return $query->orderBy('order', 'asc')->orderBy('name', 'asc');
     }
 }

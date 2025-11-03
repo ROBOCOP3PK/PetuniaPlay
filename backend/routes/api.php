@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\Admin\LoyaltyRedemptionController;
 use App\Http\Controllers\Api\ProductQuestionController;
 use App\Http\Controllers\Api\ShippingConfigController;
 use App\Http\Controllers\Api\SiteConfigController;
+use App\Http\Controllers\Api\AnimalSectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/products/brands', [ProductController::class, 'brands']);
     Route::get('/products/{slug}', [ProductController::class, 'show']);
     Route::get('/products/{slug}/related', [ProductController::class, 'related']);
+
+    // Animal Sections (public - only active sections)
+    Route::get('/animal-sections', [AnimalSectionController::class, 'index']);
+    Route::get('/animal-sections/{slug}', [AnimalSectionController::class, 'show']);
 
     // Categories
     Route::get('/categories', [CategoryController::class, 'index']);
@@ -164,6 +169,15 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/products', [ProductController::class, 'store']);
         Route::put('/products/{id}', [ProductController::class, 'update']);
         Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+
+        // Animal Sections Management
+        Route::get('/animal-sections/all', [AnimalSectionController::class, 'index']); // Override public route to show all
+        Route::post('/animal-sections', [AnimalSectionController::class, 'store']);
+        Route::put('/animal-sections/{id}', [AnimalSectionController::class, 'update']);
+        Route::delete('/animal-sections/{id}', [AnimalSectionController::class, 'destroy']);
+        Route::put('/animal-sections/{id}/toggle-status', [AnimalSectionController::class, 'toggleStatus']);
+        Route::get('/admin/animal-sections/stats', [AnimalSectionController::class, 'stats']);
+        Route::post('/admin/animal-sections/reorder', [AnimalSectionController::class, 'reorder']);
 
         // Categories Management
         Route::post('/categories', [CategoryController::class, 'store']);

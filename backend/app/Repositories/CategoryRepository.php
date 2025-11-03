@@ -17,7 +17,10 @@ class CategoryRepository extends BaseRepository
         // Cachear categorías por 1 hora (se invalida en create/update/delete)
         return Cache::remember('categories.all.active', 3600, function () {
             return $this->model->active()
-                ->with('parent')
+                ->whereHas('animalSection', function($query) {
+                    $query->where('is_active', true);
+                })
+                ->with(['parent', 'animalSection'])
                 ->orderBy('order')
                 ->get();
         });
@@ -29,7 +32,14 @@ class CategoryRepository extends BaseRepository
         return Cache::remember('categories.parents.with.children', 3600, function () {
             return $this->model->active()
                 ->parent()
-                ->with('children')
+                ->whereHas('animalSection', function($query) {
+                    $query->where('is_active', true);
+                })
+                ->with(['children' => function($query) {
+                    $query->whereHas('animalSection', function($q) {
+                        $q->where('is_active', true);
+                    });
+                }, 'animalSection'])
                 ->orderBy('order')
                 ->get();
         });
@@ -39,7 +49,14 @@ class CategoryRepository extends BaseRepository
     {
         return $this->model->active()
             ->where('slug', $slug)
-            ->with(['children', 'products' => function($query) {
+            ->whereHas('animalSection', function($query) {
+                $query->where('is_active', true);
+            })
+            ->with(['animalSection', 'children' => function($query) {
+                $query->whereHas('animalSection', function($q) {
+                    $q->where('is_active', true);
+                });
+            }, 'products' => function($query) {
                 $query->active()->with('primaryImage');
             }])
             ->firstOrFail();

@@ -1,7 +1,7 @@
 # 🐾 PetuniaPlay - Contexto del Proyecto
 
-> **Última actualización:** 2025-11-02
-> **Versión:** 1.2 - Optimización frontend con composables avanzados
+> **Última actualización:** 2025-11-03
+> **Versión:** 1.3 - Sistema de Secciones de Animales
 
 ---
 
@@ -57,10 +57,11 @@ Clientes: (generados por seeder) / 2025
 
 ## 📊 Base de Datos - Modelos Principales
 
-### Core (8 modelos)
+### Core (9 modelos)
 - **User** - Usuarios con roles, email_notifications, loyalty fields
 - **Product** - Productos con brand, low_stock_threshold, imágenes múltiples
-- **Category** - Categorías jerárquicas
+- **Category** - Categorías jerárquicas vinculadas a secciones de animales
+- **AnimalSection** - Secciones por tipo de animal (Perros, Gatos, etc.) con control de activación
 - **ProductImage** - Galería de imágenes por producto
 - **Order** - Órdenes con night_delivery, coupon_id
 - **OrderItem** - Items de cada orden
@@ -88,7 +89,7 @@ Clientes: (generados por seeder) / 2025
 ### Blog Base (2 modelos)
 - **BlogPost**, **BlogCategory** (no implementados en frontend)
 
-**Total:** 22 modelos + 37 migraciones + 31 tablas en BD
+**Total:** 23 modelos + 39 migraciones + 31 tablas en BD
 
 ---
 
@@ -204,6 +205,14 @@ Clientes: (generados por seeder) / 2025
 - Reportes de ventas
 - Rate limiting (10 exportes/hora)
 
+**16. Sistema de Secciones por Tipo de Animal** 🆕
+- Categorización de productos por tipo de mascota (Perros, Gatos, Aves, Peces, etc.)
+- Solo secciones activas visibles en frontend público
+- Gestión completa desde panel admin (activar/desactivar secciones)
+- 6 secciones predefinidas: Perros (activo), Gatos, Aves, Peces, Roedores, Reptiles
+- Filtrado automático en ProductRepository y CategoryRepository
+- Escalable: fácil agregar nuevas secciones de animales
+
 ---
 
 ## 🚫 NO Implementado (Pendiente)
@@ -230,10 +239,10 @@ Clientes: (generados por seeder) / 2025
 **Node:** ^20.19.0 || >=22.12.0
 
 **Estructura:**
-- 33 vistas (views) - Incluye admin panel completo
+- 34 vistas (views) - Incluye admin panel completo
 - 28 componentes reutilizables
 - 7 stores Pinia
-- 17 servicios API
+- 18 servicios API
 - 6 composables (reutilizables y optimizados)
 
 ### Stores Pinia (7)
@@ -245,13 +254,14 @@ Clientes: (generados por seeder) / 2025
 - `notificationStore` - Notificaciones in-app en tiempo real
 - `counter` - Store demo (no usado en producción)
 
-### Servicios API (17)
+### Servicios API (18)
 Todos en `frontend/src/services/`:
 - `api.js` - Cliente base Axios con interceptors (auth, error handling)
 - `authService` - Login, registro, recuperación de contraseña
 - `productService` - CRUD productos, búsqueda, autocomplete, brands
 - `orderService` - Crear órdenes, historial, tracking, exportar
 - `categoryService` - Categorías jerárquicas
+- `animalSectionService` - CRUD secciones de animales, toggle status, stats, reorder
 - `addressService` - CRUD direcciones, set default
 - `wishlistService` - Agregar/remover wishlist, check status
 - `reviewService` - CRUD reseñas, moderación, stats
@@ -294,10 +304,11 @@ Todos en `frontend/src/services/`:
 - `/wishlist` - Lista de deseos
 - `/loyalty` - Programa de fidelidad del cliente
 
-**Admin Panel (requiresManager - 9):**
+**Admin Panel (requiresManager - 10):**
 - `/admin` - Dashboard con métricas
 - `/admin/products` - Gestión de productos
 - `/admin/categories` - Gestión de categorías
+- `/admin/animal-sections` - Gestión de secciones de animales (activar/desactivar)
 - `/admin/orders` - Gestión de órdenes y envíos
 - `/admin/coupons` - Gestión de cupones
 - `/admin/shipments` - Control de despachos
@@ -331,12 +342,13 @@ Todos en `frontend/src/services/`:
 **Excel:** maatwebsite/excel 3.1
 **Database:** MySQL 8.0.43 (31 tablas)
 
-### Controladores API (22)
+### Controladores API (23)
 Todos en `backend/app/Http/Controllers/Api/`:
 
-**Públicos (8):**
+**Públicos (9):**
 - `ProductController` - index, show, featured, search, autocomplete, brands
 - `CategoryController` - index, show (categorías jerárquicas)
+- `AnimalSectionController` - index (solo activas), show (público)
 - `CartController` - index, add, update, remove, clear (stateless)
 - `CouponController` - validate (validación de cupones)
 - `ShipmentController` - trackByNumber (tracking público)
@@ -354,11 +366,12 @@ Todos en `backend/app/Http/Controllers/Api/`:
 - `LoyaltyController` - myRewards, myRedemptions, redeem (fidelidad cliente)
 - `NotificationController` - index, unreadCount, markAsRead, markAllAsRead, destroy, deleteRead
 
-**Manager/Admin (6):**
+**Manager/Admin (7):**
 - `AdminController` - dashboard, salesStats, lowStockProducts, outOfStockProducts, users, updateUserRole, toggleUserStatus
 - `FileUploadController` - uploadImage, uploadMultiple, deleteImage, deleteImageByUrl
 - `ProductController` - store, update, destroy (gestión de productos)
 - `CategoryController` - store, update, destroy (gestión de categorías)
+- `AnimalSectionController` - store, update, destroy, toggleStatus, stats, reorder (gestión de secciones)
 - `OrderController` - adminIndex, updateStatus, pendingShipment, shipped, shippingStats, exportExcel, exportPdf
 - `ReviewController` - adminIndex, toggleApproval (moderación)
 - `ProductQuestionController` - index, stats, answer, destroy (responder preguntas)
@@ -437,12 +450,13 @@ Todos en `backend/app/Mail/`:
 - `PasswordResetMail` - Token para recuperar contraseña
 - `ContactMail` - Envío de formulario de contacto al admin
 
-### Seeders (7)
+### Seeders (8)
 Todos en `backend/database/seeders/`:
 - `DatabaseSeeder` - Seeder principal (orquesta todos)
-- `UserSeeder` - Admin, manager, 20 clientes
-- `CategorySeeder` - Categorías de productos para mascotas
-- `ProductSeeder` - ~50 productos con imágenes
+- `UserSeeder` - Admin, manager, 25 clientes
+- `AnimalSectionSeeder` - 6 secciones (Perros activo, otros inactivos)
+- `CategorySeeder` - 11 categorías para perros (alimentos, juguetes, accesorios, salud)
+- `ProductSeeder` - 22 productos para perros con imágenes
 - `CouponSeeder` - Cupones de ejemplo
 - `LoyaltySeeder` - Programa de fidelidad con recompensas
 - `BlogCategorySeeder` - Categorías de blog (no usado en frontend)
@@ -465,20 +479,24 @@ Todos en `backend/database/seeders/`:
 ## 📈 Optimizaciones Recientes
 
 **Últimos commits (git log):**
+- `a8d313c` - Se comentarean todas las migraciones y modelos (2025-11-02)
+- `862c653` - Se corrije tipo de dato
+- `be385a2` - Se corrige función duplicada
 - `d094c12` - Se optimiza frontend con composables reutilizables y componentes skeleton
   - Agregados 4 composables nuevos: useNotification, usePerformance, useFormat, useLoading
   - Implementados skeleton loaders para mejorar UX durante cargas
   - Refactorización de lógica común en composables reutilizables
   - Reducción de código duplicado en componentes
 - `e50de32` - Optimización del sistema general
-- `8e76c27` - Se optimiza documentación con PROJECT_CONTEXT.md unificado
-  - Consolidados 4 archivos MD en PROJECT_CONTEXT.md único
-  - Agregados comandos slash /apc y /cm para automatización
-  - Actualizado PROJECT_CONTEXT con estadísticas completas
-  - Eliminados archivos redundantes de documentación técnica
-- `cb09b20` - Se crea PROJECT_CONTEXT.md para mantener contexto completo del proyecto
 
 **Funcionalidades añadidas últimamente:**
+- **Sistema de Secciones de Animales (2025-11-02)** 🆕
+  - Modelo AnimalSection con control de activación
+  - Categorías vinculadas a secciones de animales
+  - Filtrado automático en frontend público (solo secciones activas)
+  - Panel admin completo para gestionar secciones
+  - 6 secciones predefinidas: Perros (activo), Gatos, Aves, Peces, Roedores, Reptiles
+  - Productos organizados por tipo de mascota
 - Sistema de cupones con límite por cliente (max_usage_per_customer)
 - Tabla `coupon_redemptions` para tracking de usos
 - WhatsApp button flotante parametrizable desde SiteConfig
@@ -616,15 +634,16 @@ composer dev  # Inicia servidor + queue + logs + vite simultáneamente
 
 ## 📍 Estado Actual
 
-**Versión:** 1.2 Development
-**Última actualización:** 2025-11-02
+**Versión:** 1.3 Development - Sistema de Secciones de Animales
+**Última actualización:** 2025-11-03
 **Estado:** ✅ Funcional al 100% en desarrollo
 
 **Base de datos (estado real):**
-- 27 tablas activas (de 31 disponibles)
+- 31 tablas activas
 - 27 usuarios registrados
-- 13 productos en catálogo
-- 12 categorías activas
+- 22 productos en catálogo (solo Perros)
+- 11 categorías activas (todas de Perros)
+- 6 secciones de animales (solo Perros activo)
 - 0 órdenes (sistema nuevo)
 
 **Próximos pasos para producción:**

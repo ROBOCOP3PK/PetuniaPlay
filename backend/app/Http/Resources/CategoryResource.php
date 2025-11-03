@@ -16,6 +16,7 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'animal_section_id' => $this->animal_section_id,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
@@ -27,6 +28,15 @@ class CategoryResource extends JsonResource
             'updated_at' => $this->updated_at,
 
             // Relaciones
+            'animal_section' => $this->whenLoaded('animalSection', function () {
+                return [
+                    'id' => $this->animalSection->id,
+                    'name' => $this->animalSection->name,
+                    'slug' => $this->animalSection->slug,
+                    'icon' => $this->animalSection->icon,
+                ];
+            }),
+
             'parent' => $this->whenLoaded('parent', function () {
                 return [
                     'id' => $this->parent->id,

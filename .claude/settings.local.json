@@ -71,7 +71,15 @@
       "Bash(npx vue-tsc:*)",
       "Bash(npm uninstall:*)",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total FROM product_questions;\")",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "SlashCommand(/apc)",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT COUNT(*) as total_users FROM users; SELECT COUNT(*) as total_products FROM products; SELECT COUNT(*) as total_categories FROM categories; SELECT COUNT(*) as total_sections FROM animal_sections;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT id, name, slug, icon, is_active, \\`order\\` FROM animal_sections ORDER BY \\`order\\`;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; UPDATE animal_sections SET is_active = 1 WHERE slug = ''gatos'';\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT id, name, slug, icon, is_active FROM animal_sections WHERE is_active = 1 ORDER BY \\`order\\`;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT c.id, c.name, c.animal_section_id, c.parent_id, a.name as seccion FROM categories c LEFT JOIN animal_sections a ON c.animal_section_id = a.id WHERE c.is_active = 1 ORDER BY a.name, c.name LIMIT 20;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT id, name, slug, animal_section_id FROM categories WHERE animal_section_id = 2 LIMIT 10;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root -e \"USE petunia_play; SELECT c.name as categoria, COUNT(p.id) as productos FROM categories c LEFT JOIN products p ON c.id = p.category_id WHERE c.animal_section_id = 2 GROUP BY c.id ORDER BY c.name;\")"
     ],
     "deny": [],
     "ask": []

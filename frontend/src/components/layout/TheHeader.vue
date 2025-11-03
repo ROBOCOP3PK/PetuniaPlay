@@ -144,14 +144,39 @@
               Productos
             </router-link>
           </li>
-          <li v-for="category in parentCategories" :key="category.id">
-            <router-link
-              :to="`/category/${category.slug}`"
-              class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition"
+
+          <!-- Animal Sections with Categories Dropdown -->
+          <li
+            v-for="section in animalSections"
+            :key="section.id"
+            class="relative group"
+          >
+            <button
+              class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition flex items-center gap-1"
             >
-              {{ category.name }}
-            </router-link>
+              <span>{{ section.icon }} {{ section.name }}</span>
+              <i class="pi pi-chevron-down text-xs"></i>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div class="absolute left-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-200 dark:border-gray-700">
+              <router-link
+                v-for="category in getCategoriesBySection(section.id)"
+                :key="category.id"
+                :to="`/category/${category.slug}`"
+                class="block px-4 py-2 text-dark dark:text-gray-200 hover:bg-primary hover:bg-opacity-10 dark:hover:bg-primary dark:hover:bg-opacity-20 hover:text-primary dark:hover:text-primary-light transition"
+              >
+                {{ category.name }}
+              </router-link>
+              <div
+                v-if="getCategoriesBySection(section.id).length === 0"
+                class="px-4 py-2 text-gray-400 dark:text-gray-500 text-sm italic"
+              >
+                No hay categorías
+              </div>
+            </div>
           </li>
+
           <li>
             <router-link to="/contact" class="text-dark dark:text-gray-200 hover:text-primary dark:hover:text-primary-light font-semibold transition">
               Contacto
@@ -174,6 +199,7 @@ import { useToast } from 'vue-toastification'
 import ThemeToggle from '../ThemeToggle.vue'
 import NotificationBell from '../notifications/NotificationBell.vue'
 import SearchAutocomplete from '../search/SearchAutocomplete.vue'
+import animalSectionService from '../../services/animalSectionService'
 
 const router = useRouter()
 const categoryStore = useCategoryStore()
@@ -183,8 +209,28 @@ const authStore = useAuthStore()
 const toast = useToast()
 
 const showUserMenu = ref(false)
+const animalSections = ref([])
 
 const parentCategories = computed(() => categoryStore.parentCategories)
+
+// Obtener categorías por sección de animal
+const getCategoriesBySection = (sectionId) => {
+  return categoryStore.categories.filter(
+    category => category.animal_section_id === sectionId && !category.parent_id && category.is_active
+  )
+}
+
+// Cargar secciones de animales activas
+const loadAnimalSections = async () => {
+  try {
+    const response = await animalSectionService.getAll()
+    // Solo mostrar secciones activas
+    animalSections.value = (response.data.data || response.data || []).filter(section => section.is_active)
+  } catch (error) {
+    console.error('Error al cargar secciones de animales:', error)
+    animalSections.value = []
+  }
+}
 
 const handleLogout = async () => {
   await authStore.logout()
@@ -193,7 +239,10 @@ const handleLogout = async () => {
   router.push('/')
 }
 
-onMounted(() => {
-  categoryStore.fetchCategories()
+onMounted(async () => {
+  await Promise.all([
+    categoryStore.fetchCategories(),
+    loadAnimalSections()
+  ])
 })
 </script>

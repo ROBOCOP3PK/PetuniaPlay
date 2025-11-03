@@ -56,6 +56,7 @@
             <thead class="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Categoría</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Sección</th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Slug</th>
                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Padre</th>
                 <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase">Orden</th>
@@ -86,6 +87,13 @@
                       <p class="text-sm text-gray-600 dark:text-gray-400">{{ truncate(category.description, 40) || 'Sin descripción' }}</p>
                     </div>
                   </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div v-if="category.animal_section" class="flex items-center space-x-2">
+                    <span class="text-2xl">{{ category.animal_section.icon }}</span>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ category.animal_section.name }}</span>
+                  </div>
+                  <span v-else class="text-sm text-gray-400 dark:text-gray-500 italic">Sin sección</span>
                 </td>
                 <td class="px-6 py-4">
                   <code class="text-sm bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">{{ category.slug }}</code>
@@ -214,6 +222,38 @@
               </div>
             </div>
 
+            <!-- Animal Section -->
+            <div>
+              <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Sección de Animal</h3>
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Sección *</label>
+                <Dropdown
+                  v-model="categoryForm.animal_section_id"
+                  :options="animalSections"
+                  optionLabel="name"
+                  optionValue="id"
+                  placeholder="Selecciona una sección"
+                  class="w-full"
+                  :class="{'p-invalid': !categoryForm.animal_section_id}"
+                >
+                  <template #value="slotProps">
+                    <div v-if="slotProps.value" class="flex items-center space-x-2">
+                      <span class="text-xl">{{ getSelectedSectionIcon(slotProps.value) }}</span>
+                      <span>{{ getSelectedSectionName(slotProps.value) }}</span>
+                    </div>
+                    <span v-else>{{ slotProps.placeholder }}</span>
+                  </template>
+                  <template #option="slotProps">
+                    <div class="flex items-center space-x-2">
+                      <span class="text-xl">{{ slotProps.option.icon }}</span>
+                      <span>{{ slotProps.option.name }}</span>
+                    </div>
+                  </template>
+                </Dropdown>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Selecciona la sección de animal para esta categoría</p>
+              </div>
+            </div>
+
             <!-- Hierarchy & Order -->
             <div>
               <h3 class="font-bold text-lg mb-3 text-gray-900 dark:text-white">Jerarquía y Orden</h3>
@@ -291,10 +331,12 @@ import { ref, computed, onMounted } from 'vue'
 import AdminLayout from '../../layouts/AdminLayout.vue'
 import ImageUpload from '../../components/admin/ImageUpload.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import Dropdown from 'primevue/dropdown'
 import { useCategoryStore } from '../../stores/categoryStore'
 import { useNotification } from '@/composables/useNotification'
 import { useConfirm } from '@/composables/useConfirm'
 import { adminService } from '../../services/adminService'
+import { animalSectionService } from '../../services/animalSectionService'
 
 const categoryStore = useCategoryStore()
 const { notifySuccess, notifyError, notifyWarning } = useNotification()
@@ -303,6 +345,9 @@ const { confirmDialog, showConfirm } = useConfirm()
 const loading = ref(false)
 const search = ref('')
 const filterStatus = ref('')
+
+// Animal sections
+const animalSections = ref([])
 
 // Modal state
 const showModal = ref(false)
@@ -316,6 +361,7 @@ const emptyForm = {
   description: '',
   image: '',
   imageArray: [],
+  animal_section_id: null,
   parent_id: null,
   order: 0,
   is_active: true
@@ -360,6 +406,17 @@ const truncate = (text, length) => {
   return text.length > length ? text.substring(0, length) + '...' : text
 }
 
+// Helper functions for animal sections
+const getSelectedSectionIcon = (sectionId) => {
+  const section = animalSections.value.find(s => s.id === sectionId)
+  return section ? section.icon : ''
+}
+
+const getSelectedSectionName = (sectionId) => {
+  const section = animalSections.value.find(s => s.id === sectionId)
+  return section ? section.name : ''
+}
+
 // Modal functions
 const openCreateModal = () => {
   editingCategoryData.value = null
@@ -375,6 +432,7 @@ const editCategory = (category) => {
     description: category.description || '',
     image: category.image || '',
     imageArray: category.image ? [category.image] : [],
+    animal_section_id: category.animal_section_id || null,
     parent_id: category.parent_id || null,
     order: category.order || 0,
     is_active: category.is_active
@@ -389,6 +447,12 @@ const closeModal = () => {
 }
 
 const saveCategoryForm = async () => {
+  // Validar que se haya seleccionado una sección
+  if (!categoryForm.value.animal_section_id) {
+    notifyError('Debes seleccionar una sección de animal')
+    return
+  }
+
   savingCategory.value = true
   try {
     // Convertir imageArray a image (tomar la primera URL del array)
@@ -401,6 +465,7 @@ const saveCategoryForm = async () => {
       slug: categoryForm.value.slug || null,
       description: categoryForm.value.description || null,
       image: imageUrl,
+      animal_section_id: categoryForm.value.animal_section_id,
       parent_id: categoryForm.value.parent_id || null,
       order: categoryForm.value.order,
       is_active: categoryForm.value.is_active
@@ -478,7 +543,18 @@ const loadCategories = async () => {
   }
 }
 
+const loadAnimalSections = async () => {
+  try {
+    const response = await animalSectionService.getAll()
+    animalSections.value = response.data.data || response.data || []
+  } catch (error) {
+    notifyError('Error al cargar secciones de animales')
+    animalSections.value = []
+  }
+}
+
 onMounted(() => {
   loadCategories()
+  loadAnimalSections()
 })
 </script>

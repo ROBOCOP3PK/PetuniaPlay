@@ -17,27 +17,38 @@
       </div>
     </section>
 
-    <!-- Categories -->
+    <!-- Animal Sections -->
     <section class="py-16 bg-white dark:bg-gray-900">
       <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">Compra por Categoría</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <h2 class="text-3xl font-bold text-center mb-4 text-gray-900 dark:text-white">Compra por Tipo de Mascota</h2>
+        <p class="text-center text-gray-600 dark:text-gray-400 mb-12">Encuentra productos especializados para cada compañero</p>
+
+        <!-- Animal Sections Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <div
-            v-for="category in parentCategories"
-            :key="category.id"
-            class="card cursor-pointer"
-            @click="goToCategory(category.slug)"
+            v-for="section in animalSections"
+            :key="section.id"
+            class="card cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-300"
+            @click="goToAnimalSection(section.id)"
           >
-            <div class="aspect-square bg-beige dark:bg-gray-700 flex items-center justify-center">
-              <span class="text-6xl">
-                {{ getCategoryIcon(category.name) }}
+            <div class="aspect-square bg-gradient-to-br from-beige to-cream dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
+              <span class="text-8xl">
+                {{ section.icon }}
               </span>
             </div>
             <div class="p-6 text-center">
-              <h3 class="font-bold text-xl mb-2 text-gray-900 dark:text-white">{{ category.name }}</h3>
-              <p class="text-gray-600 dark:text-gray-300 text-sm">{{ category.description }}</p>
+              <h3 class="font-bold text-2xl mb-2 text-gray-900 dark:text-white">{{ section.name }}</h3>
+              <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ section.description }}</p>
+              <span class="text-primary dark:text-primary-light font-semibold text-sm">
+                Ver productos →
+              </span>
             </div>
           </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="animalSections.length === 0 && !loadingSections" class="text-center py-12">
+          <p class="text-gray-600 dark:text-gray-400">No hay secciones disponibles</p>
         </div>
       </div>
     </section>
@@ -109,33 +120,43 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProductStore } from '../stores/productStore'
-import { useCategoryStore } from '../stores/categoryStore'
 import ProductCard from '../components/product/ProductCard.vue'
+import animalSectionService from '../services/animalSectionService'
 
 const router = useRouter()
 const productStore = useProductStore()
-const categoryStore = useCategoryStore()
 
-const parentCategories = computed(() => categoryStore.parentCategories)
+const animalSections = ref([])
+const loadingSections = ref(false)
 
-const getCategoryIcon = (name) => {
-  const icons = {
-    'Perros': '🐕',
-    'Gatos': '🐈',
-    'Accesorios': '🎾'
+// Cargar secciones de animales activas
+const loadAnimalSections = async () => {
+  loadingSections.value = true
+  try {
+    const response = await animalSectionService.getAll()
+    // Solo mostrar secciones activas
+    animalSections.value = (response.data.data || response.data || []).filter(section => section.is_active)
+  } catch (error) {
+    console.error('Error al cargar secciones de animales:', error)
+    animalSections.value = []
+  } finally {
+    loadingSections.value = false
   }
-  return icons[name] || '🐾'
 }
 
-const goToCategory = (slug) => {
-  router.push(`/category/${slug}`)
+// Navegar a productos filtrados por sección de animal
+const goToAnimalSection = (sectionId) => {
+  router.push({
+    path: '/products',
+    query: { animal_section_id: sectionId }
+  })
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await loadAnimalSections()
   productStore.fetchFeaturedProducts(8)
-  categoryStore.fetchCategories()
 })
 </script>

@@ -2,174 +2,17 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\AnimalSection;
 
-class CategorySeeder extends Seeder
+class CatCategorySeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds for CAT categories ONLY
      */
     public function run(): void
     {
-        // Obtener la sección de Perros (debe existir del AnimalSectionSeeder)
-        $perrosSection = AnimalSection::where('slug', 'perros')->first();
-
-        if (!$perrosSection) {
-            throw new \Exception('La sección de Perros debe existir antes de crear categorías. Ejecuta AnimalSectionSeeder primero.');
-        }
-
-        // Categorías principales para PERROS
-        $alimentosPerros = DB::table('categories')->insertGetId([
-            'animal_section_id' => $perrosSection->id,
-            'name' => 'Alimentos',
-            'slug' => 'alimentos-perros',
-            'description' => 'Alimento balanceado y premium para perros de todas las edades',
-            'image' => 'https://via.placeholder.com/400x300.png?text=Alimentos+Perros',
-            'parent_id' => null,
-            'order' => 1,
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $juguetesPerros = DB::table('categories')->insertGetId([
-            'animal_section_id' => $perrosSection->id,
-            'name' => 'Juguetes',
-            'slug' => 'juguetes-perros',
-            'description' => 'Juguetes interactivos y de entretenimiento para perros',
-            'image' => 'https://via.placeholder.com/400x300.png?text=Juguetes+Perros',
-            'parent_id' => null,
-            'order' => 2,
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $accesoriosPerros = DB::table('categories')->insertGetId([
-            'animal_section_id' => $perrosSection->id,
-            'name' => 'Accesorios',
-            'slug' => 'accesorios-perros',
-            'description' => 'Collares, correas, camas y más accesorios para perros',
-            'image' => 'https://via.placeholder.com/400x300.png?text=Accesorios+Perros',
-            'parent_id' => null,
-            'order' => 3,
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $saludPerros = DB::table('categories')->insertGetId([
-            'animal_section_id' => $perrosSection->id,
-            'name' => 'Salud e Higiene',
-            'slug' => 'salud-higiene-perros',
-            'description' => 'Productos de salud, higiene y cuidado para perros',
-            'image' => 'https://via.placeholder.com/400x300.png?text=Salud+Perros',
-            'parent_id' => null,
-            'order' => 4,
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Subcategorías de Alimentos para Perros
-        DB::table('categories')->insert([
-            [
-                'animal_section_id' => $perrosSection->id,
-                'name' => 'Alimento Seco',
-                'slug' => 'alimento-seco-perros',
-                'description' => 'Concentrado y croquetas para perros',
-                'image' => null,
-                'parent_id' => $alimentosPerros,
-                'order' => 1,
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'animal_section_id' => $perrosSection->id,
-                'name' => 'Alimento Húmedo',
-                'slug' => 'alimento-humedo-perros',
-                'description' => 'Comida húmeda en lata y pouch',
-                'image' => null,
-                'parent_id' => $alimentosPerros,
-                'order' => 2,
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'animal_section_id' => $perrosSection->id,
-                'name' => 'Snacks y Premios',
-                'slug' => 'snacks-perros',
-                'description' => 'Premios, golosinas y huesos',
-                'image' => null,
-                'parent_id' => $alimentosPerros,
-                'order' => 3,
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
-
-        // Subcategorías de Accesorios para Perros
-        DB::table('categories')->insert([
-            [
-                'animal_section_id' => $perrosSection->id,
-                'name' => 'Collares y Correas',
-                'slug' => 'collares-correas-perros',
-                'description' => 'Collares, correas y arneses para paseo',
-                'image' => null,
-                'parent_id' => $accesoriosPerros,
-                'order' => 1,
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'animal_section_id' => $perrosSection->id,
-                'name' => 'Camas y Mantas',
-                'slug' => 'camas-perros',
-                'description' => 'Camas, colchonetas y mantas para el descanso',
-                'image' => null,
-                'parent_id' => $accesoriosPerros,
-                'order' => 2,
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'animal_section_id' => $perrosSection->id,
-                'name' => 'Comederos y Bebederos',
-                'slug' => 'comederos-perros',
-                'description' => 'Platos, comederos y bebederos',
-                'image' => null,
-                'parent_id' => $accesoriosPerros,
-                'order' => 3,
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'animal_section_id' => $perrosSection->id,
-                'name' => 'Transportadoras',
-                'slug' => 'transportadoras-perros',
-                'description' => 'Transportadoras y mochilas para viaje',
-                'image' => null,
-                'parent_id' => $accesoriosPerros,
-                'order' => 4,
-                'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
-
-        // ===================================================
-        // CATEGORÍAS PARA GATOS
-        // ===================================================
-
         // Obtener la sección de Gatos
         $gatosSection = AnimalSection::where('slug', 'gatos')->first();
 
@@ -349,5 +192,7 @@ class CategorySeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+
+        $this->command->info('✅ Categorías de GATOS creadas exitosamente');
     }
 }

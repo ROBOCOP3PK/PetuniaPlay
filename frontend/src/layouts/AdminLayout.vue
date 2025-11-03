@@ -63,6 +63,15 @@
           </router-link>
 
           <router-link
+            to="/admin/animal-sections"
+            class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition"
+            active-class="bg-primary"
+          >
+            <i class="pi pi-th-large text-xl"></i>
+            <span class="font-semibold">Secciones de Animales</span>
+          </router-link>
+
+          <router-link
             to="/admin/orders"
             class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition"
             active-class="bg-primary"
