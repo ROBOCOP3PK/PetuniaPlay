@@ -51,7 +51,7 @@
                 <button
                   v-for="section in animalSections"
                   :key="section.id"
-                  @click="filters.animal_section_id = filters.animal_section_id === section.id ? null : section.id; applyFilters()"
+                  @click="filters.animal_section_id = filters.animal_section_id === section.id ? null : section.id"
                   :class="[
                     'flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all duration-200',
                     filters.animal_section_id === section.id
@@ -87,7 +87,6 @@
               <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Categoría</h3>
               <select
                 v-model="filters.category"
-                @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">Todas las categorías</option>
@@ -128,13 +127,6 @@
                 <option :value="1">1★ o más</option>
               </select>
             </div>
-
-            <button
-              @click="applyFilters"
-              class="w-full bg-primary text-white py-2 rounded-lg font-semibold hover:bg-primary-dark transition"
-            >
-              Aplicar Filtros
-            </button>
           </div>
         </aside>
 
@@ -156,7 +148,6 @@
             <!-- Sort -->
             <select
               v-model="filters.sort_by"
-              @change="applyFilters"
               class="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary sm:w-64 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             >
               <option value="">Ordenar por</option>
@@ -175,7 +166,7 @@
               class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               {{ selectedSection.icon }} {{ selectedSection.name }}
-              <button @click="filters.animal_section_id = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+              <button @click="filters.animal_section_id = null" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -184,7 +175,7 @@
               class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               Categoría: {{ selectedCategoryName }}
-              <button @click="filters.category = ''; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+              <button @click="filters.category = ''" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -193,7 +184,7 @@
               class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               Precio mín: ${{ filters.min_price }}
-              <button @click="filters.min_price = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+              <button @click="filters.min_price = null" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -202,7 +193,7 @@
               class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               Precio máx: ${{ filters.max_price }}
-              <button @click="filters.max_price = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+              <button @click="filters.max_price = null" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -211,7 +202,7 @@
               class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               Marca: {{ filters.brand }}
-              <button @click="filters.brand = ''; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+              <button @click="filters.brand = ''" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -220,7 +211,7 @@
               class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               En stock
-              <button @click="filters.in_stock = false; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+              <button @click="filters.in_stock = false" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -229,7 +220,7 @@
               class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
             >
               {{ filters.min_rating }}★ o más
-              <button @click="filters.min_rating = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+              <button @click="filters.min_rating = null" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -379,6 +370,20 @@ const loadAnimalSections = async () => {
     loadingSections.value = false
   }
 }
+
+// Watcher para aplicar filtros automáticamente
+let filterTimeout = null
+watch(
+  filters,
+  () => {
+    // Debounce para los campos de precio (input type number)
+    clearTimeout(filterTimeout)
+    filterTimeout = setTimeout(() => {
+      applyFilters()
+    }, 300)
+  },
+  { deep: true }
+)
 
 onMounted(async () => {
   // Cargar secciones de animales
