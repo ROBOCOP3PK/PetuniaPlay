@@ -86,8 +86,8 @@
             <div class="mb-6">
               <h3 class="font-semibold mb-3 text-sm text-gray-700 dark:text-gray-300">Categoría</h3>
               <select
-                v-model="selectedCategory"
-                @change="handleCategoryFilter"
+                v-model="filters.category"
+                @change="applyFilters"
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="">Todas las categorías</option>
@@ -176,6 +176,15 @@
             >
               {{ selectedSection.icon }} {{ selectedSection.name }}
               <button @click="filters.animal_section_id = null; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
+                ×
+              </button>
+            </span>
+            <span
+              v-if="selectedCategoryName"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+            >
+              Categoría: {{ selectedCategoryName }}
+              <button @click="filters.category = ''; applyFilters()" class="hover:text-primary-dark dark:hover:text-primary">
                 ×
               </button>
             </span>
@@ -279,12 +288,12 @@ const productStore = useProductStore()
 const categoryStore = useCategoryStore()
 
 const searchQuery = ref(route.query.search || '')
-const selectedCategory = ref('')
 const animalSections = ref([])
 const loadingSections = ref(false)
 
 const filters = ref({
   animal_section_id: null,
+  category: '',
   min_price: null,
   max_price: null,
   brand: '',
@@ -295,6 +304,7 @@ const filters = ref({
 
 const hasActiveFilters = computed(() => {
   return filters.value.animal_section_id ||
+    filters.value.category ||
     filters.value.min_price ||
     filters.value.max_price ||
     filters.value.brand ||
@@ -306,6 +316,12 @@ const hasActiveFilters = computed(() => {
 const selectedSection = computed(() => {
   if (!filters.value.animal_section_id) return null
   return animalSections.value.find(section => section.id === filters.value.animal_section_id)
+})
+
+const selectedCategoryName = computed(() => {
+  if (!filters.value.category) return null
+  const category = categoryStore.categories.find(cat => cat.slug === filters.value.category)
+  return category ? category.name : null
 })
 
 let searchTimeout = null
@@ -321,18 +337,11 @@ const handleSearch = () => {
   }, 500)
 }
 
-const handleCategoryFilter = () => {
-  if (selectedCategory.value) {
-    router.push(`/category/${selectedCategory.value}`)
-  } else {
-    applyFilters()
-  }
-}
-
 const applyFilters = () => {
   const params = {}
 
   if (filters.value.animal_section_id) params.animal_section_id = filters.value.animal_section_id
+  if (filters.value.category) params.category = filters.value.category
   if (filters.value.min_price) params.min_price = filters.value.min_price
   if (filters.value.max_price) params.max_price = filters.value.max_price
   if (filters.value.brand) params.brand = filters.value.brand
@@ -345,9 +354,9 @@ const applyFilters = () => {
 
 const clearAllFilters = () => {
   searchQuery.value = ''
-  selectedCategory.value = ''
   filters.value = {
     animal_section_id: null,
+    category: '',
     min_price: null,
     max_price: null,
     brand: '',
