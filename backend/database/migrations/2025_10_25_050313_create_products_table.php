@@ -12,22 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description');
-            $table->longText('long_description')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->decimal('sale_price', 10, 2)->nullable();
-            $table->string('sku')->unique();
-            $table->integer('stock')->default(0);
-            $table->decimal('weight', 8, 2)->nullable();
-            $table->boolean('is_featured')->default(false);
-            $table->boolean('is_active')->default(true);
-            $table->string('meta_title')->nullable();
-            $table->text('meta_description')->nullable();
-            $table->string('meta_keywords')->nullable();
+            $table->id()->comment('ID único del producto');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade')->comment('Categoría del producto');
+            $table->string('name')->comment('Nombre del producto');
+            $table->string('slug')->unique()->comment('URL amigable única (ej: collar-perro-rojo)');
+            $table->text('description')->comment('Descripción corta del producto');
+            $table->longText('long_description')->nullable()->comment('Descripción detallada del producto');
+            $table->decimal('price', 10, 2)->comment('Precio regular del producto');
+            $table->decimal('sale_price', 10, 2)->nullable()->comment('Precio de oferta (si aplica)');
+            $table->string('sku')->unique()->comment('Código SKU único del producto');
+            $table->integer('stock')->default(0)->comment('Cantidad disponible en inventario');
+            $table->decimal('weight', 8, 2)->nullable()->comment('Peso del producto en kg (para envíos)');
+            $table->boolean('is_featured')->default(false)->comment('Producto destacado en home');
+            $table->boolean('is_active')->default(true)->comment('Producto visible en tienda');
+            $table->string('meta_title')->nullable()->comment('Título para SEO');
+            $table->text('meta_description')->nullable()->comment('Descripción para SEO');
+            $table->string('meta_keywords')->nullable()->comment('Palabras clave para SEO');
             $table->timestamps();
         });
     }

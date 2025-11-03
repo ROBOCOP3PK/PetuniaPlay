@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->boolean('night_delivery')->default(false)->after('notes');
+            $table->boolean('night_delivery')->default(false)->after('notes')->comment('Entrega nocturna solicitada (21:00-02:00)');
         });
     }
 

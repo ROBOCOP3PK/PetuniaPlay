@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('blog_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->id()->comment('ID único de la categoría de blog');
+            $table->string('name')->comment('Nombre de la categoría (ej: Tips, Noticias)');
+            $table->string('slug')->unique()->comment('URL amigable única');
+            $table->text('description')->nullable()->comment('Descripción de la categoría');
+            $table->boolean('is_active')->default(true)->comment('Categoría activa/visible');
             $table->timestamps();
         });
     }

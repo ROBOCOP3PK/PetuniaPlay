@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('loyalty_programs', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->json('settings')->nullable(); // Configuraciones generales del programa
+            $table->id()->comment('ID único del programa de fidelidad');
+            $table->string('name')->comment('Nombre del programa (ej: Club PetuniaPlay)');
+            $table->text('description')->nullable()->comment('Descripción del programa');
+            $table->boolean('is_active')->default(true)->comment('Programa activo/inactivo');
+            $table->json('settings')->nullable()->comment('Configuraciones: reglas de puntos, niveles, etc.');
             $table->timestamps();
         });
     }

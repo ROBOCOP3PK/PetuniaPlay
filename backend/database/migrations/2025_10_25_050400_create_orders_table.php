@@ -12,19 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id();
-            $table->string('order_number')->unique();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('shipping_address_id')->nullable()->constrained('addresses')->onDelete('set null');
-            $table->foreignId('billing_address_id')->nullable()->constrained('addresses')->onDelete('set null');
-            $table->decimal('subtotal', 10, 2);
-            $table->decimal('tax', 10, 2)->default(0);
-            $table->decimal('shipping_cost', 10, 2)->default(0);
-            $table->decimal('discount', 10, 2)->default(0);
-            $table->decimal('total', 10, 2);
-            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
-            $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');
-            $table->text('notes')->nullable();
+            $table->id()->comment('ID único de la orden');
+            $table->string('order_number')->unique()->comment('Número de orden único (ej: PP-ABC123)');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('Cliente que realizó la orden');
+            $table->foreignId('shipping_address_id')->nullable()->constrained('addresses')->onDelete('set null')->comment('Dirección de envío');
+            $table->foreignId('billing_address_id')->nullable()->constrained('addresses')->onDelete('set null')->comment('Dirección de facturación');
+            $table->decimal('subtotal', 10, 2)->comment('Subtotal sin impuestos ni envío');
+            $table->decimal('tax', 10, 2)->default(0)->comment('Impuestos aplicados');
+            $table->decimal('shipping_cost', 10, 2)->default(0)->comment('Costo de envío');
+            $table->decimal('discount', 10, 2)->default(0)->comment('Descuento aplicado (cupones)');
+            $table->decimal('total', 10, 2)->comment('Total final de la orden');
+            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending')->comment('Estado del pedido');
+            $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending')->comment('Estado del pago');
+            $table->text('notes')->nullable()->comment('Notas adicionales del pedido');
             $table->timestamps();
         });
     }

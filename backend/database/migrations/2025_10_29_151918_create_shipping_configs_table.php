@@ -13,12 +13,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('shipping_configs', function (Blueprint $table) {
-            $table->id();
-            $table->boolean('night_delivery_enabled')->default(true);
-            $table->time('night_delivery_start_time')->default('21:00:00'); // 9:00 PM
-            $table->time('night_delivery_end_time')->default('02:00:00'); // 2:00 AM
-            $table->integer('free_shipping_min_items')->default(4); // Envío gratis con 4+ items
-            $table->decimal('standard_shipping_cost', 10, 2)->default(10000); // Costo estándar
+            $table->id()->comment('ID de la configuración (solo habrá un registro)');
+            $table->boolean('night_delivery_enabled')->default(true)->comment('Entregas nocturnas habilitadas');
+            $table->time('night_delivery_start_time')->default('21:00:00')->comment('Hora de inicio entrega nocturna (9:00 PM)');
+            $table->time('night_delivery_end_time')->default('02:00:00')->comment('Hora de fin entrega nocturna (2:00 AM)');
+            $table->integer('free_shipping_min_items')->default(4)->comment('Cantidad mínima de items para envío gratis');
+            $table->decimal('standard_shipping_cost', 10, 2)->default(10000)->comment('Costo estándar de envío en COP');
             $table->timestamps();
         });
 

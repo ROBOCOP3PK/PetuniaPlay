@@ -12,18 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('full_name');
-            $table->string('phone');
-            $table->string('address_line_1');
-            $table->string('address_line_2')->nullable();
-            $table->string('city');
-            $table->string('state');
-            $table->string('postal_code');
-            $table->string('country')->default('Colombia');
-            $table->boolean('is_default')->default(false);
-            $table->enum('type', ['shipping', 'billing', 'both'])->default('both');
+            $table->id()->comment('ID único de la dirección');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('Usuario dueño de la dirección');
+            $table->string('full_name')->comment('Nombre completo del destinatario');
+            $table->string('phone')->comment('Teléfono de contacto');
+            $table->string('address_line_1')->comment('Dirección principal (calle y número)');
+            $table->string('address_line_2')->nullable()->comment('Dirección adicional (apto, oficina, etc.)');
+            $table->string('city')->comment('Ciudad');
+            $table->string('state')->comment('Departamento/Estado');
+            $table->string('postal_code')->comment('Código postal');
+            $table->string('country')->default('Colombia')->comment('País');
+            $table->boolean('is_default')->default(false)->comment('Dirección por defecto del usuario');
+            $table->enum('type', ['shipping', 'billing', 'both'])->default('both')->comment('Tipo: envío, facturación o ambos');
             $table->timestamps();
         });
     }

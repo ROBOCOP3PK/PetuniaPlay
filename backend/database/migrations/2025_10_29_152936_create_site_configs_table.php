@@ -13,10 +13,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('site_configs', function (Blueprint $table) {
-            $table->id();
-            $table->string('whatsapp_number')->default('573057594088');
-            $table->boolean('whatsapp_enabled')->default(true);
-            $table->text('whatsapp_message');
+            $table->id()->comment('ID de la configuración (solo habrá un registro)');
+            $table->string('whatsapp_number')->default('573057594088')->comment('Número de WhatsApp con código de país');
+            $table->boolean('whatsapp_enabled')->default(true)->comment('WhatsApp habilitado en el sitio');
+            $table->text('whatsapp_message')->comment('Mensaje predeterminado para WhatsApp');
             $table->timestamps();
         });
 

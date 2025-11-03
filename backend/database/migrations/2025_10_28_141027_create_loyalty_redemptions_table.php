@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('loyalty_redemptions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('loyalty_reward_id')->constrained()->onDelete('cascade');
-            $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null'); // Orden generada por el canje
-            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
-            $table->integer('purchases_at_redemption'); // Cantidad de compras que tenía al momento del canje
-            $table->timestamp('redeemed_at')->nullable(); // Fecha de canje
-            $table->timestamp('completed_at')->nullable(); // Fecha de completado (cuando se genera la orden)
-            $table->text('notes')->nullable(); // Notas adicionales
+            $table->id()->comment('ID único del canje');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('Usuario que canjea la recompensa');
+            $table->foreignId('loyalty_reward_id')->constrained()->onDelete('cascade')->comment('Recompensa canjeada');
+            $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null')->comment('Orden generada por el canje');
+            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending')->comment('Estado del canje');
+            $table->integer('purchases_at_redemption')->comment('Compras que tenía el usuario al momento del canje');
+            $table->timestamp('redeemed_at')->nullable()->comment('Fecha y hora del canje');
+            $table->timestamp('completed_at')->nullable()->comment('Fecha de completado (orden generada)');
+            $table->text('notes')->nullable()->comment('Notas adicionales del canje');
             $table->timestamps();
         });
     }

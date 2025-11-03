@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wishlist_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->id()->comment('ID único del item en wishlist');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('Usuario dueño de la wishlist');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade')->comment('Producto agregado a wishlist');
             $table->timestamps();
 
-            // Evitar duplicados
+            // Evitar duplicados: un usuario no puede agregar el mismo producto dos veces
             $table->unique(['user_id', 'product_id']);
         });
     }

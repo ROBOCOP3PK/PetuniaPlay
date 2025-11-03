@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('completed_purchases')->default(0)->after('email_verified_at');
-            $table->timestamp('first_purchase_at')->nullable()->after('completed_purchases');
-            $table->timestamp('last_purchase_at')->nullable()->after('first_purchase_at');
+            $table->integer('completed_purchases')->default(0)->after('email_verified_at')->comment('Cantidad de compras completadas (para loyalty)');
+            $table->timestamp('first_purchase_at')->nullable()->after('completed_purchases')->comment('Fecha de primera compra del cliente');
+            $table->timestamp('last_purchase_at')->nullable()->after('first_purchase_at')->comment('Fecha de última compra del cliente');
         });
     }
 

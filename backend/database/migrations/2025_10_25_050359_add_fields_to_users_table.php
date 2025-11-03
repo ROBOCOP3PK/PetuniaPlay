@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone')->nullable()->after('email');
-            $table->string('document', 50)->nullable()->after('phone');
-            $table->enum('role', ['customer', 'manager', 'admin'])->default('customer')->after('password');
-            $table->date('birth_date')->nullable()->after('role');
-            $table->string('avatar')->nullable()->after('birth_date');
-            $table->boolean('is_active')->default(true)->after('avatar');
+            $table->string('phone')->nullable()->after('email')->comment('Teléfono del usuario');
+            $table->string('document', 50)->nullable()->after('phone')->comment('Documento de identidad (cédula, pasaporte)');
+            $table->enum('role', ['customer', 'manager', 'admin'])->default('customer')->after('password')->comment('Rol del usuario en el sistema');
+            $table->date('birth_date')->nullable()->after('role')->comment('Fecha de nacimiento');
+            $table->string('avatar')->nullable()->after('birth_date')->comment('URL de la foto de perfil');
+            $table->boolean('is_active')->default(true)->after('avatar')->comment('Usuario activo/bloqueado');
         });
     }
 

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->foreignId('coupon_id')->nullable()->after('billing_address_id')->constrained()->onDelete('set null');
-            $table->string('coupon_code')->nullable()->after('coupon_id');
+            $table->foreignId('coupon_id')->nullable()->after('billing_address_id')->constrained()->onDelete('set null')->comment('Cupón aplicado a la orden');
+            $table->string('coupon_code')->nullable()->after('coupon_id')->comment('Código del cupón usado (guardado para histórico)');
         });
     }
 
