@@ -6,11 +6,19 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   // Configurar comportamiento de scroll optimizado
   scrollBehavior(to, from, savedPosition) {
+    // Si hay una posición guardada (botón atrás del navegador), usarla
     if (savedPosition) {
       return savedPosition
-    } else {
-      return { top: 0, behavior: 'smooth' }
     }
+
+    // Si ambas rutas son del área de admin, mantener la posición actual
+    const bothAdmin = to.path.startsWith('/admin') && from.path.startsWith('/admin')
+    if (bothAdmin) {
+      return false // No hacer scroll, mantener posición actual
+    }
+
+    // Para otras navegaciones, ir al inicio
+    return { top: 0, behavior: 'smooth' }
   },
   routes: [
     {
