@@ -45,6 +45,22 @@ const router = createRouter({
       name: 'checkout',
       component: () => import('../views/CheckoutView.vue'),
     },
+    // Payment routes
+    {
+      path: '/payment/success',
+      name: 'payment-success',
+      component: () => import('../views/PaymentSuccessView.vue'),
+    },
+    {
+      path: '/payment/failure',
+      name: 'payment-failure',
+      component: () => import('../views/PaymentFailureView.vue'),
+    },
+    {
+      path: '/payment/pending',
+      name: 'payment-pending',
+      component: () => import('../views/PaymentPendingView.vue'),
+    },
     {
       path: '/contact',
       name: 'contact',

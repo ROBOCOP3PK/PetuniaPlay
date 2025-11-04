@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\ProductQuestionController;
 use App\Http\Controllers\Api\ShippingConfigController;
 use App\Http\Controllers\Api\SiteConfigController;
 use App\Http\Controllers\Api\AnimalSectionController;
+use App\Http\Controllers\Api\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -102,6 +103,11 @@ Route::prefix('v1')->group(function () {
     Route::middleware('throttle:3,1')->group(function () {
         Route::post('/orders', [OrderController::class, 'store']);
     });
+
+    // Payments - Mercado Pago
+    Route::post('/payments/create-preference', [PaymentController::class, 'createPreference']);
+    Route::post('/payments/webhook', [PaymentController::class, 'webhook']);
+    Route::get('/payments/status', [PaymentController::class, 'getPaymentStatus']);
 });
 
 // Protected routes (require authentication)

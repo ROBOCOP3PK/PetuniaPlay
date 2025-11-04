@@ -121,30 +121,19 @@
                 <!-- Payment Options -->
                 <div class="space-y-3">
                   <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
-                    :class="form.paymentMethod === 'card' ? 'border-primary bg-primary bg-opacity-5 dark:bg-opacity-20' : 'border-gray-300 dark:border-gray-600 hover:border-primary'">
+                    :class="form.paymentMethod === 'online' ? 'border-primary bg-primary bg-opacity-5 dark:bg-opacity-20' : 'border-gray-300 dark:border-gray-600 hover:border-primary'">
                     <input
                       v-model="form.paymentMethod"
                       type="radio"
-                      value="card"
+                      value="online"
                       class="mr-3"
                     />
                     <div class="flex-1">
-                      <div class="font-semibold text-gray-900 dark:text-white">💳 Tarjeta de Crédito/Débito</div>
-                      <div class="text-sm text-gray-600 dark:text-gray-400">Visa, Mastercard, American Express</div>
-                    </div>
-                  </label>
-
-                  <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition"
-                    :class="form.paymentMethod === 'pse' ? 'border-primary bg-primary bg-opacity-5 dark:bg-opacity-20' : 'border-gray-300 dark:border-gray-600 hover:border-primary'">
-                    <input
-                      v-model="form.paymentMethod"
-                      type="radio"
-                      value="pse"
-                      class="mr-3"
-                    />
-                    <div class="flex-1">
-                      <div class="font-semibold text-gray-900 dark:text-white">🏦 PSE</div>
-                      <div class="text-sm text-gray-600 dark:text-gray-400">Pago seguro en línea</div>
+                      <div class="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        💳 Pago Online con Mercado Pago
+                        <img src="https://http2.mlstatic.com/storage/logos-api-admin/51b446b0-571c-11e8-9a2d-4b2bd7b1bf77-m.svg" alt="Mercado Pago" class="h-5">
+                      </div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">Tarjetas de crédito/débito, PSE, efectivo y más</div>
                     </div>
                   </label>
 
@@ -158,57 +147,20 @@
                     />
                     <div class="flex-1">
                       <div class="font-semibold text-gray-900 dark:text-white">💵 Contra Entrega</div>
-                      <div class="text-sm text-gray-600 dark:text-gray-400">Paga al recibir tu pedido</div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">Paga en efectivo al recibir tu pedido</div>
                     </div>
                   </label>
                 </div>
 
-                <!-- Card Details (only if card selected) -->
-                <div v-if="form.paymentMethod === 'card'" class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <h3 class="font-bold mb-4 text-gray-900 dark:text-white">Datos de la Tarjeta</h3>
-                  <div class="space-y-4">
+                <!-- Online Payment Info -->
+                <div v-if="form.paymentMethod === 'online'" class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 border border-blue-200 dark:border-blue-700 rounded-lg">
+                  <div class="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
                     <div>
-                      <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Número de Tarjeta *</label>
-                      <input
-                        v-model="form.cardNumber"
-                        type="text"
-                        maxlength="19"
-                        class="input-field"
-                        placeholder="1234 5678 9012 3456"
-                        @input="formatCardNumber"
-                      />
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                      <div>
-                        <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Vencimiento (MM/AA) *</label>
-                        <input
-                          v-model="form.cardExpiry"
-                          type="text"
-                          maxlength="5"
-                          class="input-field"
-                          placeholder="12/25"
-                          @input="formatExpiry"
-                        />
-                      </div>
-                      <div>
-                        <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">CVV *</label>
-                        <input
-                          v-model="form.cardCvv"
-                          type="text"
-                          maxlength="4"
-                          class="input-field"
-                          placeholder="123"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Nombre en la Tarjeta *</label>
-                      <input
-                        v-model="form.cardName"
-                        type="text"
-                        class="input-field"
-                        placeholder="JUAN PEREZ"
-                      />
+                      <p class="font-semibold mb-1">Serás redirigido a Mercado Pago</p>
+                      <p>Completa tu pago de forma segura con todos los métodos disponibles: tarjetas, PSE, Nequi, Daviplata y más.</p>
                     </div>
                   </div>
                 </div>
@@ -397,6 +349,7 @@ import { useToast } from 'vue-toastification'
 import { useFormat } from '@/composables/useFormat'
 import orderService from '../services/orderService'
 import addressService from '../services/addressService'
+import paymentService from '../services/paymentService'
 import AddressMapPicker from '../components/AddressMapPicker.vue'
 
 const router = useRouter()
@@ -498,29 +451,11 @@ const form = reactive({
   nightDelivery: false,
 
   // Payment
-  paymentMethod: 'card',
-  cardNumber: '',
-  cardExpiry: '',
-  cardCvv: '',
-  cardName: '',
+  paymentMethod: 'online',
 
   // Terms
   acceptTerms: false
 })
-
-const formatCardNumber = (event) => {
-  let value = event.target.value.replace(/\s/g, '')
-  let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value
-  form.cardNumber = formattedValue
-}
-
-const formatExpiry = (event) => {
-  let value = event.target.value.replace(/\D/g, '')
-  if (value.length >= 2) {
-    value = value.slice(0, 2) + '/' + value.slice(2, 4)
-  }
-  form.cardExpiry = value
-}
 
 // Handle address update from map picker
 const handleAddressUpdate = (addressData) => {
@@ -577,13 +512,6 @@ const validateForm = () => {
     return false
   }
 
-  if (form.paymentMethod === 'card') {
-    if (!form.cardNumber || !form.cardExpiry || !form.cardCvv || !form.cardName) {
-      toast.warning('Por favor completa todos los datos de la tarjeta')
-      return false
-    }
-  }
-
   if (!form.acceptTerms) {
     toast.warning('Debes aceptar los términos y condiciones')
     return false
@@ -618,7 +546,7 @@ const placeOrder = async () => {
         nightDelivery: form.nightDelivery
       },
       payment: {
-        method: form.paymentMethod,
+        method: form.paymentMethod === 'cash' ? 'cash' : 'mercadopago',
         amount: orderTotal.value
       },
       items: cartStore.items.map(item => ({
@@ -640,22 +568,49 @@ const placeOrder = async () => {
     const response = await orderService.create(orderData)
     const order = response.data.data
 
-    // Limpiar carrito
-    cartStore.clearCart()
+    // Si el método de pago es contra entrega, finalizar el proceso
+    if (form.paymentMethod === 'cash') {
+      // Limpiar carrito
+      cartStore.clearCart()
 
-    // Mostrar mensaje de éxito
-    toast.success(`¡Pedido realizado exitosamente! Número de orden: ${order.order_number}. Recibirás un email de confirmación pronto.`, {
-      timeout: 6000
-    })
+      // Mostrar mensaje de éxito
+      toast.success(`¡Pedido realizado exitosamente! Número de orden: ${order.order_number}. Recibirás un email de confirmación pronto.`, {
+        timeout: 6000
+      })
 
-    // Redirigir a página principal
-    router.push('/')
+      // Redirigir a página principal
+      router.push('/')
+    } else {
+      // Si es pago online, crear preferencia de Mercado Pago y redirigir
+      const paymentResponse = await paymentService.createPreference(order.id)
+      const paymentData = paymentResponse.data
+
+      if (paymentData.success && paymentData.init_point) {
+        // Guardar el order ID para recuperarlo después
+        sessionStorage.setItem('pending_order_id', order.id)
+
+        // Limpiar carrito antes de redirigir
+        cartStore.clearCart()
+
+        // Mostrar mensaje informativo
+        toast.info('Redirigiendo a Mercado Pago para completar el pago...', {
+          timeout: 2000
+        })
+
+        // Esperar un momento y redirigir a Mercado Pago
+        setTimeout(() => {
+          window.location.href = paymentData.init_point
+        }, 1000)
+      } else {
+        throw new Error('No se pudo crear la preferencia de pago')
+      }
+    }
 
   } catch (error) {
     console.error('Error al procesar el pedido:', error)
 
     // Mostrar mensaje de error más específico
-    const errorMessage = error.response?.data?.message || 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.'
+    const errorMessage = error.response?.data?.message || error.message || 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.'
     toast.error(errorMessage)
   } finally {
     processing.value = false

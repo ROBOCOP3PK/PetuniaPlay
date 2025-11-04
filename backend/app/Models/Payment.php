@@ -17,6 +17,8 @@ class Payment extends Model
         'status',
         'payment_details',
         'paid_at',
+        'preference_id',
+        'mercadopago_payment_id',
     ];
 
     protected function casts(): array
