@@ -29,6 +29,8 @@ class PaymentController extends Controller
                 'order_id' => 'required|exists:orders,id',
             ]);
 
+            Log::info('MP: Iniciando creación de preferencia', ['order_id' => $validated['order_id']]);
+
             // Obtener la orden
             $order = Order::with(['items.product.images', 'user'])->findOrFail($validated['order_id']);
 
@@ -74,11 +76,14 @@ class PaymentController extends Controller
             $result = $this->mercadoPagoService->createPreference($orderData);
 
             if (!$result['success']) {
+                Log::error('MP: Error al crear preferencia', ['error' => $result['error']]);
                 return response()->json([
                     'message' => $result['error'],
                     'details' => $result['details'] ?? null,
                 ], 500);
             }
+
+            Log::info('MP: Preferencia creada exitosamente', ['preference_id' => $result['preference_id']]);
 
             // Guardar la preferencia en la base de datos
             $order->update([
@@ -108,9 +113,9 @@ class PaymentController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error al crear preferencia de pago', [
+            Log::error('MP: Excepción al crear preferencia', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'line' => $e->getLine(),
             ]);
 
             return response()->json([
@@ -126,10 +131,7 @@ class PaymentController extends Controller
     public function webhook(Request $request)
     {
         try {
-            Log::info('Webhook de Mercado Pago recibido', [
-                'body' => $request->all(),
-                'headers' => $request->headers->all(),
-            ]);
+            Log::info('MP: Webhook recibido', ['type' => $request->input('type'), 'id' => $request->input('data.id')]);
 
             // Mercado Pago envía diferentes tipos de notificaciones
             $type = $request->input('type');
@@ -173,14 +175,12 @@ class PaymentController extends Controller
             // Actualizar estado de la orden según el estado del pago
             $this->updateOrderStatus($order, $paymentInfo['status']);
 
+            Log::info('MP: Pago procesado', ['order' => $order->order_number, 'status' => $paymentInfo['status']]);
+
             return response()->json(['status' => 'processed'], 200);
 
         } catch (\Exception $e) {
-            Log::error('Error procesando webhook de Mercado Pago', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
+            Log::error('MP: Error en webhook', ['error' => $e->getMessage()]);
             return response()->json(['status' => 'error'], 500);
         }
     }

@@ -40,12 +40,17 @@ class OrderController extends Controller
         try {
             $userId = Auth::check() ? Auth::id() : null;
 
+            \Log::info('Orden: Creando orden', ['payment_method' => $request->input('payment.method')]);
+
             // Permitir pedidos sin autenticación (guest checkout)
             // Los datos del cliente vienen en el request
             $order = $this->orderService->createOrder($userId, $request->validated());
 
+            \Log::info('Orden: Orden creada exitosamente', ['order_id' => $order->id, 'order_number' => $order->order_number]);
+
             return new OrderResource($order);
         } catch (\Exception $e) {
+            \Log::error('Orden: Error al crear', ['error' => $e->getMessage()]);
             return response()->json([
                 'message' => 'Error al crear el pedido: ' . $e->getMessage()
             ], 500);

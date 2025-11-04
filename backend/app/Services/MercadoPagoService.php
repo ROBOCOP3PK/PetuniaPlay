@@ -34,6 +34,8 @@ class MercadoPagoService
     public function createPreference(array $orderData)
     {
         try {
+            \Log::info('MP Service: Creando preferencia', ['order' => $orderData['order_number'] ?? 'N/A']);
+
             $client = new PreferenceClient();
 
             // Preparar items para Mercado Pago
@@ -75,6 +77,8 @@ class MercadoPagoService
                 'pending' => config('mercadopago.urls.pending'),
             ];
 
+            \Log::info('MP Service: URLs configuradas', $backUrls);
+
             // Preparar metadata con información adicional del pedido
             $metadata = [
                 'order_number' => $orderData['order_number'] ?? null,
@@ -90,7 +94,7 @@ class MercadoPagoService
                 'items' => $items,
                 'payer' => $payer,
                 'back_urls' => $backUrls,
-                'auto_return' => 'approved', // Retorna automáticamente al aprobar
+                // 'auto_return' => 'approved', // Comentado temporalmente para debugging
                 'payment_methods' => [
                     'installments' => 12, // Permitir hasta 12 cuotas
                 ],
@@ -111,9 +115,9 @@ class MercadoPagoService
             ];
 
         } catch (MPApiException $e) {
-            \Log::error('Error de API de Mercado Pago', [
-                'message' => $e->getMessage(),
+            \Log::error('MP Service: Error API', [
                 'status' => $e->getApiResponse()->getStatusCode(),
+                'message' => $e->getMessage(),
                 'content' => $e->getApiResponse()->getContent(),
             ]);
 
@@ -124,9 +128,7 @@ class MercadoPagoService
             ];
 
         } catch (Exception $e) {
-            \Log::error('Error general al crear preferencia de Mercado Pago', [
-                'message' => $e->getMessage(),
-            ]);
+            \Log::error('MP Service: Error general', ['message' => $e->getMessage()]);
 
             return [
                 'success' => false,

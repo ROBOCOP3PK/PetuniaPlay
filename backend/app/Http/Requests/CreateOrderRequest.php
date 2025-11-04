@@ -28,7 +28,7 @@ class CreateOrderRequest extends FormRequest
             'shipping.notes' => 'nullable|string|max:1000',
 
             // Payment information
-            'payment.method' => 'required|in:card,pse,cash',
+            'payment.method' => 'required|in:card,pse,cash,mercadopago',
             'payment.amount' => 'required|numeric|min:0',
 
             // Order items
