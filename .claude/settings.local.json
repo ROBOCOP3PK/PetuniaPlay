@@ -5,7 +5,12 @@
       "Bash(php artisan:*)",
       "Bash(npm install:*)",
       "Bash(curl:*)",
-      "Bash(mysql:*)"
+      "Bash(mysql:*)",
+      "Bash(lsof:*)",
+      "Bash(netstat:*)",
+      "Bash(ss:*)",
+      "Bash(python3:*)",
+      "Bash(vendor/bin/phpunit:*)"
     ],
     "deny": [],
     "ask": []
