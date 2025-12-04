@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryStoreRequest;
 use App\Services\CategoryService;
 use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Request;
@@ -28,20 +29,10 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'animal_section_id' => 'required|exists:animal_sections,id',
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|unique:categories',
-            'description' => 'nullable|string',
-            'image' => 'nullable|string',
-            'parent_id' => 'nullable|exists:categories,id',
-            'order' => 'nullable|integer',
-            'is_active' => 'boolean',
-        ]);
-
-        try {
+    public function store(CategoryStoreRequest $request)
+    {   
+        try { 
+            $validated = $request->validated;
             $category = $this->categoryService->createCategory($validated);
             return new CategoryResource($category);
         } catch (\Exception $e) {

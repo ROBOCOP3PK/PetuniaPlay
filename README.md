@@ -52,24 +52,6 @@ Sistema completo de e-commerce especializado en productos para mascotas, constru
 
 ---
 
-## 📚 Documentación
-
-Este proyecto cuenta con documentación completa y detallada:
-
-| Documento | Descripción | Para Quién |
-|-----------|-------------|------------|
-| **[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)** | Contexto unificado del proyecto: arquitectura, decisiones técnicas, estado actual | Desarrolladores, equipo técnico, onboarding |
-| **[MANUAL_USUARIO.md](MANUAL_USUARIO.md)** | Guía completa de uso del sistema, organizada por módulos y roles | Usuarios finales, clientes, administradores, managers |
-| **[TESTING_CHECKLIST.md](TESTING_CHECKLIST.md)** | Checklist exhaustivo de pruebas (500+ puntos) | QA, testers |
-| **[SHIPPING_GUIDE.md](SHIPPING_GUIDE.md)** | Guía específica del sistema de control de despachos | Managers, personal de logística |
-
-**Comandos Slash para Claude:**
-- `/apc` - Actualiza exhaustivamente PROJECT_CONTEXT.md analizando todo el proyecto
-- `/cm` - Genera mensaje inteligente de commit analizando cambios
-- `/console` - Limpia console.log del proyecto automáticamente
-
----
-
 ## 🚀 Inicio Rápido
 
 ### Prerrequisitos
@@ -292,18 +274,6 @@ npm run dev
 3. **Crear cupón:**
    - Panel Admin → Cupones → + Nuevo Cupón → Configurar → Guardar
 
-**Ver guías completas:** [MANUAL_USUARIO.md](MANUAL_USUARIO.md)
-
----
-
-## 🧪 Testing
-
-El proyecto incluye un checklist exhaustivo de pruebas:
-- 500+ puntos de verificación
-- Cobertura de frontend, backend, seguridad, UI/UX
-- Estimado: 8-12 horas de testing completo
-
-**Ver checklist:** [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md)
 
 ---
 
@@ -338,13 +308,6 @@ PetuniaPlay/
 │   │   └── composables/          # useTheme, useConfirm
 │   └── public/
 │
-├── .claude/                      # Configuración Claude Code
-│   └── commands/                 # Comandos slash personalizados
-│
-├── PROJECT_CONTEXT.md            # Contexto unificado del proyecto
-├── MANUAL_USUARIO.md             # Guía de usuario
-├── TESTING_CHECKLIST.md          # Checklist de pruebas (500+ puntos)
-├── SHIPPING_GUIDE.md             # Guía de despachos
 └── README.md                     # Este archivo
 ```
 
@@ -537,10 +500,6 @@ npm run preview                   # Preview del build
 # Desarrollo Full Stack
 composer dev                      # Servidor + queue + logs + vite (requiere concurrently)
 
-# Git Helpers (Comandos Slash de Claude)
-/cm                               # Genera mensaje de commit inteligente
-/apc                              # Actualiza PROJECT_CONTEXT.md
-/console                          # Limpia console.log del proyecto
 ```
 
 ### Debug
@@ -568,14 +527,6 @@ curl http://localhost:8000/api/v1/products
 curl -H "Authorization: Bearer YOUR_TOKEN" \
      http://localhost:8000/api/v1/user
 ```
-
----
-
-**¿Necesitas ayuda?** Consulta la documentación correspondiente:
-- Contexto del Proyecto → [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)
-- Manual de Usuario → [MANUAL_USUARIO.md](MANUAL_USUARIO.md)
-- Testing → [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md)
-- Guía de Despachos → [SHIPPING_GUIDE.md](SHIPPING_GUIDE.md)
 
 ---
 

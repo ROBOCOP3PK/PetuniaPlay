@@ -1,19 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(composer require:*)",
-      "Bash(php artisan:*)",
-      "Bash(npm install:*)",
-      "Bash(curl:*)",
-      "Bash(mysql:*)",
-      "Bash(lsof:*)",
-      "Bash(netstat:*)",
-      "Bash(ss:*)",
-      "Bash(python3:*)",
-      "Bash(vendor/bin/phpunit:*)",
-      "Bash(php:*)",
-      "Bash(sudo apt-get update:*)",
-      "Bash(sudo apt-get install:*)"
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
