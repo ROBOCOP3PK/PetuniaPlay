@@ -1,4 +1,4 @@
-# 🐾 PetuniaPlay - E-commerce para Mascotas
+# PetuniaPlay - E-commerce para Mascotas
 
 ![Laravel](https://img.shields.io/badge/Laravel-12-red)
 ![Vue.js](https://img.shields.io/badge/Vue.js-3-green)
@@ -10,49 +10,49 @@ Sistema completo de e-commerce especializado en productos para mascotas, constru
 
 ---
 
-## 🌟 Características Principales
+## Características Principales
 
 ### Para Clientes
-- 🛒 Catálogo de productos con filtros avanzados (categoría, precio, marca)
-- 🔍 Búsqueda en tiempo real con autocompletado
-- 📍 Selección de dirección con Google Maps (pin arrastrable, validación de cobertura)
-- 🎁 Sistema de cupones de descuento con validación en tiempo real
-- ❤️ Lista de deseos (wishlist) con persistencia
-- ⭐ Reseñas y calificaciones (solo productos comprados)
-- 📦 Rastreo público de pedidos (número + email)
-- 👤 Gestión de cuenta y preferencias de notificaciones
-- 🏆 Programa de fidelidad con recompensas por compras
-- ❓ Sistema de preguntas y respuestas sobre productos
-- 🌙 Envío nocturno opcional con cargo adicional
+- Catálogo de productos con filtros avanzados (categoría, precio, marca)
+- Búsqueda en tiempo real con autocompletado
+- Selección de dirección con Google Maps (pin arrastrable, validación de cobertura)
+- Sistema de cupones de descuento con validación en tiempo real
+- Lista de deseos (wishlist) con persistencia
+- Reseñas y calificaciones (solo productos comprados)
+- Rastreo público de pedidos (número + email)
+- Gestión de cuenta y preferencias de notificaciones
+- Programa de fidelidad con recompensas por compras
+- Sistema de preguntas y respuestas sobre productos
+- Envío nocturno opcional con cargo adicional
 
 ### Para Administradores
-- 📊 Dashboard con estadísticas en tiempo real (ventas, órdenes, stock)
-- 📦 Gestión completa de inventario con alertas de stock bajo
-- 🚚 Control de despachos con alertas de órdenes antiguas
-- 💰 Gestión de cupones con límites por cliente
-- 🏆 Gestión de programa de fidelidad (recompensas permanentes y campañas)
-- 👥 Administración de usuarios y roles (solo admin)
-- 📧 Sistema de emails con cumplimiento Ley 1581/2012
-- 📈 Reportes exportables (Excel/PDF) con rate limiting
-- ✅ Moderación de reseñas y respuesta a preguntas
-- ⚙️ Configuraciones parametrizables (envíos, WhatsApp, horarios)
+- Dashboard con estadísticas en tiempo real (ventas, órdenes, stock)
+- Gestión completa de inventario con alertas de stock bajo
+- Control de despachos con alertas de órdenes antiguas
+- Gestión de cupones con límites por cliente
+- Gestión de programa de fidelidad (recompensas permanentes y campañas)
+- Administración de usuarios y roles (solo admin)
+- Sistema de emails con cumplimiento Ley 1581/2012
+- Reportes exportables (Excel/PDF) con rate limiting
+- Moderación de reseñas y respuesta a preguntas
+- Configuraciones parametrizables (envíos, WhatsApp, horarios)
 
 ### Técnicas
-- 🔐 Autenticación con Laravel Sanctum (SPA authentication)
-- 🎨 UI moderna con PrimeVue + Tailwind CSS y Dark Mode
-- 📱 Diseño 100% responsive
-- 🌍 Integración con Google Maps API (Places, Geocoding, validación de cobertura)
-- 📧 Sistema de notificaciones por email con preferencias granulares
-- 📋 Cumplimiento Ley 1581/2012 (Colombia) - Protección de datos
-- 🔄 Gestión automática de stock con alertas
-- 💳 Preparado para integración de pasarelas de pago (Stripe/PayU/MercadoPago)
-- 🛡️ Rate limiting en endpoints críticos
-- 📦 22 modelos Eloquent con relaciones optimizadas
-- 🎯 API REST versionada (/api/v1/)
+- Autenticación con Laravel Sanctum (SPA authentication)
+- UI moderna con PrimeVue + Tailwind CSS y Dark Mode
+- Diseño 100% responsive
+- Integración con Google Maps API (Places, Geocoding, validación de cobertura)
+- Sistema de notificaciones por email con preferencias granulares
+- Cumplimiento Ley 1581/2012 (Colombia) - Protección de datos
+- Gestión automática de stock con alertas
+- Preparado para integración de pasarelas de pago (Stripe/PayU/MercadoPago)
+- Rate limiting en endpoints críticos
+- 22 modelos Eloquent con relaciones optimizadas
+- API REST versionada (/api/v1/)
 
 ---
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 ### Prerrequisitos
 
@@ -128,7 +128,7 @@ npm run dev
 
 ---
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 ```
 ┌──────────────────────────────────────────┐
@@ -167,9 +167,9 @@ npm run dev
 
 ---
 
-## 📊 Estado del Proyecto
+## Estado del Proyecto
 
-### ✅ Completado (100% Funcional en Desarrollo)
+### Completado (100% Funcional en Desarrollo)
 
 **Core del E-commerce:**
 - [x] Sistema de autenticación completo (Laravel Sanctum)
@@ -197,7 +197,7 @@ npm run dev
 - [x] Envío nocturno opcional
 - [x] WhatsApp button flotante
 
-### ⚠️ Pendiente para Producción
+### Pendiente para Producción
 
 - [ ] Integración de pasarela de pagos real (Stripe/PayU/Mercado Pago)
 - [ ] Configuración de servidor de producción
@@ -207,8 +207,6 @@ npm run dev
 - [ ] Google Maps API key con restricciones
 - [ ] Sistema de monitoreo (Sentry/Bugsnag)
 - [ ] Backups automatizados
-
-**Ver detalles completos:** [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)
 
 **Estadísticas del Proyecto:**
 - 22 modelos Eloquent
@@ -222,7 +220,7 @@ npm run dev
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 ### Backend
 - **Framework:** Laravel 12
@@ -250,7 +248,7 @@ npm run dev
 
 ---
 
-## 📖 Guías Rápidas
+## Guías Rápidas
 
 ### Para Clientes
 
@@ -277,7 +275,7 @@ npm run dev
 
 ---
 
-## 📦 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 PetuniaPlay/
@@ -313,22 +311,22 @@ PetuniaPlay/
 
 ---
 
-## 🔒 Seguridad
+## Seguridad
 
-- ✅ Laravel Sanctum (SPA authentication con cookies httpOnly)
-- ✅ Middleware de roles (customer, manager, admin)
-- ✅ Validación doble (frontend y backend)
-- ✅ Protección CSRF nativa de Laravel
-- ✅ Encriptación de tokens sensibles (unsubscribe, reset password)
-- ✅ Rate limiting en endpoints críticos (auth, checkout, export)
-- ✅ Passwords hasheados con bcrypt (12 rounds)
-- ✅ Sanitización de inputs y protección XSS
-- ✅ Guards de navegación en Vue Router
-- ✅ Cumplimiento Ley 1581/2012 (protección de datos Colombia)
+- Laravel Sanctum (SPA authentication con cookies httpOnly)
+- Middleware de roles (customer, manager, admin)
+- Validación doble (frontend y backend)
+- Protección CSRF nativa de Laravel
+- Encriptación de tokens sensibles (unsubscribe, reset password)
+- Rate limiting en endpoints críticos (auth, checkout, export)
+- Passwords hasheados con bcrypt (12 rounds)
+- Sanitización de inputs y protección XSS
+- Guards de navegación en Vue Router
+- Cumplimiento Ley 1581/2012 (protección de datos Colombia)
 
 ---
 
-## 📧 Sistema de Emails
+## Sistema de Emails
 
 ### Emails Automáticos
 
@@ -360,7 +358,7 @@ MAIL_PASSWORD=your_sendgrid_api_key
 
 ---
 
-## 🌍 Localización
+## Localización
 
 **Idioma:** Español (Colombia)
 **Moneda:** Peso Colombiano (COP)
@@ -371,13 +369,7 @@ MAIL_PASSWORD=your_sendgrid_api_key
 
 ---
 
-## 🤝 Contribuir
-
-Este es un proyecto privado. Para sugerencias o reportes de bugs, contactar al desarrollador.
-
----
-
-## 👨‍💻 Desarrollador
+## Desarrollador
 
 **David González**
 - Portfolio: [https://robocop3pk.github.io/Portafolio/](https://robocop3pk.github.io/Portafolio/)
@@ -386,101 +378,21 @@ Este es un proyecto privado. Para sugerencias o reportes de bugs, contactar al d
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Proyecto privado. Todos los derechos reservados © 2025 PetuniaPlay
 
 ---
 
-## 📞 Soporte
+## Soporte
 
 **Para usuarios del sistema:**
 - Email: soporte@petuniaplay.com
 - Teléfono: +57 305 759 4088
 
-**Para desarrolladores:**
-- Ver: [DOCUMENTACION_TECNICA.md](DOCUMENTACION_TECNICA.md)
-- Consultar API: `/api/v1/` + endpoint
-
 ---
 
-## 🎯 Roadmap Futuro
-
-### Fase 2 (Post-Lanzamiento)
-- [ ] Integración con transportadoras (tracking automático)
-- [ ] Sistema de notificaciones push (PWA)
-- [ ] Programa de puntos y lealtad
-- [ ] Multi-idioma (Inglés)
-- [ ] App móvil (React Native)
-
-### Fase 3 (Expansión)
-- [ ] Marketplace multi-vendedor
-- [ ] Sistema de suscripciones
-- [ ] Chat en vivo
-- [ ] Integración con redes sociales
-- [ ] Análisis predictivo de inventario
-
----
-
-## 🏆 Funcionalidades Destacadas
-
-### 1. Selección de Dirección con Google Maps
-Permite a los clientes:
-- Escribir dirección manualmente o buscar
-- Seleccionar ubicación en mapa con pin arrastrable
-- Validación automática de área de cobertura (50 km desde Bogotá)
-- Reverse geocoding (coordenadas → dirección legible)
-- Guardar ubicación exacta (lat/lng) para precisión de entrega
-- Integración completa con Google Places y Geocoding API
-
-### 2. Control de Despachos Inteligente
-Dashboard especializado para logística:
-- Vista de órdenes pendientes vs despachadas (métricas en tiempo real)
-- Alertas automáticas de órdenes antiguas (4+ días sin despachar)
-- Creación rápida de envíos con tracking number único
-- Actualización de estados con notificación automática por email
-- Estadísticas de envío (tiempo promedio, tasa de entrega)
-- Historial completo de tracking público
-
-### 3. Sistema de Cupones Avanzado
-- Tipos de descuento: porcentaje o monto fijo
-- Condiciones: monto mínimo de compra, fechas de validez
-- Límites: usos totales y máximo de usos por cliente individual
-- Validación en tiempo real vía API (previene fraude)
-- Estadísticas detalladas de uso y conversión
-- Activación/desactivación sin eliminar datos históricos
-- Tabla `coupon_redemptions` para tracking completo
-
-### 4. Programa de Fidelidad
-- Recompensas permanentes por hitos: 1ª, 5ª, 10ª, 20ª compra
-- Campañas temporales con fechas de inicio/fin
-- Audiencias segmentadas: solo nuevos clientes o todos
-- Productos gratuitos como premio (integración con inventario)
-- Panel de canje para clientes con recompensas disponibles
-- Historial completo de redenciones
-- Gestión centralizada para managers
-
-### 5. Emails con Cumplimiento Legal
-- Cumplimiento total Ley 1581/2012 (Colombia - Protección de datos)
-- Información clara de derechos ARCO en footer de emails
-- Sistema de unsubscribe con token único encriptado
-- Preferencias granulares por tipo de email (marketing, transaccional)
-- Respeto automático a preferencias del usuario
-- Templates transaccionales: confirmación de orden, actualización de envío
-
-### 6. Preguntas y Respuestas
-- Clientes preguntan sobre productos antes de comprar
-- Managers responden desde panel admin
-- Notificación por email al cliente cuando responden
-- Preferencia desactivable (respeto a preferencias de notificaciones)
-- Preguntas visibles públicamente en detalle de producto
-- Mejora la confianza y reduce dudas pre-compra
-
----
-
-## 💡 Tips para Desarrolladores
-
-### Comandos Útiles
+## Comandos Útiles
 
 ```bash
 # Backend (Laravel)
@@ -496,41 +408,10 @@ php artisan serve                 # Servidor dev (puerto 8000)
 npm run dev                       # Servidor desarrollo (puerto 5173)
 npm run build                     # Build para producción
 npm run preview                   # Preview del build
-
-# Desarrollo Full Stack
-composer dev                      # Servidor + queue + logs + vite (requiere concurrently)
-
-```
-
-### Debug
-
-```php
-// Backend (Laravel)
-dd($variable);           // Dump and die
-logger()->info($data);   // Log
-\DB::enableQueryLog();  // Ver queries SQL
-```
-
-```javascript
-// Frontend (Vue)
-console.log(data)        // Log básico
-debugger                 // Breakpoint
-```
-
-### Acceso Rápido API
-
-```bash
-# Test endpoints con curl
-curl http://localhost:8000/api/v1/products
-
-# Con autenticación
-curl -H "Authorization: Bearer YOUR_TOKEN" \
-     http://localhost:8000/api/v1/user
 ```
 
 ---
 
 <div align="center">
-  <p>Hecho con ❤️ para las mascotas 🐶🐱</p>
   <p><strong>PetuniaPlay © 2025</strong></p>
 </div>
