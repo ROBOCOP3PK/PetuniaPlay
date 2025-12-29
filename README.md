@@ -4,9 +4,10 @@
 ![Vue.js](https://img.shields.io/badge/Vue.js-3-green)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-blue)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange)
-![Node](https://img.shields.io/badge/Node-20.19+-brightgreen)
+![Node](https://img.shields.io/badge/Node-20.19%20|%2022.12+-brightgreen)
+![MercadoPago](https://img.shields.io/badge/MercadoPago-Integrado-009ee3)
 
-Sistema completo de e-commerce especializado en productos para mascotas, construido con Laravel 12 (backend REST API) y Vue.js 3 (frontend SPA). Incluye sistema de fidelidad, cupones avanzados, control de despachos, integración con Google Maps y cumplimiento legal colombiano.
+Sistema completo de e-commerce especializado en productos para mascotas, construido con Laravel 12 (backend REST API) y Vue.js 3 (frontend SPA). Incluye sistema de fidelidad, cupones avanzados, control de despachos, pagos con Mercado Pago y cumplimiento legal colombiano.
 
 ---
 
@@ -15,7 +16,7 @@ Sistema completo de e-commerce especializado en productos para mascotas, constru
 ### Para Clientes
 - Catálogo de productos con filtros avanzados (categoría, precio, marca)
 - Búsqueda en tiempo real con autocompletado
-- Selección de dirección con Google Maps (pin arrastrable, validación de cobertura)
+- Pago seguro con Mercado Pago
 - Sistema de cupones de descuento con validación en tiempo real
 - Lista de deseos (wishlist) con persistencia
 - Reseñas y calificaciones (solo productos comprados)
@@ -41,13 +42,12 @@ Sistema completo de e-commerce especializado en productos para mascotas, constru
 - Autenticación con Laravel Sanctum (SPA authentication)
 - UI moderna con PrimeVue + Tailwind CSS y Dark Mode
 - Diseño 100% responsive
-- Integración con Google Maps API (Places, Geocoding, validación de cobertura)
+- Pagos integrados con Mercado Pago (checkout, webhooks, estados)
 - Sistema de notificaciones por email con preferencias granulares
 - Cumplimiento Ley 1581/2012 (Colombia) - Protección de datos
 - Gestión automática de stock con alertas
-- Preparado para integración de pasarelas de pago (Stripe/PayU/MercadoPago)
 - Rate limiting en endpoints críticos
-- 22 modelos Eloquent con relaciones optimizadas
+- 24 modelos Eloquent con relaciones optimizadas
 - API REST versionada (/api/v1/)
 
 ---
@@ -58,9 +58,10 @@ Sistema completo de e-commerce especializado en productos para mascotas, constru
 
 - PHP 8.2 o superior
 - Composer 2.x
-- Node.js 18+ y npm
+- Node.js 20.19+ o 22.12+ y npm
 - MySQL/MariaDB 8.0+
 - Git
+- Cuenta de Mercado Pago (para pagos)
 
 ### Instalación
 
@@ -80,6 +81,11 @@ php artisan key:generate
 
 # Configurar base de datos en .env
 # Editar DB_DATABASE, DB_USERNAME, DB_PASSWORD
+
+# Configurar Mercado Pago en .env
+# MERCADOPAGO_ACCESS_TOKEN=tu_access_token
+# MERCADOPAGO_PUBLIC_KEY=tu_public_key
+# MERCADOPAGO_TEST_MODE=true
 
 # Migrar y poblar base de datos
 php artisan migrate --seed
@@ -104,8 +110,7 @@ npm install
 cp .env.example .env
 
 # Editar .env:
-# VITE_API_URL=http://localhost:8000
-# VITE_GOOGLE_MAPS_API_KEY=tu_api_key
+# VITE_API_URL=http://localhost:8000/api/v1
 
 # Iniciar servidor de desarrollo
 npm run dev
@@ -138,8 +143,8 @@ npm run dev
 │  • Vue Router (navegación)               │
 │  • Pinia (state management)              │
 │  • Axios (HTTP client)                   │
-│  • Tailwind CSS (estilos)                │
-│  • Google Maps API (ubicación)           │
+│  • PrimeVue + Tailwind CSS (UI)          │
+│  • Mercado Pago SDK (pagos)              │
 └────────────┬─────────────────────────────┘
              │ REST API (JSON)
              │
@@ -151,6 +156,7 @@ npm run dev
 │  • Services (lógica de negocio)          │
 │  • Models (Eloquent ORM)                 │
 │  • Sanctum (autenticación)               │
+│  • Mercado Pago SDK (pagos)              │
 │  • Mailer (notificaciones)               │
 └────────────┬─────────────────────────────┘
              │ Eloquent ORM
@@ -159,7 +165,7 @@ npm run dev
 │        BASE DE DATOS (MySQL)             │
 │                                          │
 │  • users, products, categories           │
-│  • orders, order_items                   │
+│  • orders, order_items, payments         │
 │  • shipments, addresses                  │
 │  • coupons, reviews, wishlists           │
 └──────────────────────────────────────────┘
@@ -176,8 +182,9 @@ npm run dev
 - [x] Catálogo de productos con filtros avanzados y búsqueda en tiempo real
 - [x] Carrito de compras y checkout (guest y autenticado)
 - [x] Gestión de órdenes con estados y tracking
-- [x] Sistema de envíos con Google Maps y validación de cobertura
+- [x] Sistema de envíos con validación de cobertura
 - [x] Panel de administración con roles (customer, manager, admin)
+- [x] Pagos con Mercado Pago (checkout, webhooks, estados)
 
 **Funcionalidades Avanzadas:**
 - [x] Sistema de cupones con límites por cliente
@@ -189,7 +196,7 @@ npm run dev
 - [x] Notificaciones in-app y por email
 
 **Integración y Configuración:**
-- [x] Integración con Google Maps (Places, Geocoding)
+- [x] Integración con Mercado Pago (pagos online)
 - [x] Sistema de emails con cumplimiento Ley 1581/2012
 - [x] Reportes exportables (Excel/PDF) con rate limiting
 - [x] UI responsive con dark mode (paleta Beagle)
@@ -199,24 +206,25 @@ npm run dev
 
 ### Pendiente para Producción
 
-- [ ] Integración de pasarela de pagos real (Stripe/PayU/Mercado Pago)
 - [ ] Configuración de servidor de producción
 - [ ] Certificado SSL
 - [ ] Servidor SMTP para emails (SendGrid/SES)
 - [ ] CDN para imágenes (Cloudinary/S3)
-- [ ] Google Maps API key con restricciones
+- [ ] Credenciales de producción de Mercado Pago
 - [ ] Sistema de monitoreo (Sentry/Bugsnag)
 - [ ] Backups automatizados
 
 **Estadísticas del Proyecto:**
-- 22 modelos Eloquent
-- 37 migraciones de base de datos
-- 31 tablas en MySQL
-- 22 controladores API
-- 33 vistas Vue.js
-- 28 componentes reutilizables
-- 17 servicios API
+- 24 modelos Eloquent
+- 44 migraciones de base de datos
+- 27 controladores API
+- 38 vistas Vue.js
+- 31 componentes reutilizables
+- 20 servicios API (frontend)
+- 8 servicios (backend)
 - 7 stores Pinia
+- 6 composables
+- 10 seeders
 
 ---
 
@@ -226,8 +234,11 @@ npm run dev
 - **Framework:** Laravel 12
 - **Lenguaje:** PHP 8.2+
 - **Base de Datos:** MySQL 8.0+ / MariaDB 10.6+
-- **Autenticación:** Laravel Sanctum
+- **Autenticación:** Laravel Sanctum 4.2
 - **ORM:** Eloquent
+- **Pagos:** mercadopago/dx-php 3.7
+- **Exportaciones:** maatwebsite/excel 3.1, barryvdh/laravel-dompdf 3.1
+- **Testing:** PHPUnit 11.5, Laravel Dusk 8.3
 
 ### Frontend
 - **Framework:** Vue.js 3.5.22 (Composition API con `<script setup>`)
@@ -237,13 +248,13 @@ npm run dev
 - **UI Components:** PrimeVue 4.4.1
 - **HTTP:** Axios 1.12.2 (interceptors)
 - **CSS:** Tailwind CSS 3.4.18 + PrimeIcons 7.0.0
-- **Maps:** @googlemaps/js-api-loader 2.0.1
+- **Pagos:** @mercadopago/sdk-js 0.0.3
 - **Notifications:** vue-toastification 2.0.0-rc.5
 - **Node:** ^20.19.0 || >=22.12.0
 
 ### Servicios Externos
-- **Mapas:** Google Maps API (Places, Geocoding)
-- **Emails (Dev):** Mailtrap
+- **Pagos:** Mercado Pago (checkout, webhooks)
+- **Emails (Dev):** Mailtrap / Log
 - **Emails (Prod):** SendGrid / Amazon SES (configurar)
 
 ---
@@ -279,31 +290,33 @@ npm run dev
 
 ```
 PetuniaPlay/
-├── backend/                 # API Laravel 12
+├── backend/                      # API Laravel 12
 │   ├── app/
 │   │   ├── Http/
-│   │   │   ├── Controllers/Api/  # 22 controladores REST
+│   │   │   ├── Controllers/      # 27 controladores REST
+│   │   │   │   └── Api/Admin/    # Controladores admin (Loyalty)
 │   │   │   ├── Middleware/       # AdminMiddleware, ManagerMiddleware
 │   │   │   └── Resources/        # API Resources
-│   │   ├── Models/               # 22 modelos Eloquent
-│   │   ├── Services/             # Lógica de negocio
+│   │   ├── Models/               # 24 modelos Eloquent
+│   │   ├── Services/             # 8 servicios de negocio
 │   │   ├── Mail/                 # 4 Mailables (transaccionales)
-│   │   └── Exports/              # Exportación Excel/PDF
+│   │   └── Exports/              # 3 Exports (Excel/PDF)
 │   ├── database/
-│   │   ├── migrations/           # 37 migraciones (31 tablas)
-│   │   ├── seeders/              # 7 seeders
+│   │   ├── migrations/           # 44 migraciones
+│   │   ├── seeders/              # 10 seeders
 │   │   └── factories/
 │   └── routes/
 │       └── api.php               # Rutas API versionadas (/api/v1)
 │
 ├── frontend/                     # SPA Vue.js 3
 │   ├── src/
-│   │   ├── components/           # 28 componentes reutilizables
-│   │   ├── views/                # 33 vistas (públicas, auth, admin)
-│   │   ├── services/             # 17 servicios API (Axios)
+│   │   ├── components/           # 31 componentes reutilizables
+│   │   ├── views/                # 38 vistas (públicas, auth, admin)
+│   │   ├── services/             # 20 servicios API (Axios)
 │   │   ├── stores/               # 7 stores Pinia
 │   │   ├── router/               # Vue Router con guards
-│   │   └── composables/          # useTheme, useConfirm
+│   │   ├── composables/          # 6 composables (useTheme, useConfirm, etc.)
+│   │   └── layouts/              # AdminLayout
 │   └── public/
 │
 └── README.md                     # Este archivo
@@ -358,6 +371,41 @@ MAIL_PASSWORD=your_sendgrid_api_key
 
 ---
 
+## Mercado Pago
+
+### Configuración
+
+El sistema utiliza Mercado Pago como pasarela de pagos. Configura las siguientes variables en el backend `.env`:
+
+```env
+# Mercado Pago - Obtener credenciales en https://www.mercadopago.com.co/developers
+MERCADOPAGO_ACCESS_TOKEN=APP_USR-xxxx     # Access Token (privado)
+MERCADOPAGO_PUBLIC_KEY=APP_USR-xxxx       # Public Key (público)
+MERCADOPAGO_TEST_MODE=true                # true = sandbox, false = producción
+```
+
+### Flujo de Pago
+
+1. **Checkout:** El cliente completa el carrito y procede al pago
+2. **Preferencia:** El backend crea una preferencia de pago en Mercado Pago
+3. **Redirección:** El cliente es redirigido a Mercado Pago para pagar
+4. **Webhook:** Mercado Pago notifica al backend el estado del pago
+5. **Confirmación:** El sistema actualiza la orden y envía email de confirmación
+
+### Endpoints de Pago
+
+- `POST /api/v1/payments/create-preference` - Crear preferencia de pago
+- `POST /api/v1/payments/webhook` - Recibir notificaciones de Mercado Pago
+- `GET /api/v1/payments/status` - Consultar estado del pago
+
+### URLs de Retorno (configurar en producción)
+
+- **Success:** `https://tudominio.com/payment/success`
+- **Failure:** `https://tudominio.com/payment/failure`
+- **Pending:** `https://tudominio.com/payment/pending`
+
+---
+
 ## Localización
 
 **Idioma:** Español (Colombia)
@@ -365,7 +413,7 @@ MAIL_PASSWORD=your_sendgrid_api_key
 **Impuesto:** IVA 19%
 **Formato de fecha:** DD/MM/YYYY
 **Marco Legal:** Ley 1581/2012 (Protección de datos personales)
-**Zona de Cobertura:** Bogotá y 50 km a la redonda (validación con Google Maps)
+**Pasarela de Pagos:** Mercado Pago (Colombia)
 
 ---
 
