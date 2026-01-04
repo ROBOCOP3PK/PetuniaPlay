@@ -55,7 +55,7 @@
           <button
             v-if="!address.is_default"
             @click="setDefaultAddress(address.id)"
-            class="btn-outline flex-1 text-sm font-semibold dark:border-primary dark:text-primary dark:hover:bg-primary dark:hover:text-white"
+            class="btn-outline flex-1 text-sm font-semibold dark:border-fuchsia-400 dark:text-fuchsia-400 dark:hover:bg-fuchsia-500 dark:hover:text-white"
           >
             Marcar como Predeterminada
           </button>

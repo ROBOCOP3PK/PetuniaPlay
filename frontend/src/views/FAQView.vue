@@ -80,7 +80,7 @@
                 {{ faq.question }}
               </span>
               <svg
-                :class="['w-5 h-5 text-primary dark:text-primary-light transform transition-transform duration-300', openFAQs.includes(index) ? 'rotate-180' : '']"
+                :class="['w-5 h-5 text-primary dark:text-fuchsia-400 transform transition-transform duration-300', openFAQs.includes(index) ? 'rotate-180' : '']"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -171,7 +171,7 @@ const faqs = [
   {
     category: 'Pedidos y Envíos',
     question: '¿Puedo rastrear mi pedido?',
-    answer: `Sí, una vez que tu pedido sea enviado, recibirás un correo electrónico con un número de seguimiento. Puedes usar este número en nuestra <a href="/tracking" class="text-primary dark:text-primary-light font-semibold hover:underline">página de rastreo</a> o directamente en el sitio web de la transportadora.`
+    answer: `Sí, una vez que tu pedido sea enviado, recibirás un correo electrónico con un número de seguimiento. Puedes usar este número en nuestra <a href="/tracking" class="text-primary dark:text-fuchsia-400 font-semibold hover:underline">página de rastreo</a> o directamente en el sitio web de la transportadora.`
   },
   {
     category: 'Pedidos y Envíos',
@@ -181,7 +181,7 @@ const faqs = [
   {
     category: 'Pedidos y Envíos',
     question: '¿Puedo cambiar la dirección de envío después de hacer el pedido?',
-    answer: `Puedes cambiar la dirección de envío solo si tu pedido aún no ha sido enviado. Contáctanos lo antes posible a través de <a href="/contact" class="text-primary dark:text-primary-light font-semibold hover:underline">nuestro formulario de contacto</a> o por email a contacto@petuniaplay.com con tu número de pedido.`
+    answer: `Puedes cambiar la dirección de envío solo si tu pedido aún no ha sido enviado. Contáctanos lo antes posible a través de <a href="/contact" class="text-primary dark:text-fuchsia-400 font-semibold hover:underline">nuestro formulario de contacto</a> o por email a contacto@petuniaplay.com con tu número de pedido.`
   },
 
   // Pagos
@@ -232,12 +232,12 @@ const faqs = [
   {
     category: 'Devoluciones',
     question: '¿Cuál es su política de devoluciones?',
-    answer: `Aceptamos devoluciones dentro de los <strong>30 días</strong> posteriores a la recepción de tu pedido. El producto debe estar sin usar, en su empaque original y con todas las etiquetas. Para más detalles, consulta nuestra <a href="/returns" class="text-primary dark:text-primary-light font-semibold hover:underline">Política de Devoluciones completa</a>.`
+    answer: `Aceptamos devoluciones dentro de los <strong>30 días</strong> posteriores a la recepción de tu pedido. El producto debe estar sin usar, en su empaque original y con todas las etiquetas. Para más detalles, consulta nuestra <a href="/returns" class="text-primary dark:text-fuchsia-400 font-semibold hover:underline">Política de Devoluciones completa</a>.`
   },
   {
     category: 'Devoluciones',
     question: '¿Cómo inicio una devolución?',
-    answer: `Para iniciar una devolución:<br><br><ol class="list-decimal list-inside space-y-1"><li>Inicia sesión en tu cuenta</li><li>Ve a "Mis Pedidos"</li><li>Selecciona el pedido que deseas devolver</li><li>Haz clic en "Solicitar Devolución"</li><li>Selecciona el motivo y sigue las instrucciones</li></ol><br>También puedes contactarnos directamente a través de <a href="/contact" class="text-primary dark:text-primary-light font-semibold hover:underline">nuestro formulario de contacto</a>.`
+    answer: `Para iniciar una devolución:<br><br><ol class="list-decimal list-inside space-y-1"><li>Inicia sesión en tu cuenta</li><li>Ve a "Mis Pedidos"</li><li>Selecciona el pedido que deseas devolver</li><li>Haz clic en "Solicitar Devolución"</li><li>Selecciona el motivo y sigue las instrucciones</li></ol><br>También puedes contactarnos directamente a través de <a href="/contact" class="text-primary dark:text-fuchsia-400 font-semibold hover:underline">nuestro formulario de contacto</a>.`
   },
   {
     category: 'Devoluciones',
@@ -259,7 +259,7 @@ const faqs = [
   {
     category: 'Cuenta',
     question: '¿Olvidé mi contraseña, qué hago?',
-    answer: `Puedes restablecer tu contraseña fácilmente:<br><br><ol class="list-decimal list-inside space-y-1"><li>Ve a la <a href="/login" class="text-primary dark:text-primary-light font-semibold hover:underline">página de inicio de sesión</a></li><li>Haz clic en "¿Olvidaste tu contraseña?"</li><li>Ingresa tu correo electrónico</li><li>Revisa tu email y sigue el enlace para crear una nueva contraseña</li></ol><br>Si tienes problemas, contáctanos a contacto@petuniaplay.com.`
+    answer: `Puedes restablecer tu contraseña fácilmente:<br><br><ol class="list-decimal list-inside space-y-1"><li>Ve a la <a href="/login" class="text-primary dark:text-fuchsia-400 font-semibold hover:underline">página de inicio de sesión</a></li><li>Haz clic en "¿Olvidaste tu contraseña?"</li><li>Ingresa tu correo electrónico</li><li>Revisa tu email y sigue el enlace para crear una nueva contraseña</li></ol><br>Si tienes problemas, contáctanos a contacto@petuniaplay.com.`
   },
   {
     category: 'Cuenta',
@@ -269,7 +269,7 @@ const faqs = [
   {
     category: 'Cuenta',
     question: '¿Cómo elimino mi cuenta?',
-    answer: `Si deseas eliminar tu cuenta, contáctanos a través de <a href="/contact" class="text-primary dark:text-primary-light font-semibold hover:underline">nuestro formulario de contacto</a> o envía un email a contacto@petuniaplay.com. Ten en cuenta que:<br><br><ul class="list-disc list-inside space-y-1"><li>No podrás recuperar tu cuenta una vez eliminada</li><li>Se perderá tu historial de pedidos</li><li>Las compras pendientes deben completarse antes de eliminar la cuenta</li></ul>`
+    answer: `Si deseas eliminar tu cuenta, contáctanos a través de <a href="/contact" class="text-primary dark:text-fuchsia-400 font-semibold hover:underline">nuestro formulario de contacto</a> o envía un email a contacto@petuniaplay.com. Ten en cuenta que:<br><br><ul class="list-disc list-inside space-y-1"><li>No podrás recuperar tu cuenta una vez eliminada</li><li>Se perderá tu historial de pedidos</li><li>Las compras pendientes deben completarse antes de eliminar la cuenta</li></ul>`
   }
 ]
 

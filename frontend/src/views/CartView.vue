@@ -54,7 +54,7 @@
             <div class="flex-1">
               <router-link
                 :to="`/product/${item.product.slug}`"
-                class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary transition mb-2 block"
+                class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-fuchsia-400 transition mb-2 block"
               >
                 {{ item.product.name }}
               </router-link>
@@ -170,7 +170,7 @@
                 Proceder al Pago
               </router-link>
 
-              <router-link to="/products" class="w-full block text-center px-6 py-3 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-lg font-semibold transition">
+              <router-link to="/products" class="w-full block text-center px-6 py-3 border-2 border-primary dark:border-fuchsia-400 text-primary dark:text-fuchsia-400 hover:bg-primary dark:hover:bg-fuchsia-500 hover:text-white rounded-lg font-semibold transition">
                 Continuar Comprando
               </router-link>
 

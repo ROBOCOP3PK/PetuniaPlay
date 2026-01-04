@@ -148,7 +148,7 @@
             </h2>
             <p class="text-gray-700 dark:text-gray-300 mb-4">
               Su privacidad es importante para nosotros. Consulte nuestra
-              <router-link to="/privacy" class="text-primary hover:text-primary-dark font-semibold">
+              <router-link to="/privacy" class="text-primary dark:text-fuchsia-400 hover:text-primary-dark font-semibold">
                 Política de Privacidad
               </router-link>
               para obtener información sobre cómo recopilamos, usamos y divulgamos información personal.
@@ -178,7 +178,7 @@
             <ul class="list-none text-gray-700 dark:text-gray-300 mb-4 space-y-2">
               <li>• Por correo electrónico: legal@petuniaplay.com</li>
               <li>• A través de nuestra
-                <router-link to="/contact" class="text-primary hover:text-primary-dark font-semibold">
+                <router-link to="/contact" class="text-primary dark:text-fuchsia-400 hover:text-primary-dark font-semibold">
                   página de contacto
                 </router-link>
               </li>
@@ -190,7 +190,7 @@
         <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
           <router-link
             to="/"
-            class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold"
+            class="inline-flex items-center gap-2 text-primary dark:text-fuchsia-400 hover:text-primary-dark font-semibold"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>

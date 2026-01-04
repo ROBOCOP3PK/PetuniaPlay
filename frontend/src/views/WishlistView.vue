@@ -86,7 +86,7 @@
           <div class="p-4">
             <router-link
               :to="`/product/${item.product.slug}`"
-              class="text-lg font-semibold text-dark dark:text-white hover:text-primary transition mb-2 block line-clamp-2"
+              class="text-lg font-semibold text-dark dark:text-white hover:text-primary dark:hover:text-fuchsia-400 transition mb-2 block line-clamp-2"
             >
               {{ item.product.name }}
             </router-link>
@@ -98,10 +98,10 @@
             <!-- Price and Actions -->
             <div class="flex items-center justify-between">
               <div>
-                <p v-if="item.product.sale_price" class="text-2xl font-bold text-primary">
+                <p v-if="item.product.sale_price" class="text-2xl font-bold text-primary dark:text-fuchsia-400">
                   ${{ formatPrice(item.product.sale_price) }}
                 </p>
-                <p v-else class="text-2xl font-bold text-primary">
+                <p v-else class="text-2xl font-bold text-primary dark:text-fuchsia-400">
                   ${{ formatPrice(item.product.price) }}
                 </p>
                 <p v-if="item.product.sale_price" class="text-sm text-gray-500 dark:text-gray-400 line-through">

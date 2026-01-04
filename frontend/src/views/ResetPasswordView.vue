@@ -90,7 +90,7 @@
         </div>
 
         <div class="text-center">
-          <router-link to="/login" class="font-medium text-primary hover:text-primary-dark">
+          <router-link to="/login" class="font-medium text-primary dark:text-fuchsia-400 hover:text-primary-dark">
             ← Volver a iniciar sesión
           </router-link>
         </div>

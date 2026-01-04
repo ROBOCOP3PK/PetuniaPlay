@@ -16,7 +16,7 @@
               <button
                 v-if="hasActiveFilters"
                 @click="clearAllFilters"
-                class="text-sm text-primary dark:text-primary-light hover:underline"
+                class="text-sm text-primary dark:text-fuchsia-400 hover:underline"
               >
                 Limpiar
               </button>
@@ -55,7 +55,7 @@
                   :class="[
                     'flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all duration-200',
                     filters.animal_section_id === section.id
-                      ? 'border-primary bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light'
+                      ? 'border-primary bg-primary/10 dark:bg-primary/20 text-primary dark:text-fuchsia-400'
                       : 'border-gray-300 dark:border-gray-600 hover:border-primary/50 dark:hover:border-primary/50 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                   ]"
                 >
@@ -163,7 +163,7 @@
           <div v-if="hasActiveFilters" class="mb-4 flex flex-wrap gap-2">
             <span
               v-if="selectedSection"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-fuchsia-400 rounded-full text-sm"
             >
               {{ selectedSection.icon }} {{ selectedSection.name }}
               <button @click="filters.animal_section_id = null" class="hover:text-primary-dark dark:hover:text-primary">
@@ -172,7 +172,7 @@
             </span>
             <span
               v-if="selectedCategoryName"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-fuchsia-400 rounded-full text-sm"
             >
               Categoría: {{ selectedCategoryName }}
               <button @click="filters.category = ''" class="hover:text-primary-dark dark:hover:text-primary">
@@ -181,7 +181,7 @@
             </span>
             <span
               v-if="filters.min_price"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-fuchsia-400 rounded-full text-sm"
             >
               Precio mín: ${{ filters.min_price }}
               <button @click="filters.min_price = null" class="hover:text-primary-dark dark:hover:text-primary">
@@ -190,7 +190,7 @@
             </span>
             <span
               v-if="filters.max_price"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-fuchsia-400 rounded-full text-sm"
             >
               Precio máx: ${{ filters.max_price }}
               <button @click="filters.max_price = null" class="hover:text-primary-dark dark:hover:text-primary">
@@ -199,7 +199,7 @@
             </span>
             <span
               v-if="filters.brand"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-fuchsia-400 rounded-full text-sm"
             >
               Marca: {{ filters.brand }}
               <button @click="filters.brand = ''" class="hover:text-primary-dark dark:hover:text-primary">
@@ -208,7 +208,7 @@
             </span>
             <span
               v-if="filters.in_stock"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-fuchsia-400 rounded-full text-sm"
             >
               En stock
               <button @click="filters.in_stock = false" class="hover:text-primary-dark dark:hover:text-primary">
@@ -217,7 +217,7 @@
             </span>
             <span
               v-if="filters.min_rating"
-              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-full text-sm"
+              class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 dark:bg-primary/20 text-primary dark:text-fuchsia-400 rounded-full text-sm"
             >
               {{ filters.min_rating }}★ o más
               <button @click="filters.min_rating = null" class="hover:text-primary-dark dark:hover:text-primary">

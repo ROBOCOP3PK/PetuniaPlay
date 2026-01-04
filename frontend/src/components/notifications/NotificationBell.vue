@@ -3,8 +3,8 @@
     <!-- Bell Icon Button -->
     <button
       @click="handleBellClick"
-      class="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-light transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-      :class="{ 'text-primary dark:text-primary-light': isOpen }"
+      class="relative p-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-fuchsia-400 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+      :class="{ 'text-primary dark:text-fuchsia-400': isOpen }"
     >
       <!-- Bell Icon -->
       <i class="pi pi-bell text-2xl"></i>
@@ -39,7 +39,7 @@
           <button
             v-if="hasUnread"
             @click="handleMarkAllAsRead"
-            class="text-sm text-primary hover:text-primary-dark dark:text-primary-light dark:hover:text-primary transition"
+            class="text-sm text-primary hover:text-primary-dark dark:text-fuchsia-400 dark:hover:text-primary transition"
           >
             Marcar todas como leídas
           </button>

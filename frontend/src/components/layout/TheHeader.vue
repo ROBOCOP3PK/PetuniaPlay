@@ -56,7 +56,7 @@
                 <router-link
                   v-if="authStore.hasManagerAccess"
                   to="/admin"
-                  class="block px-4 py-2 text-primary dark:text-primary-light font-semibold hover:bg-primary hover:bg-opacity-10 dark:hover:bg-opacity-20 transition border-t dark:border-gray-700 flex items-center gap-2"
+                  class="block px-4 py-2 text-primary dark:text-fuchsia-400 font-semibold hover:bg-primary hover:bg-opacity-10 dark:hover:bg-opacity-20 transition border-t dark:border-gray-700 flex items-center gap-2"
                 >
                   <i class="pi pi-chart-bar"></i>
                   Panel Admin

@@ -21,12 +21,12 @@
       <div v-else-if="category">
         <!-- Breadcrumb -->
         <nav class="text-sm mb-8">
-          <ol class="flex items-center space-x-2 text-gray-600">
-            <li><router-link to="/" class="hover:text-primary">Inicio</router-link></li>
+          <ol class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+            <li><router-link to="/" class="hover:text-primary dark:hover:text-fuchsia-400">Inicio</router-link></li>
             <li>/</li>
-            <li><router-link to="/products" class="hover:text-primary">Productos</router-link></li>
+            <li><router-link to="/products" class="hover:text-primary dark:hover:text-fuchsia-400">Productos</router-link></li>
             <li>/</li>
-            <li class="text-primary font-semibold">{{ category.name }}</li>
+            <li class="text-primary dark:text-fuchsia-400 font-semibold">{{ category.name }}</li>
           </ol>
         </nav>
 

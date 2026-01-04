@@ -176,8 +176,8 @@
                   class="mt-1 mr-3"
                 />
                 <span class="text-sm text-gray-900 dark:text-gray-300">
-                  Acepto los <a href="#" class="text-primary hover:underline">términos y condiciones</a>
-                  y la <a href="#" class="text-primary hover:underline">política de privacidad</a> de Petunia Play
+                  Acepto los <a href="#" class="text-primary dark:text-fuchsia-400 hover:underline">términos y condiciones</a>
+                  y la <a href="#" class="text-primary dark:text-fuchsia-400 hover:underline">política de privacidad</a> de Petunia Play
                 </span>
               </label>
             </div>

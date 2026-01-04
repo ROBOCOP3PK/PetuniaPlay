@@ -181,9 +181,9 @@
                 <div>
                   <h3 class="font-bold text-lg mb-1 dark:text-white">Redes Sociales</h3>
                   <div class="space-y-1">
-                    <a href="#" class="text-primary hover:underline block">Facebook</a>
-                    <a href="#" class="text-primary hover:underline block">Instagram</a>
-                    <a href="#" class="text-primary hover:underline block">Twitter</a>
+                    <a href="#" class="text-primary dark:text-fuchsia-400 hover:underline block">Facebook</a>
+                    <a href="#" class="text-primary dark:text-fuchsia-400 hover:underline block">Instagram</a>
+                    <a href="#" class="text-primary dark:text-fuchsia-400 hover:underline block">Twitter</a>
                   </div>
                 </div>
               </div>
@@ -196,7 +196,7 @@
             <p class="text-gray-700 dark:text-gray-300 mb-4">
               Revisa nuestras preguntas frecuentes, tal vez encuentres tu respuesta allí.
             </p>
-            <router-link to="/faq" class="inline-block px-6 py-3 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-lg font-semibold transition dark:border-primary dark:text-primary dark:hover:bg-primary dark:hover:text-white">
+            <router-link to="/faq" class="inline-block px-6 py-3 border-2 border-primary dark:border-fuchsia-400 text-primary dark:text-fuchsia-400 hover:bg-primary dark:hover:bg-fuchsia-500 hover:text-white rounded-lg font-semibold transition">
               Ver FAQ
             </router-link>
           </div>

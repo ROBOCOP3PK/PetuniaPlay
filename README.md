@@ -283,6 +283,163 @@ npm run dev
 3. **Crear cupón:**
    - Panel Admin → Cupones → + Nuevo Cupón → Configurar → Guardar
 
+---
+
+## Panel de Administración
+
+El sistema cuenta con un panel de administración completo accesible en `/admin`. A continuación se detallan todas las secciones disponibles:
+
+### 1. Dashboard (`/admin`)
+Centro de control con estadísticas en tiempo real:
+- **Tarjetas de resumen:** Ingresos totales, ingresos del mes, total de pedidos, productos y usuarios
+- **Alertas de inventario:** Notificación automática de productos con stock bajo o agotados
+- **Últimos pedidos:** Lista de los pedidos más recientes con estado y monto
+- **Productos con bajo stock:** Vista rápida de productos que necesitan reabastecimiento
+- **Productos más vendidos:** Top de ventas del último mes
+- **Exportar reportes:** Generación de reportes de ventas en Excel con filtros por fecha y agrupación (día/semana/mes)
+
+### 2. Gestión de Productos (`/admin/products`)
+Administración completa del catálogo de productos:
+- **Listado con filtros:** Búsqueda por nombre/SKU, filtro por categoría y estado de stock
+- **Edición rápida:** Modificar precio y stock directamente desde la tabla
+- **Crear/Editar producto:**
+  - Información básica: nombre, categoría, SKU, marca, peso, descripción
+  - Precio e inventario: precio regular, precio de oferta, stock, umbral de stock bajo
+  - Imágenes: carga múltiple con imagen principal
+  - Estado: activo/inactivo, destacado
+- **Exportar a Excel:** Descarga del catálogo completo o filtrado
+- **Indicadores visuales:** Badges de stock bajo, agotado, activo/inactivo
+
+### 3. Gestión de Categorías (`/admin/categories`)
+Organización jerárquica de productos:
+- **Listado con filtros:** Búsqueda por nombre, filtro por estado
+- **Crear/Editar categoría:**
+  - Nombre y slug (URL amigable)
+  - Descripción e imagen
+  - Sección de animal (Perros, Gatos, etc.)
+  - Categoría padre (para subcategorías)
+  - Orden de visualización
+- **Jerarquía:** Soporte para categorías padre e hijas
+- **Activar/Desactivar:** Toggle de estado desde la tabla
+
+### 4. Secciones de Animales (`/admin/animal-sections`)
+Configuración de las secciones principales del catálogo:
+- **Gestión de secciones:** Perros, Gatos, Aves, Peces, etc.
+- **Iconos personalizados:** Emojis o iconos para cada sección
+- **Orden de visualización:** Control del orden en el menú
+
+### 5. Gestión de Pedidos (`/admin/orders`)
+Control completo de órdenes:
+- **Listado con filtros:**
+  - Búsqueda por número de pedido o cliente
+  - Filtro por estado (Pendiente, Procesando, Enviado, Entregado, Cancelado)
+  - Filtro por fecha
+- **Información del pedido:** Número, cliente, fecha, total, productos
+- **Cambio de estado:** Actualización del estado del pedido
+- **Exportar:** Excel y PDF con los filtros aplicados
+- **Detalle completo:** Vista de productos, dirección de envío, información de pago
+
+### 6. Gestión de Cupones (`/admin/coupons`)
+Sistema avanzado de descuentos:
+- **Estadísticas:** Total de cupones, activos, usos totales, cupón más usado
+- **Listado con filtros:** Búsqueda por código, filtro por estado
+- **Crear/Editar cupón:**
+  - Código único (mayúsculas automáticas)
+  - Tipo: porcentaje o monto fijo
+  - Valor del descuento
+  - Monto mínimo de compra
+  - Límite de usos (global)
+  - Vigencia: fecha inicio y fin
+- **Toggle de estado:** Activar/desactivar cupones
+- **Protección:** No se pueden eliminar cupones ya utilizados
+
+### 7. Gestión de Envíos (`/admin/shipments`)
+Control de despachos y entregas:
+- **Panel de estadísticas:**
+  - Por despachar, listas para envío, en tránsito, entregados
+  - Total histórico de despachados
+- **Alertas urgentes:** Órdenes con más días esperando despacho
+- **Pestañas:**
+  - Pendientes de despacho: órdenes pagadas sin envío creado
+  - Enviados: historial de envíos con estados
+- **Crear envío:**
+  - Transportadora y número de guía
+  - Notas del envío
+  - Notificación automática al cliente
+- **Actualizar estado:** Procesando → Enviado → En tránsito → Entregado
+
+### 8. Configuración de Envíos (`/admin/shipping-config`)
+Parámetros del sistema de entregas:
+- **Zonas de cobertura:** Ciudades y regiones habilitadas
+- **Tarifas de envío:** Costos por zona
+- **Envío nocturno:** Configuración de horarios y recargo adicional
+- **Umbral de envío gratis:** Monto mínimo para envío sin costo
+
+### 9. Programa de Lealtad (`/admin/loyalty`)
+Sistema de puntos y recompensas:
+- **Toggle global:** Activar/desactivar el programa completo
+- **Estadísticas:**
+  - Recompensas activas
+  - Canjes pendientes y completados
+  - Órdenes generadas por canjes
+- **Pestañas:**
+  - **Recompensas:** Crear y gestionar recompensas disponibles
+    - Permanentes o por campaña (con fechas)
+    - Puntos requeridos
+    - Tipo: descuento porcentual, monto fijo, producto gratis, envío gratis
+  - **Canjes:** Historial y gestión de canjes de clientes
+    - Aprobar/rechazar canjes pendientes
+    - Ver historial completo
+  - **Configuración:** Reglas del programa
+    - Puntos por compra (ej: 1 punto por cada $1,000)
+    - Vigencia de puntos
+    - Mínimo para canjear
+
+### 10. Gestión de Preguntas (`/admin/questions`)
+Moderación de preguntas sobre productos:
+- **Listado:** Preguntas pendientes de respuesta
+- **Responder:** Formulario para responder preguntas de clientes
+- **Publicar/Ocultar:** Control de visibilidad de preguntas y respuestas
+- **Notificación:** Email automático al cliente cuando se responde
+
+### 11. Gestión de Usuarios (`/admin/users`) *(Solo Admin)*
+Administración de cuentas:
+- **Listado con filtros:**
+  - Búsqueda por nombre o email
+  - Filtro por rol (Cliente, Gestor, Admin)
+  - Filtro por estado (Activo, Inactivo)
+- **Cambio de rol:** Dropdown para modificar rol directamente
+- **Toggle de estado:** Activar/desactivar usuarios
+- **Detalle de usuario:** Modal con información completa
+- **Protección:** No se puede modificar el usuario actual
+
+### 12. Configuración del Sitio (`/admin/site-config`) *(Solo Admin)*
+Parámetros generales del e-commerce:
+- **Botón de WhatsApp:**
+  - Habilitar/deshabilitar botón flotante
+  - Número de WhatsApp (formato internacional)
+  - Mensaje predeterminado
+  - Vista previa del enlace
+- **Información de contacto:** Teléfono, email de soporte
+- **Redes sociales:** Enlaces a perfiles
+- **Configuración de emails:** Plantillas y preferencias
+
+### Roles y Permisos
+
+| Sección | Customer | Manager | Admin |
+|---------|:--------:|:-------:|:-----:|
+| Dashboard | - | ✅ | ✅ |
+| Productos | - | ✅ | ✅ |
+| Categorías | - | ✅ | ✅ |
+| Secciones Animales | - | ✅ | ✅ |
+| Pedidos | - | ✅ | ✅ |
+| Cupones | - | ✅ | ✅ |
+| Envíos | - | ✅ | ✅ |
+| Config. Envíos | - | ✅ | ✅ |
+| Programa Lealtad | - | ✅ | ✅ |
+| Preguntas | - | ✅ | ✅ |
+| **Usuarios** | - | - | ✅ |
+| **Config. Sitio** | - | - | ✅ |
 
 ---
 

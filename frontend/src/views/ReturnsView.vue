@@ -81,7 +81,7 @@
             </ul>
             <p class="text-gray-700 dark:text-gray-300 mb-4">
               Alternativamente, puede contactarnos directamente a través de nuestra
-              <router-link to="/contact" class="text-primary hover:text-primary-dark font-semibold">
+              <router-link to="/contact" class="text-primary dark:text-fuchsia-400 hover:text-primary-dark font-semibold">
                 página de contacto
               </router-link>
               con su número de pedido.
@@ -248,7 +248,7 @@
               <li>• Por correo electrónico: returns@petuniaplay.com</li>
               <li>• Por teléfono: +57 (123) 456-7890</li>
               <li>• A través de nuestra
-                <router-link to="/contact" class="text-primary hover:text-primary-dark font-semibold">
+                <router-link to="/contact" class="text-primary dark:text-fuchsia-400 hover:text-primary-dark font-semibold">
                   página de contacto
                 </router-link>
               </li>
@@ -277,7 +277,7 @@
         <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
           <router-link
             to="/"
-            class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold"
+            class="inline-flex items-center gap-2 text-primary dark:text-fuchsia-400 hover:text-primary-dark font-semibold"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>

@@ -22,32 +22,32 @@
           <h3 class="font-bold text-lg mb-4">Enlaces Rápidos</h3>
           <ul class="space-y-2 text-sm">
             <li>
-              <router-link to="/" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Inicio
               </router-link>
             </li>
             <li>
-              <router-link to="/products" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/products" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Productos
               </router-link>
             </li>
             <li>
-              <router-link to="/about" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/about" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Sobre Nosotros
               </router-link>
             </li>
             <li>
-              <router-link to="/faq" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/faq" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Preguntas Frecuentes
               </router-link>
             </li>
             <li>
-              <router-link to="/contact" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/contact" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Contacto
               </router-link>
             </li>
             <li>
-              <router-link to="/tracking" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/tracking" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Rastrear Pedido
               </router-link>
             </li>
@@ -59,22 +59,22 @@
           <h3 class="font-bold text-lg mb-4">Legal</h3>
           <ul class="space-y-2 text-sm">
             <li>
-              <router-link to="/terms" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/terms" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Términos y Condiciones
               </router-link>
             </li>
             <li>
-              <router-link to="/privacy" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/privacy" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Política de Privacidad
               </router-link>
             </li>
             <li>
-              <router-link to="/returns" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/returns" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Devoluciones y Reembolsos
               </router-link>
             </li>
             <li>
-              <router-link to="/shipping" class="text-gray-300 hover:text-primary transition">
+              <router-link to="/shipping" class="text-gray-300 hover:text-fuchsia-400 transition">
                 Política de Envíos
               </router-link>
             </li>
@@ -101,10 +101,10 @@
 
           <!-- Social Media -->
           <div class="flex space-x-4 mt-4">
-            <a href="#" class="text-gray-300 hover:text-primary transition">
+            <a href="#" class="text-gray-300 hover:text-fuchsia-400 transition">
               <i class="pi pi-facebook text-2xl"></i>
             </a>
-            <a href="#" class="text-gray-300 hover:text-primary transition">
+            <a href="#" class="text-gray-300 hover:text-fuchsia-400 transition">
               <i class="pi pi-instagram text-2xl"></i>
             </a>
           </div>
@@ -177,7 +177,7 @@
             href="https://robocop3pk.github.io/Portafolio/"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-primary hover:text-primary-dark font-semibold transition"
+            class="text-fuchsia-400 hover:text-fuchsia-300 font-semibold transition"
           >
             David Gonzalez
           </a>

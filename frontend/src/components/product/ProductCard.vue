@@ -86,12 +86,12 @@
             <span class="text-gray-400 dark:text-gray-500 line-through text-sm">
               ${{ formatPrice(product.price) }}
             </span>
-            <span class="text-primary dark:text-primary-light font-bold text-xl">
+            <span class="text-primary dark:text-fuchsia-400 font-bold text-xl">
               ${{ formatPrice(product.sale_price) }}
             </span>
           </div>
           <div v-else>
-            <span class="text-primary dark:text-primary-light font-bold text-xl">
+            <span class="text-primary dark:text-fuchsia-400 font-bold text-xl">
               ${{ formatPrice(product.price) }}
             </span>
           </div>

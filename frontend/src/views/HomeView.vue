@@ -48,7 +48,7 @@
             <div class="p-6 text-center">
               <h3 class="font-bold text-2xl mb-2 text-gray-900 dark:text-white">{{ section.name }}</h3>
               <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ section.description }}</p>
-              <span class="text-primary dark:text-primary-light font-semibold text-sm">
+              <span class="text-primary dark:text-fuchsia-400 font-semibold text-sm">
                 Ver productos →
               </span>
             </div>
@@ -67,7 +67,7 @@
       <div class="container mx-auto px-4">
         <div class="flex justify-between items-center mb-12">
           <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Productos Destacados</h2>
-          <router-link to="/products" class="text-primary dark:text-primary-light hover:text-primary-dark dark:hover:text-primary font-semibold">
+          <router-link to="/products" class="text-primary dark:text-fuchsia-400 hover:text-primary-dark dark:hover:text-primary font-semibold">
             Ver todos →
           </router-link>
         </div>

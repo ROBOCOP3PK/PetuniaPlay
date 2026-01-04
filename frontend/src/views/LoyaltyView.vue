@@ -16,7 +16,7 @@
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-          <i class="pi pi-gift text-primary dark:text-primary-light"></i>
+          <i class="pi pi-gift text-primary dark:text-fuchsia-400"></i>
           Programa de Lealtad
         </h1>
         <p class="text-gray-600 dark:text-gray-400 mt-2">
@@ -26,7 +26,7 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-20">
-        <i class="pi pi-spin pi-spinner text-4xl text-primary dark:text-primary-light"></i>
+        <i class="pi pi-spin pi-spinner text-4xl text-primary dark:text-fuchsia-400"></i>
       </div>
 
       <!-- Content -->
@@ -65,7 +65,7 @@
           <!-- Rewards Section -->
           <div class="mb-12">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <i class="pi pi-star text-primary dark:text-primary-light"></i>
+              <i class="pi pi-star text-primary dark:text-fuchsia-400"></i>
               Recompensas Disponibles
             </h2>
 
@@ -108,7 +108,7 @@
                   <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Recibirás:</p>
                     <p class="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                      <i class="pi pi-box text-primary dark:text-primary-light"></i>
+                      <i class="pi pi-box text-primary dark:text-fuchsia-400"></i>
                       {{ reward.product?.name || 'Producto especial' }}
                     </p>
                   </div>
@@ -189,7 +189,7 @@
           <!-- Redemption History -->
           <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <i class="pi pi-history text-primary dark:text-primary-light"></i>
+              <i class="pi pi-history text-primary dark:text-fuchsia-400"></i>
               Historial de Canjes
             </h2>
 

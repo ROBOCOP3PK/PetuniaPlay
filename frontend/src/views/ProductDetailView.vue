@@ -15,12 +15,12 @@
 
       <!-- Breadcrumb -->
       <nav class="text-sm mb-8">
-        <ol class="flex items-center space-x-2 text-gray-600">
-          <li><router-link to="/" class="hover:text-primary">Inicio</router-link></li>
+        <ol class="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+          <li><router-link to="/" class="hover:text-primary dark:hover:text-fuchsia-400">Inicio</router-link></li>
           <li>/</li>
-          <li><router-link to="/products" class="hover:text-primary">Productos</router-link></li>
+          <li><router-link to="/products" class="hover:text-primary dark:hover:text-fuchsia-400">Productos</router-link></li>
           <li v-if="product">/</li>
-          <li v-if="product" class="text-primary font-semibold">{{ product.name }}</li>
+          <li v-if="product" class="text-primary dark:text-fuchsia-400 font-semibold">{{ product.name }}</li>
         </ol>
       </nav>
 
@@ -102,7 +102,7 @@
               <span class="text-gray-400 line-through text-2xl">
                 ${{ formatPrice(product.price) }}
               </span>
-              <span class="text-primary font-bold text-4xl">
+              <span class="text-primary dark:text-fuchsia-400 font-bold text-4xl">
                 ${{ formatPrice(product.sale_price) }}
               </span>
               <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-bold">
@@ -110,7 +110,7 @@
               </span>
             </div>
             <div v-else>
-              <span class="text-primary font-bold text-4xl">
+              <span class="text-primary dark:text-fuchsia-400 font-bold text-4xl">
                 ${{ formatPrice(product.price) }}
               </span>
             </div>
@@ -218,7 +218,7 @@
                 <dd>
                   <router-link
                     :to="`/category/${product.category?.slug}`"
-                    class="text-primary hover:underline font-semibold"
+                    class="text-primary dark:text-fuchsia-400 hover:underline font-semibold"
                   >
                     {{ product.category?.name }}
                   </router-link>
@@ -317,7 +317,7 @@
             <p class="text-gray-600 mb-4">Aún no hay preguntas sobre este producto</p>
             <button
               @click="openQuestionForm"
-              class="text-primary hover:underline font-semibold"
+              class="text-primary dark:text-fuchsia-400 hover:underline font-semibold"
             >
               Sé el primero en preguntar
             </button>
@@ -332,7 +332,7 @@
             >
               <!-- Question -->
               <div class="flex items-start gap-3 mb-4">
-                <svg class="w-6 h-6 text-primary flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6 text-primary dark:text-fuchsia-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div class="flex-1">
