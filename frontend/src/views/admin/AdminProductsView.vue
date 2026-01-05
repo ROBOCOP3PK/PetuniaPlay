@@ -125,9 +125,9 @@
                     />
                   </div>
                   <div v-else class="cursor-pointer" @click="editingProduct = product.id">
-                    <p class="font-bold text-admin-price-light dark:text-admin-price-dark">${{ formatPrice(product.price) }}</p>
+                    <p class="font-bold text-admin-price-light dark:text-admin-price-dark">{{ formatPrice(product.price) }}</p>
                     <p v-if="product.sale_price" class="text-sm text-green-600 dark:text-green-400">
-                      Oferta: ${{ formatPrice(product.sale_price) }}
+                      Oferta: {{ formatPrice(product.sale_price) }}
                     </p>
                   </div>
                 </td>

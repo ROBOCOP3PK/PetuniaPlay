@@ -60,7 +60,7 @@
                 <div>
                   <span class="font-mono font-bold text-red-600 dark:text-red-400">{{ order.order_number }}</span>
                   <span class="text-gray-600 dark:text-gray-400 ml-3">{{ order.customer }}</span>
-                  <span class="text-sm text-gray-500 dark:text-gray-500 ml-3">${{ formatPrice(order.total) }}</span>
+                  <span class="text-sm text-gray-500 dark:text-gray-500 ml-3">{{ formatPrice(order.total) }}</span>
                 </div>
                 <div class="flex items-center gap-3">
                   <span class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-3 py-1 rounded-full text-sm font-bold">
@@ -200,7 +200,7 @@
                   <div class="text-sm text-gray-500 dark:text-gray-400">{{ order.user?.email }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">
-                  ${{ formatPrice(order.total) }}
+                  {{ formatPrice(order.total) }}
                 </td>
                 <td class="px-6 py-4">
                   <div class="text-sm text-gray-900 dark:text-white">{{ order.shipping_address?.city }}</div>
@@ -353,7 +353,7 @@
               <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Pedido:</strong> {{ modalMode === 'create' ? selectedOrder?.order_number : selectedShipment?.order_number }}</p>
               <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Cliente:</strong> {{ modalMode === 'create' ? selectedOrder?.user?.name : selectedShipment?.order?.user?.name }}</p>
               <p class="text-sm text-gray-600 dark:text-gray-400"><strong>Email:</strong> {{ modalMode === 'create' ? selectedOrder?.user?.email : selectedShipment?.order?.user?.email }}</p>
-              <p v-if="modalMode === 'create'" class="text-sm text-gray-600 dark:text-gray-400"><strong>Total:</strong> ${{ formatPrice(selectedOrder?.total) }}</p>
+              <p v-if="modalMode === 'create'" class="text-sm text-gray-600 dark:text-gray-400"><strong>Total:</strong> {{ formatPrice(selectedOrder?.total) }}</p>
             </div>
 
             <div v-if="modalMode === 'edit' || modalMode === 'create'">

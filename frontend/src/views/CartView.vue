@@ -65,10 +65,10 @@
               <div class="mb-4">
                 <div v-if="item.product.has_discount" class="flex items-center gap-2">
                   <span class="text-gray-500 dark:text-gray-400 line-through text-sm">
-                    ${{ formatPrice(item.product.price) }}
+                    {{ formatPrice(item.product.price) }}
                   </span>
                   <span class="text-primary dark:text-white font-bold text-xl">
-                    ${{ formatPrice(item.product.final_price) }}
+                    {{ formatPrice(item.product.final_price) }}
                   </span>
                   <span class="bg-primary text-white px-2 py-1 rounded text-xs">
                     -{{ item.product.discount_percentage }}%
@@ -76,7 +76,7 @@
                 </div>
                 <div v-else>
                   <span class="text-primary dark:text-white font-bold text-xl">
-                    ${{ formatPrice(item.product.price) }}
+                    {{ formatPrice(item.product.price) }}
                   </span>
                 </div>
               </div>
@@ -119,7 +119,7 @@
             <div class="text-right">
               <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Subtotal</p>
               <p class="text-2xl font-bold text-primary dark:text-white">
-                ${{ formatPrice((parseFloat(item.product.final_price || item.product.sale_price || item.product.price || 0)) * item.quantity) }}
+                {{ formatPrice((parseFloat(item.product.final_price || item.product.sale_price || item.product.price || 0)) * item.quantity) }}
               </p>
             </div>
           </div>
@@ -134,12 +134,12 @@
             <div class="space-y-3 mb-6">
               <div class="flex justify-between">
                 <span class="text-gray-600 dark:text-gray-400">Subtotal ({{ cartStore.itemCount }} items)</span>
-                <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.subtotal) }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ formatPrice(cartStore.subtotal) }}</span>
               </div>
               <!-- Seccion de cobro de iva -->
               <!-- <div class="flex justify-between">
                 <span class="text-gray-600 dark:text-gray-400">IVA (19%)</span>
-                <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.tax) }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ formatPrice(cartStore.tax) }}</span>
               </div> -->
 
               <div class="flex justify-between">
@@ -159,7 +159,7 @@
               <div class="flex justify-between items-center">
                 <span class="text-xl font-bold text-gray-900 dark:text-white">Total</span>
                 <span class="text-3xl font-bold text-primary dark:text-white">
-                  ${{ formatPrice(cartStore.total) }}
+                  {{ formatPrice(cartStore.total) }}
                 </span>
               </div>
             </div>

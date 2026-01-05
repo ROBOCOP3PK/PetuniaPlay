@@ -100,10 +100,10 @@
           <div class="mb-6">
             <div v-if="product.has_discount" class="flex items-center gap-4">
               <span class="text-gray-400 line-through text-2xl">
-                ${{ formatPrice(product.price) }}
+                {{ formatPrice(product.price) }}
               </span>
               <span class="text-primary dark:text-fuchsia-400 font-bold text-4xl">
-                ${{ formatPrice(product.sale_price) }}
+                {{ formatPrice(product.sale_price) }}
               </span>
               <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-bold">
                 -{{ product.discount_percentage }}%
@@ -111,7 +111,7 @@
             </div>
             <div v-else>
               <span class="text-primary dark:text-fuchsia-400 font-bold text-4xl">
-                ${{ formatPrice(product.price) }}
+                {{ formatPrice(product.price) }}
               </span>
             </div>
           </div>

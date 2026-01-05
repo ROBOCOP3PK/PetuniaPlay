@@ -99,13 +99,13 @@
             <div class="flex items-center justify-between">
               <div>
                 <p v-if="item.product.sale_price" class="text-2xl font-bold text-primary dark:text-fuchsia-400">
-                  ${{ formatPrice(item.product.sale_price) }}
+                  {{ formatPrice(item.product.sale_price) }}
                 </p>
                 <p v-else class="text-2xl font-bold text-primary dark:text-fuchsia-400">
-                  ${{ formatPrice(item.product.price) }}
+                  {{ formatPrice(item.product.price) }}
                 </p>
                 <p v-if="item.product.sale_price" class="text-sm text-gray-500 dark:text-gray-400 line-through">
-                  ${{ formatPrice(item.product.price) }}
+                  {{ formatPrice(item.product.price) }}
                 </p>
               </div>
 

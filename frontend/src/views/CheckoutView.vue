@@ -105,7 +105,7 @@
                     <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                       Recibe tu pedido en horario nocturno <strong>({{ nightDeliveryTime.start }} - {{ nightDeliveryTime.end }})</strong> sin costo adicional.
                       <span class="block mt-1 text-purple-700 dark:text-purple-300 font-semibold">
-                        ✨ Exclusivo para Bogotá - Ahorra ${{ formatPrice(cartStore.shippingConfig?.standard_shipping_cost || 10000) }} en envío
+                        ✨ Exclusivo para Bogotá - Ahorra {{ formatPrice(cartStore.shippingConfig?.standard_shipping_cost || 10000) }} en envío
                       </span>
                     </p>
                   </label>
@@ -204,7 +204,7 @@
                     <p class="font-semibold text-sm text-gray-900 dark:text-white">{{ item.product.name }}</p>
                     <p class="text-xs text-gray-600 dark:text-gray-400">Cantidad: {{ item.quantity }}</p>
                     <p class="text-primary dark:text-white font-bold">
-                      ${{ formatPrice(parseFloat(item.product.final_price) * item.quantity) }}
+                      {{ formatPrice(parseFloat(item.product.final_price) * item.quantity) }}
                     </p>
                   </div>
                 </div>
@@ -224,7 +224,7 @@
                       <div>
                         <p class="font-bold text-green-800 dark:text-green-300 text-sm">{{ cartStore.appliedCoupon.code }}</p>
                         <p class="text-xs text-green-700 dark:text-green-400">
-                          Descuento: ${{ formatPrice(cartStore.discount) }}
+                          Descuento: {{ formatPrice(cartStore.discount) }}
                         </p>
                       </div>
                     </div>
@@ -266,12 +266,12 @@
               <div class="space-y-3 mb-6">
                 <div class="flex justify-between text-sm">
                   <span class="text-gray-600 dark:text-gray-400">Subtotal</span>
-                  <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.subtotal) }}</span>
+                  <span class="font-semibold text-gray-900 dark:text-white">{{ formatPrice(cartStore.subtotal) }}</span>
                 </div>
                 <!-- Seccion de cobro de iva -->
                 <!-- <div class="flex justify-between text-sm">
                   <span class="text-gray-600 dark:text-gray-400">IVA (19%)</span>
-                  <span class="font-semibold text-gray-900 dark:text-white">${{ formatPrice(cartStore.tax) }}</span>
+                  <span class="font-semibold text-gray-900 dark:text-white">{{ formatPrice(cartStore.tax) }}</span>
                 </div> -->
                 <div class="flex justify-between text-sm">
                   <span class="text-gray-600 dark:text-gray-400">Envío</span>
@@ -280,7 +280,7 @@
                     <span v-else>¡Gratis! (+{{ freeShippingMinItems - 1 }} artículos)</span>
                   </span>
                   <span v-else class="font-semibold text-gray-900 dark:text-white">
-                    ${{ formatPrice(shippingCost) }}
+                    {{ formatPrice(shippingCost) }}
                   </span>
                 </div>
 
@@ -299,7 +299,7 @@
 
                 <div v-if="cartStore.hasCoupon" class="flex justify-between text-sm text-green-600 dark:text-green-400">
                   <span class="font-semibold">Descuento</span>
-                  <span class="font-bold">-${{ formatPrice(cartStore.discount) }}</span>
+                  <span class="font-bold">-{{ formatPrice(cartStore.discount) }}</span>
                 </div>
               </div>
 
@@ -308,7 +308,7 @@
                 <div class="flex justify-between items-center">
                   <span class="text-xl font-bold text-gray-900 dark:text-white">Total</span>
                   <span class="text-3xl font-bold text-primary dark:text-white">
-                    ${{ formatPrice(orderTotal) }}
+                    {{ formatPrice(orderTotal) }}
                   </span>
                 </div>
               </div>

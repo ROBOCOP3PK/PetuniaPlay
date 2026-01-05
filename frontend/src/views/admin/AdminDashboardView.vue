@@ -65,7 +65,7 @@
               <div>
                 <p class="text-gray-500 dark:text-gray-400 text-sm font-semibold uppercase">Ingresos Totales</p>
                 <p class="text-3xl font-bold text-primary mt-2">
-                  ${{ formatPrice(stats.total_revenue) }}
+                  {{ formatPrice(stats.total_revenue) }}
                 </p>
               </div>
               <div class="bg-green-100 dark:bg-green-900 dark:bg-opacity-30 rounded-full p-3">
@@ -73,7 +73,7 @@
               </div>
             </div>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-              Mes actual: ${{ formatPrice(stats.monthly_revenue) }}
+              Mes actual: {{ formatPrice(stats.monthly_revenue) }}
             </p>
           </div>
 
@@ -172,7 +172,7 @@
                   <p class="text-sm text-gray-600 dark:text-gray-400">{{ order.user?.name || 'Invitado' }}</p>
                 </div>
                 <div class="text-right">
-                  <p class="font-bold text-primary">${{ formatPrice(order.total) }}</p>
+                  <p class="font-bold text-primary">{{ formatPrice(order.total) }}</p>
                   <span
                     class="text-xs px-2 py-1 rounded-full"
                     :class="getStatusClass(order.status)"

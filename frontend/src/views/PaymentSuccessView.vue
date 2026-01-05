@@ -24,7 +24,7 @@
             </div>
             <div>
               <p class="text-sm text-gray-600 dark:text-gray-400">Total Pagado</p>
-              <p class="text-lg font-bold text-green-600 dark:text-green-400">${{ formatPrice(orderInfo.total) }}</p>
+              <p class="text-lg font-bold text-green-600 dark:text-green-400">{{ formatPrice(orderInfo.total) }}</p>
             </div>
           </div>
         </div>

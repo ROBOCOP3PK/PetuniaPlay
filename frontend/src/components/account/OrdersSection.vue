@@ -55,11 +55,11 @@
             <div class="flex-1">
               <p class="font-semibold">{{ item.product_name }}</p>
               <p class="text-sm text-gray-600">
-                Cantidad: {{ item.quantity }} x ${{ formatPrice(item.price) }}
+                Cantidad: {{ item.quantity }} x {{ formatPrice(item.price) }}
               </p>
             </div>
             <div class="text-right">
-              <p class="font-bold text-primary">${{ formatPrice(item.subtotal) }}</p>
+              <p class="font-bold text-primary">{{ formatPrice(item.subtotal) }}</p>
             </div>
           </div>
         </div>
@@ -68,21 +68,21 @@
         <div class="border-t pt-4">
           <div class="flex justify-between text-sm mb-2">
             <span class="text-gray-600">Subtotal:</span>
-            <span>${{ formatPrice(order.subtotal) }}</span>
+            <span>{{ formatPrice(order.subtotal) }}</span>
           </div>
           <div class="flex justify-between text-sm mb-2">
             <span class="text-gray-600">IVA:</span>
-            <span>${{ formatPrice(order.tax) }}</span>
+            <span>{{ formatPrice(order.tax) }}</span>
           </div>
           <div class="flex justify-between text-sm mb-2">
             <span class="text-gray-600">Envío:</span>
             <span>
-              {{ order.shipping_cost === 0 ? '¡Gratis!' : '$' + formatPrice(order.shipping_cost) }}
+              {{ order.shipping_cost === 0 ? '¡Gratis!' : formatPrice(order.shipping_cost) }}
             </span>
           </div>
           <div class="flex justify-between text-lg font-bold mt-3 pt-3 border-t">
             <span>Total:</span>
-            <span class="text-primary">${{ formatPrice(order.total) }}</span>
+            <span class="text-primary">{{ formatPrice(order.total) }}</span>
           </div>
         </div>
 
@@ -147,9 +147,9 @@
             >
               <div>
                 <p class="font-semibold">{{ item.product_name }}</p>
-                <p class="text-sm text-gray-600">{{ item.quantity }} x ${{ formatPrice(item.price) }}</p>
+                <p class="text-sm text-gray-600">{{ item.quantity }} x {{ formatPrice(item.price) }}</p>
               </div>
-              <p class="font-bold">${{ formatPrice(item.subtotal) }}</p>
+              <p class="font-bold">{{ formatPrice(item.subtotal) }}</p>
             </div>
           </div>
         </div>
@@ -172,15 +172,13 @@
 import { ref, onMounted } from 'vue'
 import orderService from '../../services/orderService'
 import { useToast } from 'vue-toastification'
+import { useFormat } from '@/composables/useFormat'
 
 const toast = useToast()
+const { formatPrice } = useFormat()
 const loading = ref(false)
 const orders = ref([])
 const selectedOrder = ref(null)
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('es-ES', {

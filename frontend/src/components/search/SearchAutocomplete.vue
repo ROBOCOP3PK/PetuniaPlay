@@ -81,16 +81,16 @@
           <!-- Price -->
           <div class="flex-shrink-0 text-right">
             <p v-if="product.sale_price" class="font-bold text-primary">
-              ${{ formatPrice(product.sale_price) }}
+              {{ formatPrice(product.sale_price) }}
             </p>
             <p
               v-if="product.sale_price"
               class="text-xs text-gray-500 line-through"
             >
-              ${{ formatPrice(product.price) }}
+              {{ formatPrice(product.price) }}
             </p>
             <p v-else class="font-bold text-dark">
-              ${{ formatPrice(product.price) }}
+              {{ formatPrice(product.price) }}
             </p>
           </div>
         </router-link>
@@ -121,6 +121,7 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import productService from '../../services/productService'
+import { useFormat } from '@/composables/useFormat'
 
 const props = defineProps({
   placeholder: {
@@ -130,6 +131,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const { formatPrice } = useFormat()
 const searchQuery = ref('')
 const results = ref([])
 const loading = ref(false)
@@ -137,10 +139,6 @@ const showDropdown = ref(false)
 const selectedIndex = ref(-1)
 
 let searchTimeout = null
-
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO').format(price)
-}
 
 const handleInput = () => {
   selectedIndex.value = -1
