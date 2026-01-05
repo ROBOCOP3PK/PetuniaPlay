@@ -49,19 +49,6 @@
             />
           </div>
 
-          <!-- Document -->
-          <div>
-            <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Documento de Identidad *</label>
-            <input
-              v-model="form.document"
-              type="text"
-              required
-              class="input-field"
-              placeholder="1234567890"
-              :disabled="loading"
-            />
-          </div>
-
           <!-- Password -->
           <div>
             <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Contraseña *</label>
@@ -157,7 +144,6 @@ const form = reactive({
   name: '',
   email: '',
   phone: '',
-  document: '',
   password: '',
   password_confirmation: '',
   acceptTerms: false
@@ -178,7 +164,6 @@ const handleRegister = async () => {
     name: form.name,
     email: form.email,
     phone: form.phone,
-    document: form.document,
     password: form.password,
     password_confirmation: form.password_confirmation
   })
