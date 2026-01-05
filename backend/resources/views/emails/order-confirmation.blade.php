@@ -244,16 +244,15 @@
         <!-- Footer -->
         <div class="footer">
             <p><strong>¿Tienes preguntas?</strong></p>
-            <p>Contáctanos en petuniaplayhub@gmail.com o al +57 305 7594088</p>
+            <p>Contáctanos a través del sistema de contacto en nuestra aplicación</p>
             <p style="margin-top: 20px; padding: 15px; background-color: #f8f4ec; border-radius: 5px; font-size: 13px; line-height: 1.6;">
                 <strong>Protección de Datos Personales (Ley 1581 de 2012)</strong><br>
                 Tienes derecho a conocer, actualizar, rectificar y suprimir tus datos personales (Derechos RACS).
-                Para ejercer estos derechos o consultar nuestra política de tratamiento de datos, contáctanos en petuniaplayhub@gmail.com
+                Para ejercer estos derechos o consultar nuestra política de tratamiento de datos, contáctanos a través del sistema de contacto en la aplicación.
             </p>
             <p style="margin-top: 15px; font-size: 12px;">
                 <strong>Responsable del tratamiento de datos:</strong><br>
-                Petunia Play | Bogotá, Colombia<br>
-                Email: petuniaplayhub@gmail.com | Tel: +57 305 7594088
+                Petunia Play | Bogotá, Colombia
             </p>
             @php
                 $unsubscribeToken = \App\Http\Controllers\Api\UnsubscribeController::generateUnsubscribeToken($order->user->email);

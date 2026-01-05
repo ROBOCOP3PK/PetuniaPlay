@@ -200,24 +200,23 @@
         </div>
 
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
-            Si tienes alguna pregunta sobre tu envío, no dudes en contactarnos.
+            Si tienes alguna pregunta sobre tu envío, contáctanos a través del sistema de contacto en nuestra aplicación.
         </p>
     </div>
 
     <div class="footer">
         <p><strong>Petunia Play</strong></p>
-        <p>petuniaplayhub@gmail.com | +57 305 7594088</p>
+        <p>Tu tienda de confianza para mascotas</p>
 
         <div style="margin-top: 20px; padding: 15px; background-color: #f8f4ec; border-radius: 5px; font-size: 13px; line-height: 1.6; text-align: left;">
             <strong>Protección de Datos Personales (Ley 1581 de 2012)</strong><br>
             Tienes derecho a conocer, actualizar, rectificar y suprimir tus datos personales (Derechos RACS).
-            Para ejercer estos derechos o consultar nuestra política de tratamiento de datos, contáctanos en petuniaplayhub@gmail.com
+            Para ejercer estos derechos o consultar nuestra política de tratamiento de datos, contáctanos a través del sistema de contacto en la aplicación.
         </div>
 
         <p style="margin-top: 15px; font-size: 12px;">
             <strong>Responsable del tratamiento de datos:</strong><br>
-            Petunia Play | Bogotá, Colombia<br>
-            Email: petuniaplayhub@gmail.com | Tel: +57 305 7594088
+            Petunia Play | Bogotá, Colombia
         </p>
 
         @php

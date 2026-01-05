@@ -85,13 +85,13 @@
         @endif
 
         <p style="margin-top: 30px; color: #6b7280; font-size: 14px;">
-            Si tienes alguna pregunta, no dudes en contactarnos.
+            Si tienes alguna pregunta, contáctanos a través del sistema de contacto en nuestra aplicación.
         </p>
     </div>
 
     <div class="footer">
         <p><strong>Petunia Play</strong></p>
-        <p>petuniaplay@gmail.com | +57 305 759 4088</p>
+        <p>Tu tienda de confianza para mascotas</p>
         <p style="margin-top: 10px; font-size: 12px;">
             Este es un email automático, por favor no respondas a este mensaje.
         </p>

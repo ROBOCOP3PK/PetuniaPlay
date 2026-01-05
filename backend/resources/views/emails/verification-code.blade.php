@@ -149,7 +149,7 @@
             </div>
 
             <p style="color: #6b7280; font-size: 14px; margin-top: 25px;">
-                Si tienes problemas, contáctanos en <strong>petuniaplay@gmail.com</strong>
+                Si tienes problemas, contáctanos a través del sistema de contacto en nuestra aplicación.
             </p>
         </div>
 
