@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\VerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -40,9 +41,21 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Enviar código de verificación de email
+        try {
+            VerificationCode::generateAndSend(
+                $user->email,
+                VerificationCode::TYPE_EMAIL_VERIFICATION
+            );
+        } catch (\Exception $e) {
+            Log::error('Error enviando código de verificación: ' . $e->getMessage());
+        }
+
         return response()->json([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'requires_email_verification' => true,
+            'message' => 'Cuenta creada exitosamente. Te enviamos un código de verificación a tu email.'
         ], 201);
     }
 
@@ -264,6 +277,243 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Preferencias de notificación actualizadas exitosamente',
             'data' => $user
+        ]);
+    }
+
+    /**
+     * Send email verification code
+     */
+    public function sendVerificationCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // Por seguridad, no revelamos si el email existe o no
+            return response()->json([
+                'message' => 'Si el email está registrado, recibirás un código de verificación'
+            ]);
+        }
+
+        // Si el email ya está verificado
+        if ($user->email_verified_at) {
+            return response()->json([
+                'message' => 'Este email ya ha sido verificado'
+            ], 400);
+        }
+
+        try {
+            VerificationCode::generateAndSend(
+                $request->email,
+                VerificationCode::TYPE_EMAIL_VERIFICATION
+            );
+        } catch (\Exception $e) {
+            Log::error('Error enviando código de verificación: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Error al enviar el código. Intenta de nuevo.'
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Código de verificación enviado exitosamente'
+        ]);
+    }
+
+    /**
+     * Verify email with code
+     */
+    public function verifyEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'code' => 'required|string|size:6',
+        ]);
+
+        $verification = VerificationCode::verify(
+            $request->email,
+            $request->code,
+            VerificationCode::TYPE_EMAIL_VERIFICATION
+        );
+
+        if (!$verification) {
+            return response()->json([
+                'message' => 'Código inválido o expirado'
+            ], 400);
+        }
+
+        // Marcar el email como verificado
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            $user->update(['email_verified_at' => now()]);
+
+            return response()->json([
+                'message' => 'Email verificado exitosamente',
+                'user' => $user
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Usuario no encontrado'
+        ], 404);
+    }
+
+    /**
+     * Send password reset code (alternative to forgotPassword with link)
+     */
+    public function sendPasswordResetCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // Por seguridad, no revelamos si el email existe o no
+            return response()->json([
+                'message' => 'Si el email existe, recibirás un código de recuperación'
+            ]);
+        }
+
+        try {
+            VerificationCode::generateAndSend(
+                $request->email,
+                VerificationCode::TYPE_PASSWORD_RESET
+            );
+        } catch (\Exception $e) {
+            Log::error('Error enviando código de recuperación: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Error al enviar el código. Intenta de nuevo.'
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Si el email existe, recibirás un código de recuperación'
+        ]);
+    }
+
+    /**
+     * Verify password reset code (step 1 of 2-step reset)
+     */
+    public function verifyPasswordResetCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'code' => 'required|string|size:6',
+        ]);
+
+        $verification = VerificationCode::where('email', $request->email)
+            ->where('code', $request->code)
+            ->where('type', VerificationCode::TYPE_PASSWORD_RESET)
+            ->whereNull('verified_at')
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$verification) {
+            return response()->json([
+                'message' => 'Código inválido o expirado'
+            ], 400);
+        }
+
+        // Marcar como verificado
+        $verification->update(['verified_at' => now()]);
+
+        return response()->json([
+            'message' => 'Código verificado. Ahora puedes crear tu nueva contraseña.',
+            'verified' => true
+        ]);
+    }
+
+    /**
+     * Reset password with verified code (step 2 of 2-step reset)
+     */
+    public function resetPasswordWithCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'code' => 'required|string|size:6',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Verificar que el código fue previamente verificado
+        $verification = VerificationCode::where('email', $request->email)
+            ->where('code', $request->code)
+            ->where('type', VerificationCode::TYPE_PASSWORD_RESET)
+            ->whereNotNull('verified_at')
+            ->where('verified_at', '>', now()->subMinutes(15)) // 15 min para completar el reset
+            ->first();
+
+        if (!$verification) {
+            return response()->json([
+                'message' => 'Código inválido o sesión expirada. Solicita un nuevo código.'
+            ], 400);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Usuario no encontrado'
+            ], 404);
+        }
+
+        // Actualizar contraseña
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        // Eliminar el código usado
+        $verification->delete();
+
+        // Eliminar todos los tokens de acceso del usuario (forzar re-login)
+        $user->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Contraseña restablecida exitosamente'
+        ]);
+    }
+
+    /**
+     * Resend verification code (for both email verification and password reset)
+     */
+    public function resendVerificationCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'type' => 'required|in:email_verification,password_reset',
+        ]);
+
+        $type = $request->type === 'password_reset'
+            ? VerificationCode::TYPE_PASSWORD_RESET
+            : VerificationCode::TYPE_EMAIL_VERIFICATION;
+
+        // Verificar rate limiting - máximo 1 código cada 60 segundos
+        $recentCode = VerificationCode::where('email', $request->email)
+            ->where('type', $type)
+            ->where('created_at', '>', now()->subMinutes(1))
+            ->exists();
+
+        if ($recentCode) {
+            return response()->json([
+                'message' => 'Debes esperar 1 minuto antes de solicitar otro código'
+            ], 429);
+        }
+
+        try {
+            VerificationCode::generateAndSend($request->email, $type);
+        } catch (\Exception $e) {
+            Log::error('Error reenviando código: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Error al enviar el código. Intenta de nuevo.'
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Código enviado exitosamente'
         ]);
     }
 }

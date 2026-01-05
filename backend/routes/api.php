@@ -43,6 +43,16 @@ Route::prefix('v1')->group(function () {
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
         Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+        // Email verification with 6-digit code
+        Route::post('/send-verification-code', [AuthController::class, 'sendVerificationCode']);
+        Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
+        Route::post('/resend-verification-code', [AuthController::class, 'resendVerificationCode']);
+
+        // Password reset with 6-digit code (alternative to link-based reset)
+        Route::post('/send-password-reset-code', [AuthController::class, 'sendPasswordResetCode']);
+        Route::post('/verify-password-reset-code', [AuthController::class, 'verifyPasswordResetCode']);
+        Route::post('/reset-password-with-code', [AuthController::class, 'resetPasswordWithCode']);
     });
 
     // Products
@@ -117,7 +127,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::put('/user/profile', [AuthController::class, 'updateProfile']);
-    Route::put('/user/password', [AuthController::class, 'changePassword']);
+    Route::put('/user/password', [AuthController::class, 'changePassword'])->middleware('verified');
     Route::put('/user/notification-preferences', [AuthController::class, 'updateNotificationPreferences']);
 
     // Addresses
@@ -141,13 +151,15 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::delete('/wishlist/clear', [WishlistController::class, 'clear']);
     Route::delete('/wishlist/{productId}', [WishlistController::class, 'destroy']);
 
-    // Reviews (authenticated)
-    Route::post('/reviews', [ReviewController::class, 'store']);
-    Route::put('/reviews/{id}', [ReviewController::class, 'update']);
-    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+    // Reviews (authenticated + verified email)
+    Route::middleware('verified')->group(function () {
+        Route::post('/reviews', [ReviewController::class, 'store']);
+        Route::put('/reviews/{id}', [ReviewController::class, 'update']);
+        Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+    });
 
-    // Product Questions (authenticated)
-    Route::post('/product-questions', [ProductQuestionController::class, 'store']);
+    // Product Questions (authenticated + verified email)
+    Route::post('/product-questions', [ProductQuestionController::class, 'store'])->middleware('verified');
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
@@ -265,7 +277,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/loyalty/my-rewards', [LoyaltyController::class, 'myRewards']);
         Route::get('/loyalty/my-redemptions', [LoyaltyController::class, 'myRedemptions']);
-        Route::post('/loyalty/redeem', [LoyaltyController::class, 'redeem']);
+        Route::post('/loyalty/redeem', [LoyaltyController::class, 'redeem'])->middleware('verified');
     });
 
     // Admin Loyalty routes (require manager or admin role)

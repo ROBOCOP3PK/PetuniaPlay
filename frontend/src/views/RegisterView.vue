@@ -187,7 +187,13 @@ const handleRegister = async () => {
 
   if (result.success) {
     toast.success(`¡Bienvenido ${result.user.name}! Tu cuenta ha sido creada exitosamente.`)
-    router.push('/account')
+
+    // Redirigir a verificación de email si es requerido
+    if (result.requiresEmailVerification) {
+      router.push({ path: '/verify-email', query: { email: form.email } })
+    } else {
+      router.push('/account')
+    }
   } else {
     // Mostrar errores de validación si existen
     if (result.errors) {

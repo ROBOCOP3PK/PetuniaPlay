@@ -40,6 +40,14 @@ class OrderController extends Controller
         try {
             $userId = Auth::check() ? Auth::id() : null;
 
+            // Si el usuario está autenticado, verificar que su email esté verificado
+            if (Auth::check() && !Auth::user()->email_verified_at) {
+                return response()->json([
+                    'message' => 'Debes verificar tu email para realizar compras',
+                    'requires_verification' => true
+                ], 403);
+            }
+
             \Log::info('Orden: Creando orden', ['payment_method' => $request->input('payment.method')]);
 
             // Permitir pedidos sin autenticación (guest checkout)

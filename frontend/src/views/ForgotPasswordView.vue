@@ -11,12 +11,12 @@
           ¿Olvidaste tu contraseña?
         </h2>
         <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-          No te preocupes, te enviaremos instrucciones para restablecerla
+          Te enviaremos un código de 6 dígitos para restablecerla
         </p>
       </div>
 
       <!-- Success Message -->
-      <div v-if="success" class="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg p-4">
+      <div v-if="codeSent" class="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg p-4">
         <div class="flex">
           <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -25,14 +25,14 @@
           </div>
           <div class="ml-3">
             <p class="text-sm font-medium text-green-800 dark:text-green-200">
-              {{ successMessage }}
+              Código enviado a {{ form.email }}. Serás redirigido...
             </p>
           </div>
         </div>
       </div>
 
       <!-- Form -->
-      <form v-if="!success" class="mt-8 space-y-6" @submit.prevent="handleSubmit">
+      <form v-if="!codeSent" class="mt-8 space-y-6" @submit.prevent="handleSubmit">
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
             <label for="email" class="sr-only">Correo electrónico</label>
@@ -66,7 +66,7 @@
               </svg>
               Enviando...
             </span>
-            <span v-else>Enviar enlace de recuperación</span>
+            <span v-else>Enviar código de recuperación</span>
           </button>
         </div>
 
@@ -76,44 +76,46 @@
           </router-link>
         </div>
       </form>
-
-      <!-- Back to login after success -->
-      <div v-if="success" class="text-center">
-        <router-link to="/login" class="font-medium text-primary dark:text-fuchsia-400 hover:text-primary-dark">
-          ← Volver a iniciar sesión
-        </router-link>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { authService } from '../services/authService'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
+import { useToast } from 'vue-toastification'
+
+const router = useRouter()
+const authStore = useAuthStore()
+const toast = useToast()
 
 const form = ref({
   email: ''
 })
 
 const loading = ref(false)
-const success = ref(false)
-const successMessage = ref('')
+const codeSent = ref(false)
 const error = ref('')
 
 const handleSubmit = async () => {
   loading.value = true
   error.value = ''
-  success.value = false
 
-  try {
-    const response = await authService.forgotPassword(form.value.email)
-    success.value = true
-    successMessage.value = response.data.message
-    form.value.email = ''
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Error al enviar el enlace de recuperación'
-  } finally {
-    loading.value = false
+  const result = await authStore.sendPasswordResetCode(form.value.email)
+
+  loading.value = false
+
+  if (result.success) {
+    codeSent.value = true
+    toast.success('Código enviado exitosamente')
+
+    // Redirigir a reset-password después de 1.5 segundos
+    setTimeout(() => {
+      router.push({ path: '/reset-password', query: { email: form.value.email } })
+    }, 1500)
+  } else {
+    error.value = result.message
   }
 }
 </script>

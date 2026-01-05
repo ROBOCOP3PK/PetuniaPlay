@@ -131,6 +131,11 @@ const router = createRouter({
       component: () => import('../views/ResetPasswordView.vue'),
       meta: { guest: true }
     },
+    {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: () => import('../views/EmailVerificationView.vue'),
+    },
     // Protected routes
     {
       path: '/account',

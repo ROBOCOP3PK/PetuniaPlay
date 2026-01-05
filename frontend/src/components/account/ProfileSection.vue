@@ -135,10 +135,12 @@
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from 'vue-toastification'
 import authService from '../../services/authService'
 
+const router = useRouter()
 const authStore = useAuthStore()
 const toast = useToast()
 
@@ -204,6 +206,13 @@ const updateProfile = async () => {
 }
 
 const changePassword = async () => {
+  // Verificar que el email esté verificado
+  if (!authStore.isEmailVerified) {
+    toast.warning('Debes verificar tu email para cambiar la contraseña')
+    router.push({ path: '/verify-email', query: { email: authStore.userEmail } })
+    return
+  }
+
   if (passwordForm.password !== passwordForm.password_confirmation) {
     toast.warning('Las contraseñas no coinciden')
     return

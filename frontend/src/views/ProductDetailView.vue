@@ -609,6 +609,12 @@ const openReviewForm = (review = null) => {
     return
   }
 
+  if (!authStore.isEmailVerified) {
+    notifyWarning('Debes verificar tu email para escribir reseñas')
+    router.push({ path: '/verify-email', query: { email: authStore.userEmail } })
+    return
+  }
+
   editingReview.value = review
   showReviewForm.value = true
 }
@@ -687,6 +693,13 @@ const openQuestionForm = () => {
     router.push({ name: 'login', query: { redirect: route.fullPath } })
     return
   }
+
+  if (!authStore.isEmailVerified) {
+    notifyWarning('Debes verificar tu email para hacer preguntas')
+    router.push({ path: '/verify-email', query: { email: authStore.userEmail } })
+    return
+  }
+
   showQuestionForm.value = true
 }
 

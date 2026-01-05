@@ -10,7 +10,10 @@
         <h2 class="mt-6 text-center text-3xl font-bold text-gray-900 dark:text-white">
           Restablecer contraseña
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+        <p v-if="!codeVerified" class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          Ingresa el código de 6 dígitos enviado a <span class="font-semibold">{{ email }}</span>
+        </p>
+        <p v-else class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
           Ingresa tu nueva contraseña
         </p>
       </div>
@@ -31,8 +34,46 @@
         </div>
       </div>
 
-      <!-- Form -->
-      <form v-if="!success" class="mt-8 space-y-6" @submit.prevent="handleSubmit">
+      <!-- Step 1: Code Verification -->
+      <div v-if="!codeVerified && !success" class="mt-8 space-y-6">
+        <VerificationCodeInput
+          ref="codeInput"
+          v-model="code"
+          :disabled="loading"
+          :expiration-minutes="10"
+          @complete="handleVerifyCode"
+          @resend="handleResend"
+        />
+
+        <!-- Error Message -->
+        <div v-if="error" class="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-4">
+          <p class="text-sm text-red-800 dark:text-red-200">{{ error }}</p>
+        </div>
+
+        <button
+          @click="handleVerifyCode"
+          :disabled="loading || code.length !== 6"
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span v-if="loading" class="flex items-center">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Verificando...
+          </span>
+          <span v-else>Verificar código</span>
+        </button>
+
+        <div class="text-center">
+          <router-link to="/forgot-password" class="font-medium text-primary dark:text-fuchsia-400 hover:text-primary-dark">
+            ← Solicitar nuevo código
+          </router-link>
+        </div>
+      </div>
+
+      <!-- Step 2: Password Form -->
+      <form v-if="codeVerified && !success" class="mt-8 space-y-6" @submit.prevent="handleResetPassword">
         <div class="space-y-4">
           <div>
             <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -102,16 +143,21 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { authService } from '../services/authService'
+import { useAuthStore } from '../stores/authStore'
 import { useToast } from 'vue-toastification'
+import VerificationCodeInput from '../components/common/VerificationCodeInput.vue'
 
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuthStore()
 const toast = useToast()
 
+const email = ref('')
+const code = ref('')
+const codeVerified = ref(false)
+const codeInput = ref(null)
+
 const form = ref({
-  email: '',
-  token: '',
   password: '',
   password_confirmation: ''
 })
@@ -121,16 +167,51 @@ const success = ref(false)
 const error = ref('')
 
 onMounted(() => {
-  // Get token and email from URL query params
-  form.value.token = route.query.token || ''
-  form.value.email = route.query.email || ''
+  email.value = route.query.email || ''
 
-  if (!form.value.token || !form.value.email) {
-    error.value = 'Enlace de recuperación inválido'
+  if (!email.value) {
+    toast.error('Email no especificado')
+    router.push('/forgot-password')
   }
 })
 
-const handleSubmit = async () => {
+const handleVerifyCode = async () => {
+  if (code.value.length !== 6) return
+
+  loading.value = true
+  error.value = ''
+
+  const result = await authStore.verifyPasswordResetCode(email.value, code.value)
+
+  loading.value = false
+
+  if (result.success) {
+    codeVerified.value = true
+    toast.success('Código verificado')
+  } else {
+    error.value = result.message
+    toast.error(result.message)
+  }
+}
+
+const handleResend = async () => {
+  loading.value = true
+  error.value = ''
+
+  const result = await authStore.sendPasswordResetCode(email.value)
+
+  loading.value = false
+
+  if (result.success) {
+    toast.success('Código reenviado exitosamente')
+    codeInput.value?.resetTimer()
+    codeInput.value?.reset()
+  } else {
+    toast.error(result.message)
+  }
+}
+
+const handleResetPassword = async () => {
   if (form.value.password !== form.value.password_confirmation) {
     error.value = 'Las contraseñas no coinciden'
     return
@@ -139,14 +220,16 @@ const handleSubmit = async () => {
   loading.value = true
   error.value = ''
 
-  try {
-    await authService.resetPassword({
-      email: form.value.email,
-      token: form.value.token,
-      password: form.value.password,
-      password_confirmation: form.value.password_confirmation
-    })
+  const result = await authStore.resetPasswordWithCode(
+    email.value,
+    code.value,
+    form.value.password,
+    form.value.password_confirmation
+  )
 
+  loading.value = false
+
+  if (result.success) {
     success.value = true
     toast.success('Contraseña restablecida exitosamente')
 
@@ -154,10 +237,8 @@ const handleSubmit = async () => {
     setTimeout(() => {
       router.push('/login')
     }, 2000)
-  } catch (err) {
-    error.value = err.response?.data?.message || 'Error al restablecer la contraseña'
-  } finally {
-    loading.value = false
+  } else {
+    error.value = result.message
   }
 }
 </script>

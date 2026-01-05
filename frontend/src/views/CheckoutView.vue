@@ -313,12 +313,19 @@
                 </div>
               </div>
 
+              <!-- Email Verification Warning -->
+              <EmailVerificationRequired
+                v-if="requiresEmailVerification"
+                message="Debes verificar tu email para realizar compras."
+                class="mb-4"
+              />
+
               <!-- Place Order Button -->
               <button
                 @click="placeOrder"
-                :disabled="processing || !form.acceptTerms"
+                :disabled="processing || !form.acceptTerms || requiresEmailVerification"
                 class="btn-primary w-full text-lg"
-                :class="{ 'opacity-50 cursor-not-allowed': processing || !form.acceptTerms }"
+                :class="{ 'opacity-50 cursor-not-allowed': processing || !form.acceptTerms || requiresEmailVerification }"
               >
                 {{ processing ? 'Procesando...' : 'Realizar Pedido' }}
               </button>
@@ -351,6 +358,7 @@ import orderService from '../services/orderService'
 import addressService from '../services/addressService'
 import paymentService from '../services/paymentService'
 import AddressMapPicker from '../components/AddressMapPicker.vue'
+import EmailVerificationRequired from '../components/common/EmailVerificationRequired.vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -381,6 +389,11 @@ const orderTotal = computed(() => {
 const isBogota = computed(() => {
   const city = form.city.toLowerCase().trim()
   return city === 'bogotá' || city === 'bogota'
+})
+
+// Computed para verificar si requiere verificación de email
+const requiresEmailVerification = computed(() => {
+  return authStore.isAuthenticated && !authStore.isEmailVerified
 })
 
 // Computed para obtener el horario formateado desde la configuración

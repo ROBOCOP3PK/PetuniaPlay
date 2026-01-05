@@ -64,6 +64,44 @@ export const authService = {
     return api.post('/reset-password', data)
   },
 
+  // ========== Verificación con código de 6 dígitos ==========
+
+  // Enviar código de verificación de email
+  async sendVerificationCode(email) {
+    await this.getCsrfToken()
+    return api.post('/send-verification-code', { email })
+  },
+
+  // Verificar email con código
+  async verifyEmail(email, code) {
+    await this.getCsrfToken()
+    return api.post('/verify-email', { email, code })
+  },
+
+  // Reenviar código de verificación
+  async resendVerificationCode(email, type = 'email_verification') {
+    await this.getCsrfToken()
+    return api.post('/resend-verification-code', { email, type })
+  },
+
+  // Enviar código para restablecer contraseña
+  async sendPasswordResetCode(email) {
+    await this.getCsrfToken()
+    return api.post('/send-password-reset-code', { email })
+  },
+
+  // Verificar código de reset de contraseña
+  async verifyPasswordResetCode(email, code) {
+    await this.getCsrfToken()
+    return api.post('/verify-password-reset-code', { email, code })
+  },
+
+  // Restablecer contraseña con código verificado
+  async resetPasswordWithCode(data) {
+    await this.getCsrfToken()
+    return api.post('/reset-password-with-code', data)
+  },
+
   // Verificar si el usuario está autenticado
   isAuthenticated() {
     return !!localStorage.getItem('auth_token')

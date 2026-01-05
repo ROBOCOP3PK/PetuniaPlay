@@ -273,11 +273,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import { useAuthStore } from '../stores/authStore'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import loyaltyService from '../services/loyaltyService'
 
+const router = useRouter()
 const toast = useToast()
+const authStore = useAuthStore()
 
 // Confirm Dialog State
 const confirmDialog = ref({
@@ -338,6 +342,13 @@ const canRedeem = (reward) => {
 }
 
 const handleRedeem = async (reward) => {
+  // Verificar que el email esté verificado
+  if (!authStore.isEmailVerified) {
+    toast.warning('Debes verificar tu email para canjear recompensas')
+    router.push({ path: '/verify-email', query: { email: authStore.userEmail } })
+    return
+  }
+
   confirmDialog.value = {
     isOpen: true,
     title: '¿Canjear recompensa?',
