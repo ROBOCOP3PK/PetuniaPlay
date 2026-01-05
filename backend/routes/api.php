@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\ShippingConfigController;
 use App\Http\Controllers\Api\SiteConfigController;
 use App\Http\Controllers\Api\AnimalSectionController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\PetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -137,6 +138,16 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/user/addresses/{id}', [AddressController::class, 'update']);
     Route::delete('/user/addresses/{id}', [AddressController::class, 'destroy']);
     Route::put('/user/addresses/{id}/set-default', [AddressController::class, 'setDefault']);
+
+    // Pets (Mascotas)
+    Route::get('/user/pets', [PetController::class, 'index']);
+    Route::post('/user/pets', [PetController::class, 'store']);
+    Route::get('/user/pets/{id}', [PetController::class, 'show']);
+    Route::put('/user/pets/{id}', [PetController::class, 'update']);
+    Route::delete('/user/pets/{id}', [PetController::class, 'destroy']);
+    Route::post('/user/pets/{id}/photo', [PetController::class, 'uploadPhoto']);
+    Route::delete('/user/pets/{id}/photo', [PetController::class, 'deletePhoto']);
+    Route::get('/pet-categories', [PetController::class, 'getAnimalCategories']);
 
     // Orders
     Route::get('/orders', [OrderController::class, 'index']);

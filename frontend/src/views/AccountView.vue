@@ -37,6 +37,14 @@
                 <span>Mis Direcciones</span>
               </button>
               <button
+                @click="activeTab = 'pets'"
+                :class="tabClass('pets')"
+                class="w-full text-left px-4 py-3 rounded-lg transition flex items-center gap-3"
+              >
+                <span>🐾</span>
+                <span>Mis Mascotas</span>
+              </button>
+              <button
                 @click="handleLogout"
                 class="w-full text-left px-4 py-3 rounded-lg transition flex items-center gap-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 dark:hover:bg-opacity-20"
               >
@@ -67,6 +75,12 @@
               <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Direcciones de Envío</h2>
               <AddressesSection />
             </div>
+
+            <!-- Pets Tab -->
+            <div v-show="activeTab === 'pets'">
+              <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Mis Mascotas</h2>
+              <PetsSection />
+            </div>
           </div>
         </div>
       </div>
@@ -83,6 +97,7 @@ import { useConfirm } from '../composables/useConfirm'
 import ProfileSection from '../components/account/ProfileSection.vue'
 import OrdersSection from '../components/account/OrdersSection.vue'
 import AddressesSection from '../components/account/AddressesSection.vue'
+import PetsSection from '../components/account/PetsSection.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

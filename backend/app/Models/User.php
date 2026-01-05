@@ -101,6 +101,11 @@ class User extends Authenticatable
         return $this->hasMany(LoyaltyRedemption::class);
     }
 
+    public function pets()
+    {
+        return $this->hasMany(Pet::class);
+    }
+
     // Helpers
 
     public function isAdmin()
