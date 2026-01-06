@@ -6,42 +6,71 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\Encoders\WebpEncoder;
 
 class FileUploadController extends Controller
 {
+    private const MAX_WIDTH = 1200;
+    private const MAX_HEIGHT = 1200;
+    private const QUALITY = 80;
+
+    /**
+     * Optimiza y guarda una imagen
+     */
+    private function optimizeAndSave($file, string $type): array
+    {
+        $filename = time() . '_' . Str::random(10) . '.webp';
+        $directory = "images/{$type}";
+        $path = "{$directory}/{$filename}";
+
+        // Asegurar que el directorio existe
+        Storage::disk('public')->makeDirectory($directory);
+
+        // Cargar imagen con Intervention
+        $image = Image::read($file);
+
+        // Redimensionar manteniendo proporción (solo si es más grande)
+        $image->scaleDown(width: self::MAX_WIDTH, height: self::MAX_HEIGHT);
+
+        // Codificar a WebP con calidad optimizada
+        $encoded = $image->encode(new WebpEncoder(quality: self::QUALITY));
+
+        // Guardar
+        Storage::disk('public')->put($path, (string) $encoded);
+
+        $url = Storage::url($path);
+        $size = Storage::disk('public')->size($path);
+
+        return [
+            'path' => $path,
+            'url' => $url,
+            'filename' => $filename,
+            'size' => $size,
+            'mime_type' => 'image/webp',
+        ];
+    }
+
     /**
      * Upload de imagen
      */
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // Max 5MB
-            'type' => 'nullable|string|in:product,category,blog', // Tipo de imagen para organización
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // Max 10MB (se comprimirá)
+            'type' => 'nullable|string|in:product,category,blog',
         ]);
 
         try {
             $file = $request->file('image');
             $type = $request->input('type', 'general');
 
-            // Generar nombre único
-            $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-
-            // Guardar en storage/app/public/{type}/{filename}
-            $path = $file->storeAs("images/{$type}", $filename, 'public');
-
-            // Generar URL pública
-            $url = Storage::url($path);
+            $imageData = $this->optimizeAndSave($file, $type);
 
             return response()->json([
                 'success' => true,
-                'data' => [
-                    'path' => $path,
-                    'url' => $url,
-                    'filename' => $filename,
-                    'size' => $file->getSize(),
-                    'mime_type' => $file->getMimeType(),
-                ],
-                'message' => 'Imagen subida exitosamente'
+                'data' => $imageData,
+                'message' => 'Imagen subida y optimizada exitosamente'
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
@@ -57,8 +86,8 @@ class FileUploadController extends Controller
     public function uploadMultiple(Request $request)
     {
         $request->validate([
-            'images' => 'required|array|max:10', // Máximo 10 imágenes
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'images' => 'required|array|max:10',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'type' => 'nullable|string|in:product,category,blog',
         ]);
 
@@ -67,23 +96,13 @@ class FileUploadController extends Controller
             $uploadedImages = [];
 
             foreach ($request->file('images') as $file) {
-                $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs("images/{$type}", $filename, 'public');
-                $url = Storage::url($path);
-
-                $uploadedImages[] = [
-                    'path' => $path,
-                    'url' => $url,
-                    'filename' => $filename,
-                    'size' => $file->getSize(),
-                    'mime_type' => $file->getMimeType(),
-                ];
+                $uploadedImages[] = $this->optimizeAndSave($file, $type);
             }
 
             return response()->json([
                 'success' => true,
                 'data' => $uploadedImages,
-                'message' => count($uploadedImages) . ' imágenes subidas exitosamente'
+                'message' => count($uploadedImages) . ' imágenes subidas y optimizadas exitosamente'
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
