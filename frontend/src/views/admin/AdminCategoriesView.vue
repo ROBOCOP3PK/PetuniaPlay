@@ -471,7 +471,7 @@ const saveCategoryForm = async () => {
     }
 
     closeModal()
-    await categoryStore.fetchCategories()
+    await categoryStore.fetchCategories(true)
   } catch (error) {
     const errorMsg = error.response?.data?.message || error.response?.data?.errors
     if (typeof errorMsg === 'object') {
