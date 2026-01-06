@@ -32,7 +32,7 @@ class CategoryController extends Controller
     public function store(CategoryStoreRequest $request)
     {   
         try { 
-            $validated = $request->validated;
+            $validated = $request->validated();
             $category = $this->categoryService->createCategory($validated);
             return new CategoryResource($category);
         } catch (\Exception $e) {
