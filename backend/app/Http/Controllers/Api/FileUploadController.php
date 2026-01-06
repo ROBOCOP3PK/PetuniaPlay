@@ -39,8 +39,8 @@ class FileUploadController extends Controller
         // Guardar
         Storage::disk('public')->put($path, (string) $encoded);
 
-        $url = Storage::url($path);
         $size = Storage::disk('public')->size($path);
+        $url = config('app.url') . '/storage/' . $path;
 
         return [
             'path' => $path,
